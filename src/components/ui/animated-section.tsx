@@ -2,8 +2,9 @@
 
 import * as React from "react";
 
-import { useIsVisible } from "@/hooks/useIntersectionObserver";
 import clsx from "clsx";
+
+import { useIsVisible } from "@/hooks/useIntersectionObserver";
 
 interface AnimatedWrapperProps {
   children: React.ReactNode;

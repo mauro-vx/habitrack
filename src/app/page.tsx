@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Logo from "~/public/icons/logo.svg";
+
 import AnimatedSection from "@/components/ui/animated-section";
+import Logo from "~/public/icons/logo.svg";
 
 export default function Home() {
   return (

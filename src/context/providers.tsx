@@ -1,16 +1,11 @@
-"use client";
-
 import * as React from "react";
 
-import dynamic from "next/dynamic";
-import { type ThemeProviderProps } from "next-themes";
+import ThemeProvider from "@/context/theme-provider";
 
-const NextThemesProvider = dynamic(() => import("next-themes").then((e) => e.ThemeProvider), { ssr: false });
-
-export default function Providers({ children }: ThemeProviderProps) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme>
       {children}
-    </NextThemesProvider>
+    </ThemeProvider>
   );
 }

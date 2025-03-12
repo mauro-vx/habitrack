@@ -1,8 +1,12 @@
 import * as React from "react";
+
 import type { Metadata } from "next";
-import { Fredoka,Poppins } from "next/font/google";
+import { Fredoka, Poppins } from "next/font/google";
 
 import "./globals.css";
+
+import Providers from "@/context/providers";
+import Header from "@/app/_components/header";
 
 const fredoka = Fredoka({
   variable: "--font-fredoka",
@@ -26,8 +30,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${fredoka.variable} ${poppins.variable} antialiased`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${fredoka.variable} ${poppins.variable} antialiased`}>
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

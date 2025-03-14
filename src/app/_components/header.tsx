@@ -1,6 +1,6 @@
-import LogoSection from "@/app/_components/header/logo-section";
-import NavMenu from "@/app/_components/header/nav-menu";
-import UserActions from "@/app/_components/header/user-actions";
+import LogoSection from "./header/logo-section";
+import NavMenu from "./header/nav-menu";
+import UserActions from "./header/user-actions";
 
 export default function Header() {
   return (

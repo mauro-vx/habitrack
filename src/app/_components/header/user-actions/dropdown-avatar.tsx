@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Cloud,
   CreditCard,
@@ -13,6 +14,7 @@ import {
   Users,
 } from "lucide-react";
 
+import { createClient } from "@/lib/supabase/server";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +30,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { createClient } from "@/lib/supabase/server";
 import { DropdownMenuButtonAuth } from "./dropdown-avatar/dropdown-menu-button-auth";
 
 export default async function DropdownAvatar() {
@@ -56,10 +57,12 @@ export default async function DropdownAvatar() {
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User />
-            <span>Profile</span>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          <DropdownMenuItem asChild>
+            <Link href="/profile">
+              <User />
+              <span>Profile</span>
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem>
@@ -84,7 +87,6 @@ export default async function DropdownAvatar() {
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-
           <DropdownMenuItem>
             <Users />
             <span>Team</span>
@@ -136,7 +138,6 @@ export default async function DropdownAvatar() {
         <DropdownMenuSeparator />
 
         <DropdownMenuButtonAuth user={user} />
-
       </DropdownMenuContent>
     </DropdownMenu>
   );

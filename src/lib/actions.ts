@@ -4,21 +4,26 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { signInSchema } from "@/app/schemas/auth";
 
-export async function signIn(formData: FormData) {
+export async function signIn(
+  prevState: { status: string; errors?: { email?: string[]; password?: string[] }; message?: string } | undefined,
+  formData: { email: string; password: string },
+) {
+  const validatedFields = signInSchema.safeParse(formData);
+
+  if (!validatedFields.success) {
+    const errors = validatedFields.error.flatten().fieldErrors;
+    return { status: "error", errors };
+  }
+
+  const { email, password } = validatedFields.data;
+
   const supabase = await createClient();
-
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  };
-
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    redirect("/error");
+    return { status: "error", message: "Invalid email or password." };
   }
 
   revalidatePath("/", "layout");

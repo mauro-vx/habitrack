@@ -4,9 +4,8 @@ import * as React from "react";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 
-import { signInSchema } from "@/app/schemas/auth";
+import { type SignInSchema, signInSchema } from "@/app/schemas/auth";
 import { signIn } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +14,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 export default function SignInForm() {
   const [state, formAction, isPending] = React.useActionState(signIn, undefined);
 
-  const form = useForm<z.infer<typeof signInSchema>>({
+  const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
@@ -26,12 +25,21 @@ export default function SignInForm() {
 
   async function onSubmit(data: { email: string; password: string }) {
     React.startTransition(() => formAction(data));
+
+    if (state?.status === "error") {
+      if (state.errors) {
+        for (const [key, value] of Object.entries(state.errors)) {
+          form.setError(key as keyof typeof state.errors, {
+            type: "manual",
+            message: value?.[0] || "Invalid value",
+          });
+        }
+      }
+    }
   }
 
   return (
     <Form {...form}>
-      {state?.message && <div className="mb-4 text-red-500">{state.message}</div>}
-
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
@@ -66,6 +74,8 @@ export default function SignInForm() {
         <Button type="submit" disabled={isPending}>
           {isPending ? "Signing in..." : "Sign In"}
         </Button>
+
+        {state?.message && <div className="mb-4 text-red-500">{state.message}</div>}
       </form>
     </Form>
   );

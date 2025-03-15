@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { signInSchema } from "@/app/schemas/auth";
+import { signInSchema, signUpSchema } from "@/app/schemas/auth";
 
 export async function signIn(
   prevState: { status: string; errors?: { email?: string[]; password?: string[] }; message?: string } | undefined,
@@ -26,33 +26,36 @@ export async function signIn(
     return { status: "error", message: error.message || "Invalid email or password." };
   }
 
-  revalidatePath("/", "layout");
   redirect("/");
 }
 
-export async function signUp(formData: FormData) {
-  const supabase = await createClient();
+export async function signUp(
+  prevState:
+    | {
+        status: string;
+        errors?: { email?: string[]; chose_password?: string[]; verify_password?: string[] };
+        message?: string;
+      }
+    | undefined,
+  formData: { email: string; chose_password: string; verify_password: string },
+) {
+  const validatedFields = signUpSchema.safeParse(formData);
 
-  const email = formData.get("email");
-  const password = formData.get("password");
-
-  if (typeof email !== "string" || typeof password !== "string") {
-    console.error("Invalid input data: Missing email or password");
-    redirect("/error?signup_failed=true");
+  if (!validatedFields.success) {
+    const errors = validatedFields.error.flatten().fieldErrors;
+    return { status: "error", errors };
   }
 
-  // Construct the data object
-  const data = { email, password };
+  const { email, chose_password: password } = validatedFields.data;
 
-  const { error } = await supabase.auth.signUp(data);
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signUp({ email, password });
 
   if (error) {
-    console.error("SignUp error:", error);
-    redirect("/error");
+    return { status: "error", message: error.message || "Invalid email or password." };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/");
+  redirect("/verification-sent");
 }
 
 export async function signOut() {

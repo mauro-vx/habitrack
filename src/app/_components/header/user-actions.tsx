@@ -15,7 +15,7 @@ export default function UserActions() {
       </AuthGuard>
 
       <AuthGuard userStatus="signedOut">
-        <PathGuard hideWhen={["/sign-in"]}>
+        <PathGuard hideWhen={["/sign-in", "/sign-up", "verification-sent"]}>
           <Button asChild variant="outline">
             <Link href="/sign-in">Sign in</Link>
           </Button>

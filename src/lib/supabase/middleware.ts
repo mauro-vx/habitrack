@@ -44,9 +44,9 @@ export async function updateSession(request: NextRequest) {
   //   !user &&
   //   request.nextUrl.pathname.startsWith("/account")
   // ) {
-  //   // no user, potentially respond by redirecting the user to the login page
+  //   // no user, potentially respond by redirecting the user to the sign-up page
   //   const url = request.nextUrl.clone();
-  //   url.pathname = "/login";
+  //   url.pathname = "/sign-up";
   //   return NextResponse.redirect(url);
   // }
   //
@@ -54,24 +54,24 @@ export async function updateSession(request: NextRequest) {
   //   !user &&
   //   !request.nextUrl.pathname.startsWith("/") &&
   //   !request.nextUrl.pathname.startsWith("/docs") &&
-  //   !request.nextUrl.pathname.startsWith("/login") &&
+  //   !request.nextUrl.pathname.startsWith("/sign-up") &&
   //   !request.nextUrl.pathname.startsWith("/auth")
   // ) {
-  //   // no user, potentially respond by redirecting the user to the login page
+  //   // no user, potentially respond by redirecting the user to the sign-up page
   //   const url = request.nextUrl.clone();
-  //   url.pathname = "/login";
+  //   url.pathname = "/sign-up";
   //   return NextResponse.redirect(url);
   // }
   //
-  // if (user && request.nextUrl.pathname.startsWith("/login")) {
-  //   // avoid the login and signUp page for authenticated user
+  // if (user && request.nextUrl.pathname.startsWith("/sign-up")) {
+  //   // avoid the sign-up and signUp page for authenticated user
   //   const url = request.nextUrl.clone();
   //   url.pathname = "/";
   //   return NextResponse.redirect(url);
   // }
 
-  if (user && request.nextUrl.pathname.startsWith("/login")) {
-    // avoid the login and signUp page for authenticated user
+  if (user && request.nextUrl.pathname.startsWith("/sign-up")) {
+    // avoid the sign-up and signUp page for authenticated user
     const url = request.nextUrl.clone();
     url.pathname = "/";
     return NextResponse.redirect(url);
@@ -83,12 +83,12 @@ export async function updateSession(request: NextRequest) {
       request.nextUrl.pathname.startsWith("/account") ||
       (!request.nextUrl.pathname.startsWith("/") &&
         !request.nextUrl.pathname.startsWith("/docs") &&
-        !request.nextUrl.pathname.startsWith("/login") &&
+        !request.nextUrl.pathname.startsWith("/sign-up") &&
         !request.nextUrl.pathname.startsWith("/auth")))
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // no user, potentially respond by redirecting the user to the sign-up page
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = "/sign-up";
     return NextResponse.redirect(url);
   }
 

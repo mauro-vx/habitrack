@@ -5,7 +5,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { type SignUpSchema, signUpSchema } from "@/app/schemas/auth";
+import { type SignUpSchema, signUpSchema } from "@/schemas/auth";
 import { signUp } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +45,7 @@ export default function SignUpForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full max-w-md flex-col space-y-6">
         <div className="mb-4 flex justify-between items-end">
           <h2 className="text-4xl font-bold">Sign up</h2>
-          <Button asChild variant="ghost" className="text-brand-text text-lg">
+          <Button asChild variant="ghost" className="text-brand text-lg">
             <Link href="/sign-in">Sign in</Link>
           </Button>
         </div>

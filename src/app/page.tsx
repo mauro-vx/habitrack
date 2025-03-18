@@ -25,37 +25,35 @@ export default function Home() {
 
       <AnimatedSection className="row-start-1 flex flex-col items-center gap-6 text-center">
         <Logo className="size-32 shrink-0" aria-label="HabiTrack logo" />
-        <h1 className="text-primary text-3xl font-medium sm:text-5xl">Welcome to HabiTrack</h1>
+        <h1 className="text-primary text-3xl font-medium sm:text-5xl">Break Free, Build Better Habits</h1>
         <p className="text-muted-foreground max-w-2xl text-lg sm:text-xl">
-          The ultimate tool to end procrastination and take charge of your habits. Stay organized, track your progress,
-          and create the life you’ve always wanted.
+          Escape the cycle of procrastination and start creating lasting habits. With HabiTrack, every step forward
+          counts.
+        </p>
+      </AnimatedSection>
+
+      <AnimatedSection className="row-start-1 flex flex-col items-center gap-6 text-center">
+        <Logo className="size-32 shrink-0" aria-label="HabiTrack logo" />
+        <h1 className="text-primary text-3xl font-medium sm:text-5xl">Small Changes, Big Transformations</h1>
+        <p className="text-muted-foreground max-w-2xl text-lg sm:text-xl">
+          Every great success starts with a habit. Track your growth daily and turn your ambitions into reality.
+        </p>
+      </AnimatedSection>
+
+      <AnimatedSection className="row-start-1 flex flex-col items-center gap-6 text-center">
+        <Logo className="size-32 shrink-0" aria-label="HabiTrack logo" />
+        <h1 className="text-primary text-3xl font-medium sm:text-5xl">Your Habits, Your Superpower</h1>
+        <p className="text-muted-foreground max-w-2xl text-lg sm:text-xl">
+          Take control of your day and unlock the power of consistency. Start thriving, one habit at a time.
         </p>
       </AnimatedSection>
 
       <AnimatedSection className="row-start-1 flex flex-col items-center gap-6 text-center">
         <Logo className="size-32 shrink-0" aria-label="HabiTrack logo" />
         <h1 className="text-primary text-3xl font-medium sm:text-5xl">Welcome to HabiTrack</h1>
+        <h1 className="text-primary text-3xl font-medium sm:text-5xl">Design the Life You Desire</h1>
         <p className="text-muted-foreground max-w-2xl text-lg sm:text-xl">
-          The ultimate tool to end procrastination and take charge of your habits. Stay organized, track your progress,
-          and create the life you’ve always wanted.
-        </p>
-      </AnimatedSection>
-
-      <AnimatedSection className="row-start-1 flex flex-col items-center gap-6 text-center">
-        <Logo className="size-32 shrink-0" aria-label="HabiTrack logo" />
-        <h1 className="text-primary text-3xl font-medium sm:text-5xl">Welcome to HabiTrack</h1>
-        <p className="text-muted-foreground max-w-2xl text-lg sm:text-xl">
-          The ultimate tool to end procrastination and take charge of your habits. Stay organized, track your progress,
-          and create the life you’ve always wanted.
-        </p>
-      </AnimatedSection>
-
-      <AnimatedSection className="row-start-1 flex flex-col items-center gap-6 text-center">
-        <Logo className="size-32 shrink-0" aria-label="HabiTrack logo" />
-        <h1 className="text-primary text-3xl font-medium sm:text-5xl">Welcome to HabiTrack</h1>
-        <p className="text-muted-foreground max-w-2xl text-lg sm:text-xl">
-          The ultimate tool to end procrastination and take charge of your habits. Stay organized, track your progress,
-          and create the life you’ve always wanted.
+          Stay focused, stay organized, and turn your goals into habits. HabiTrack helps you build a life you’ll love.
         </p>
       </AnimatedSection>
 

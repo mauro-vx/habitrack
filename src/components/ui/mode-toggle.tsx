@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from 'react';
+import * as React from "react";
 
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
@@ -14,20 +14,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function ModeToggle() {
+  const { setTheme } = useTheme();
   const [isThemeProviderAvailable, setIsThemeProviderAvailable] = React.useState(true);
 
-  let setTheme: React.Dispatch<React.SetStateAction<string>>;
-  try {
-    ({ setTheme } = useTheme());
-  } catch (error) {
-    setIsThemeProviderAvailable(false);
-  }
-
   React.useEffect(() => {
-    if (!isThemeProviderAvailable) {
+    if (!setTheme) {
       console.warn("ThemeProvider is not available. ModeToggle will not function correctly.");
+      setIsThemeProviderAvailable(false);
     }
-  }, [isThemeProviderAvailable]);
+  }, [setTheme]);
 
   if (!isThemeProviderAvailable) {
     return null;
@@ -43,9 +38,9 @@ export default function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme?.("light")}>Light</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme?.("dark")}>Dark</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme?.("system")}>System</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

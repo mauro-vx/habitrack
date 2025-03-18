@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { type SignInSchema, signInSchema } from "@/app/schemas/auth";
+import { type SignInSchema, signInSchema } from "@/schemas/auth";
 import { signIn } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,7 +44,7 @@ export default function SignInForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full max-w-md flex-col space-y-6">
         <div className="flex justify-between mb-4 items-end">
           <h2 className="text-4xl font-bold">Sign in</h2>
-          <Button asChild variant="ghost" className="text-brand-text text-lg">
+          <Button asChild variant="ghost" className="text-brand text-lg">
             <Link href="/sign-up">Sign up</Link>
           </Button>
         </div>

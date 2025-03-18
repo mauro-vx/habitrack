@@ -7,6 +7,7 @@ import "./globals.css";
 
 import Providers from "@/context/providers";
 import Header from "@/app/_components/header";
+import ReactQueryProvider from "@/lib/ReactQueryProvider";
 
 const fredoka = Fredoka({
   variable: "--font-fredoka",
@@ -34,7 +35,7 @@ export default function RootLayout({
       <body className={`${fredoka.variable} ${poppins.variable} antialiased`}>
         <Providers>
           <Header />
-          {children}
+          <ReactQueryProvider>{children}</ReactQueryProvider>
         </Providers>
       </body>
     </html>

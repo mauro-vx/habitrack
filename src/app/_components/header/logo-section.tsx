@@ -9,7 +9,7 @@ export default function LogoSection() {
         <Logo className="size-10 shrink-0" aria-hidden="true" />
       </Link>
 
-      <span className="text-brand-text" role="heading" aria-level={1}>
+      <span className="text-brand" role="heading" aria-level={1}>
         HabiTrack
       </span>
     </section>

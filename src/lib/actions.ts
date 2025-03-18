@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { signInSchema, signUpSchema } from "@/app/schemas/auth";
+import { signInSchema, signUpSchema } from "@/schemas/auth";
 
 export async function signIn(
   prevState: { status: string; errors?: { email?: string[]; password?: string[] }; message?: string } | undefined,
@@ -49,6 +49,7 @@ export async function signUp(
   const { email, chose_password: password } = validatedFields.data;
 
   const supabase = await createClient();
+
   const { error } = await supabase.auth.signUp({ email, password });
 
   if (error) {

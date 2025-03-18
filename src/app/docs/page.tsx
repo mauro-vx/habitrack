@@ -2,9 +2,9 @@ import * as React from "react";
 
 export default function Docs() {
   return (
-    <div className="container">
+    <main className="container h-screen flex justify-center items-center">
       <h1>Docs</h1>
-    </div>
+    </main>
   );
 }
 

@@ -1,18 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
+import Profile from "@/app/profile/profile";
 
-export default async function Profile() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  
-  console.log('user: ', user);
-  
-  
+export default function ProfilePage() {
   return (
-    <div className="container">
-      <h1>Profile</h1>
+    <div className="container flex h-screen items-center justify-center">
+      <Profile />
     </div>
   );
 }
-

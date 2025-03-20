@@ -24,5 +24,15 @@ export default async function Profile() {
     throw new Error(error.message || "Failed to fetch profileOld data.");
   }
 
-  return <ProfileHub profileData={profileData} />;
+  const {
+    data: avatarData,
+  } = supabase.storage.from("avatars").getPublicUrl(profileData.avatar_url);
+
+  const userProfile = {
+    id: user.id,
+    ...avatarData,
+    ...profileData,
+  };
+
+  return <ProfileHub userProfile={userProfile} />;
 }

@@ -1,9 +1,12 @@
 import * as React from "react";
 
 import Image from "next/image";
+import { AlertCircle } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { cn } from "@/lib/utils";
+import { UserProfile } from "@/app/profile/types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const AvatarFrame = ({
   size,
@@ -22,20 +25,18 @@ const AvatarFrame = ({
   );
 };
 
-export default async function ProfileAvatar({
-  avatar_url,
+export default function ProfileAvatar({
+  userProfile,
   alt,
   size = 40,
   className,
 }: {
-  avatar_url: string | null;
+  userProfile: UserProfile;
   alt: string;
   size?: number;
   className?: string;
 }) {
-  const supabase = await createClient();
-
-  if (avatar_url === null) {
+  if (userProfile.avatar_url === null) {
     return (
       <AvatarFrame size={size} className={className}>
         <AvatarFallback>
@@ -49,27 +50,24 @@ export default async function ProfileAvatar({
     );
   }
 
-  const { data: avatarData } = supabase.storage.from("avatars").getPublicUrl(avatar_url);
-
-  if (!avatarData || !avatarData.publicUrl) {
-    console.error("Failed to get the public URL for the avatar.");
+  if (!userProfile || !userProfile.publicUrl) {
     return (
-      <AvatarFrame size={size} className={className}>
-        <AvatarFallback>Error</AvatarFallback>
-      </AvatarFrame>
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>Failed to get the public URL for the avatar.</AlertDescription>
+      </Alert>
     );
   }
 
   return (
-    <AvatarFrame size={size} className={className}>
+    <AvatarFrame size={size} className={cn("flex outline-primary rounded-full outline-4", className)}>
       <Image
-        src={avatarData.publicUrl}
+        src={userProfile.publicUrl}
         alt={alt}
         width={size}
         height={size}
-        className="rounded-full object-cover"
-        placeholder="blur"
-        blurDataURL="/path-to-blur-image.png" // Optional image placeholder if pre-configured
+        className="m-auto size-[90%]"
       />
     </AvatarFrame>
   );

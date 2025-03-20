@@ -2,40 +2,44 @@
 
 import * as React from "react";
 
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle } from "lucide-react";
 
-import { type SignUpSchema, signUpSchema } from "@/schemas/auth";
-import { signUp } from "@/lib/actions";
+import { type SignUpSchema, signUpSchema } from "@/lib/actions/schemas/auth";
+import { signUp } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import Link from "next/link";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function SignUpForm() {
-  const [state, formAction, isPending] = React.useActionState(signUp, undefined);
+  const [state, formAction, isPending] = React.useActionState(signUp, {
+    email: "",
+    setPassword: "",
+    verifyPassword: "",
+  });
 
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: "",
-      chose_password: "",
-      verify_password: "",
+      setPassword: "",
+      verifyPassword: "",
     },
     mode: "onChange",
   });
 
-  async function onSubmit(data: { email: string; chose_password: string; verify_password: string }) {
+  async function onSubmit(data: SignUpSchema) {
     React.startTransition(() => formAction(data));
 
-    if (state?.status === "error") {
-      if (state.errors) {
-        for (const [key, value] of Object.entries(state.errors)) {
-          form.setError(key as keyof typeof state.errors, {
-            type: "manual",
-            message: value?.[0] || "Invalid value",
-          });
-        }
+    if (state?.status === "form-error" && state.formErrors) {
+      for (const [key, value] of Object.entries(state.formErrors)) {
+        form.setError(key as keyof typeof state.formErrors, {
+          type: "manual",
+          message: value?.[0] || "Invalid value",
+        });
       }
     }
   }
@@ -43,7 +47,7 @@ export default function SignUpForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full max-w-md flex-col space-y-6">
-        <div className="mb-4 flex justify-between items-end">
+        <div className="mb-4 flex items-end justify-between">
           <h2 className="text-4xl font-bold">Sign up</h2>
           <Button asChild variant="ghost" className="text-brand text-lg">
             <Link href="/sign-in">Sign in</Link>
@@ -67,7 +71,7 @@ export default function SignUpForm() {
 
         <FormField
           control={form.control}
-          name="chose_password"
+          name="setPassword"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Chose a password</FormLabel>
@@ -82,7 +86,7 @@ export default function SignUpForm() {
 
         <FormField
           control={form.control}
-          name="verify_password"
+          name="verifyPassword"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Verify password</FormLabel>
@@ -99,7 +103,13 @@ export default function SignUpForm() {
           {isPending ? "Signing up..." : "Sign Up"}
         </Button>
 
-        {state?.message && <div className="mb-4 text-red-500">{state.message}</div>}
+        {state?.serverError && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{state.serverError.message || "Invalid email or password."}</AlertDescription>
+          </Alert>
+        )}
       </form>
     </Form>
   );

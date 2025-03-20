@@ -10,12 +10,12 @@ export type SignInSchema = z.infer<typeof signInSchema>;
 export const signUpSchema = z
   .object({
     email: z.string().email("Invalid email address."),
-    chose_password: z.string().min(6, "Password must be at least 6 characters long."),
-    verify_password: z.string().min(6, "Password must be at least 6 characters long."),
+    setPassword: z.string().min(6, "Password must be at least 6 characters long."),
+    verifyPassword: z.string().min(6, "Password must be at least 6 characters long."),
   })
-  .refine((data) => data.chose_password === data.verify_password, {
+  .refine((data) => data.setPassword === data.verifyPassword, {
     message: "Passwords do not match.",
-    path: ["verify_password"],
+    path: ["verifyPassword"],
   });
 
 export type SignUpSchema = z.infer<typeof signUpSchema>;

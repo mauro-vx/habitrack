@@ -5,15 +5,20 @@ import * as React from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle } from "lucide-react";
 
-import { type SignInSchema, signInSchema } from "@/schemas/auth";
-import { signIn } from "@/lib/actions";
+import { type SignInSchema, signInSchema } from "@/lib/actions/schemas/auth";
+import { signIn } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function SignInForm() {
-  const [state, formAction, isPending] = React.useActionState(signIn, undefined);
+  const [state, formAction, isPending] = React.useActionState(signIn, {
+    email: "",
+    password: "",
+  });
 
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
@@ -24,17 +29,15 @@ export default function SignInForm() {
     mode: "onChange",
   });
 
-  async function onSubmit(data: { email: string; password: string }) {
+  async function onSubmit(data: SignInSchema) {
     React.startTransition(() => formAction(data));
 
-    if (state?.status === "error") {
-      if (state.errors) {
-        for (const [key, value] of Object.entries(state.errors)) {
-          form.setError(key as keyof typeof state.errors, {
-            type: "manual",
-            message: value?.[0] || "Invalid value",
-          });
-        }
+    if (state?.status === "form-error" && state.formErrors) {
+      for (const [key, value] of Object.entries(state.formErrors)) {
+        form.setError(key as keyof typeof state.formErrors, {
+          type: "manual",
+          message: value?.[0] || "Invalid value",
+        });
       }
     }
   }
@@ -42,7 +45,7 @@ export default function SignInForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full max-w-md flex-col space-y-6">
-        <div className="flex justify-between mb-4 items-end">
+        <div className="mb-4 flex items-end justify-between">
           <h2 className="text-4xl font-bold">Sign in</h2>
           <Button asChild variant="ghost" className="text-brand text-lg">
             <Link href="/sign-up">Sign up</Link>
@@ -83,7 +86,13 @@ export default function SignInForm() {
           {isPending ? "Signing in..." : "Sign In"}
         </Button>
 
-        {state?.message && <div className="mb-4 text-red-500">{state.message}</div>}
+        {state?.serverError && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{state.serverError.message || "Invalid email or password."}</AlertDescription>
+          </Alert>
+        )}
       </form>
     </Form>
   );

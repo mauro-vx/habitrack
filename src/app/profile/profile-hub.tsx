@@ -1,33 +1,13 @@
-import { cn } from "@/lib/utils";
-import ProfileAvatar from "./provile-avatar";
+import { UserProfile } from "@/app/profile/types";
+import ProfileModeWrapper from "@/app/profile/profile-mode-wrapper";
+import ProfileView from "@/app/profile/profile-view";
+import ProfileEdit from "@/app/profile/profile-edit";
 
-export default function ProfileHub({
-  profileData,
-}: {
-  profileData: {
-    full_name: string | null;
-    username: string | null;
-    avatar_url: string | null;
-  };
-}) {
+export default function ProfileHub({ userProfile }: { userProfile: UserProfile }) {
   return (
-    <div className={cn("flex flex-col gap-4")}>
-      <ProfileAvatar
-        // uid={profileOld.id}
-        avatar_url={profileData.avatar_url}
-        alt="User's avatar"
-        size={150}
-      />
-
-      <div>
-        <label>Full Name:</label>
-        <p className="text-gray-700">{profileData?.full_name || "No full name available"}</p>
-      </div>
-
-      <div>
-        <label>Username:</label>
-        <p className="text-gray-700">{profileData?.username || "No username available"}</p>
-      </div>
-    </div>
+    <ProfileModeWrapper
+      view={<ProfileView userProfile={userProfile} />}
+      edit={<ProfileEdit userProfile={userProfile} />}
+    />
   );
 }

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export default function EmailVerification() {
+export default function VerificationSentPage() {
   return (
     <main className="container flex h-screen justify-center items-center">
       <section className="text-center">

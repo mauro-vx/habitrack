@@ -1,9 +1,9 @@
-import SignInForm from "./sign-in-form";
+import SignUpForm from "./sign-up-form";
 
-export default function SignIn() {
+export default function SignUpPage() {
   return (
     <main className="container h-screen flex justify-center items-center">
-      <SignInForm />
+      <SignUpForm />
     </main>
   )
 }

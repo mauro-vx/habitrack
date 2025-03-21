@@ -3,10 +3,10 @@ import * as React from "react";
 import type { Metadata } from "next";
 import { Fredoka, Poppins } from "next/font/google";
 
-import "./globals.css";
+import "@/app/globals.css";
 
 import Providers from "@/context/providers";
-import Header from "@/app/_components/header";
+import Header from "./_components/header";
 
 const fredoka = Fredoka({
   variable: "--font-fredoka",

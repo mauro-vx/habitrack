@@ -3,8 +3,8 @@ import * as React from "react";
 import Image from "next/image";
 import { AlertCircle } from "lucide-react";
 
+import { UserProfile } from "./types";
 import { cn } from "@/lib/utils";
-import { UserProfile } from "@/app/profile/types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 

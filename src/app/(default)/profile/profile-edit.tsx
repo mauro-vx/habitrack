@@ -1,16 +1,18 @@
 "use client";
 
 import * as React from "react";
+
+import { AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { UserProfile } from "./types";
 import { type UpdateUserProfileSchema, updateUserProfileSchema } from "@/lib/actions/schemas/profile";
 import { updateUserProfile } from "@/lib/actions/profile";
 import { Button } from "@/components/ui/button";
-import { UserProfile } from "@/app/profile/types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import ProfileAvatar from "@/app/profile/provile-avatar";
+
+import ProfileAvatar from "./provile-avatar";
 
 export default function ProfileForm({ userProfile }: { userProfile: UserProfile }) {
   const [state, formAction, isPending] = React.useActionState(updateUserProfile, {
@@ -65,7 +67,7 @@ export default function ProfileForm({ userProfile }: { userProfile: UserProfile 
       className="flex flex-col gap-4"
       onChange={() => form.clearErrors("noEdits")}
     >
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-4">
         <label htmlFor="avatarUpload" className="flex cursor-pointer items-center justify-center">
           <ProfileAvatar userProfile={userProfile} alt="User's avatar" size={150} />
         </label>

@@ -3,7 +3,7 @@ import Image from "next/image";
 import AnimatedSection from "@/components/ui/animated-section";
 import Logo from "~/public/icons/logo.svg";
 
-export default function Home() {
+export default function Page() {
   return (
     <main className="container flex flex-1 flex-col gap-8 py-12">
       <AnimatedSection className="row-start-1 flex flex-col items-center gap-6 text-center">

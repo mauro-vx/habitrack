@@ -90,7 +90,7 @@ const habits = [
   },
 ];
 
-export default function DashboardPage() {
+export default function CreatePage() {
   return (
     <main className="container flex flex-1 items-center justify-center">
       <div className="{/*p-14 */} flex h-full w-full flex-col border-2 border-yellow-200">

@@ -1,6 +1,5 @@
-import { AuthError } from "@supabase/auth-js";
-
-type Status = string;
+import { ErrorStatus } from "@/app/enums";
+import { ServerError } from "@/app/types";
 
 interface SignInFormErrors {
   email?: string[];
@@ -13,12 +12,10 @@ interface SignUpFormErrors {
   verifyPassword?: string[];
 }
 
-type ServerError = AuthError;
-
 export interface SignInState {
   email: string;
   password: string;
-  status?: Status;
+  status?: ErrorStatus;
   formErrors?: SignInFormErrors;
   serverError?: ServerError;
 }
@@ -27,7 +24,7 @@ export interface SignUpState {
   email: string;
   setPassword: string;
   verifyPassword: string;
-  status?: Status;
+  status?: ErrorStatus;
   formErrors?: SignUpFormErrors;
   serverError?: ServerError;
 }

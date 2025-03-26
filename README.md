@@ -17,7 +17,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the app in action.
 
-You can start editing the page by modifying `app/profile-edit.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `app/profile-edit-form.tsx`. The page auto-updates as you edit the file.
 
 ## About the App
 

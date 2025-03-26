@@ -7,7 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
 
-import { type SignUpSchema, signUpSchema } from "@/lib/actions/schemas/auth";
+import { ErrorStatus } from "@/app/enums";
+import { type SignUpSchema, signUpSchema } from "../schema";
 import { signUp } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +35,7 @@ export default function SignUpForm() {
   async function onSubmit(data: SignUpSchema) {
     React.startTransition(() => formAction(data));
 
-    if (state?.status === "form-error" && state.formErrors) {
+    if (state?.status === ErrorStatus.FORM_ERROR && state.formErrors) {
       for (const [key, value] of Object.entries(state.formErrors)) {
         form.setError(key as keyof typeof state.formErrors, {
           type: "manual",

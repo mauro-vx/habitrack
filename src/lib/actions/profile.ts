@@ -4,10 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 
+import { ErrorStatus } from "@/app/enums";
+import { UserProfile } from "@/app/(default)/profile/types";
+import { EditProfileState } from "@/app/(default)/profile/types";
+import { updateUserProfileSchema } from "@/app/(default)/profile/schema";
 import { createClient } from "@/lib/supabase/server";
-import { EditProfileState } from "@/lib/actions/types/profile";
-import { updateUserProfileSchema } from "@/lib/actions/schemas/profile";
-import { UserProfile } from "@/app/profile/types";
 
 export async function updateUserProfile(
   prevState: EditProfileState,
@@ -18,7 +19,7 @@ export async function updateUserProfile(
   if (!validatedFields.success) {
     const errors = validatedFields.error.flatten().fieldErrors;
     return {
-      status: "form-error",
+      status: ErrorStatus.FORM_ERROR,
       formErrors: errors,
       fullName: prevState.fullName,
       username: prevState.username,
@@ -48,7 +49,7 @@ export async function updateUserProfile(
 
     if (bucketError) {
       return {
-        status: "server-error",
+        status: ErrorStatus.SERVER_ERROR,
         bucketError: bucketError,
         fullName: prevState.fullName,
         username: prevState.username,
@@ -69,7 +70,7 @@ export async function updateUserProfile(
 
   if (Object.keys(changes).length === 1) {
     return {
-      status: "form-error",
+      status: ErrorStatus.FORM_ERROR,
       noEdits: "No changes were made.",
       fullName: prevState.fullName,
       username: prevState.username,
@@ -83,7 +84,7 @@ export async function updateUserProfile(
 
   if (serverError) {
     return {
-      status: "server-error",
+      status: ErrorStatus.SERVER_ERROR,
       serverError: serverError,
       fullName: prevState.fullName,
       username: prevState.username,

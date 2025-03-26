@@ -1,7 +1,7 @@
 import { UserProfile } from "./types";
 import ProfileModeWrapper from "./profile-mode-wrapper";
 import ProfileView from "./profile-view";
-import ProfileEdit from "./profile-edit";
+import ProfileEdit from "./profile-edit-form";
 
 export default function ProfileHub({ userProfile }: { userProfile: UserProfile }) {
   return (

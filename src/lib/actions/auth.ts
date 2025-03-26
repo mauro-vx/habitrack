@@ -3,9 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { ErrorStatus } from "@/app/enums";
+import { SignInState, SignUpState } from "@/app/(default)/(auth)/types";
+import { signInSchema, signUpSchema } from "@/app/(default)/(auth)/schema";
 import { createClient } from "@/lib/supabase/server";
-import { SignInState, SignUpState } from "@/lib/actions/types/auth";
-import { signInSchema, signUpSchema } from "@/lib/actions/schemas/auth";
+
 
 export async function signIn(
   prevState: SignInState,
@@ -16,7 +18,7 @@ export async function signIn(
   if (!validatedFields.success) {
     const errors = validatedFields.error.flatten().fieldErrors;
     return {
-      status: "form-error",
+      status: ErrorStatus.FORM_ERROR,
       formErrors: errors,
       email: prevState.email,
       password: prevState.password,
@@ -31,7 +33,7 @@ export async function signIn(
 
   if (error) {
     return {
-      status: "server-error",
+      status: ErrorStatus.SERVER_ERROR,
       serverError: error,
       email: prevState.email,
       password: prevState.password,
@@ -50,7 +52,7 @@ export async function signUp(
   if (!validatedFields.success) {
     const errors = validatedFields.error.flatten().fieldErrors;
     return {
-      status: "form-error",
+      status: ErrorStatus.FORM_ERROR,
       formErrors: errors,
       email: prevState.email,
       setPassword: prevState.setPassword,
@@ -66,7 +68,7 @@ export async function signUp(
 
   if (error) {
     return {
-      status: "server-error",
+      status: ErrorStatus.SERVER_ERROR,
       serverError: error,
       email: prevState.email,
       setPassword: prevState.setPassword,
@@ -91,7 +93,7 @@ export async function signOut() {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    return { status: "server-error", serverError: error };
+    return { status: ErrorStatus.SERVER_ERROR, serverError: error };
   }
 
   revalidatePath("/", "layout");

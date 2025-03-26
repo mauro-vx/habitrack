@@ -29,6 +29,8 @@
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-secondary-accent-foreground: var(--secondary-accent-foreground);
+  --color-secondary-accent: var(--secondary-accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -59,6 +61,8 @@
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
+  --secondary-accent: oklch(0.97 0 0);
+  --secondary-accent-foreground: oklch(0.591 0.133 256.227);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
@@ -98,6 +102,8 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
+  --secondary-accent: oklch(0.269 0 0);
+  --secondary-accent-foreground: oklch(0.872 0.222 89.652);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
   --border: oklch(0.269 0 0);
@@ -143,35 +149,29 @@
 @utility container {
   padding-inline: 10px;
   margin-inline: auto;
-  /*background-color: lightgrey;*/
 
   /* 40rem (640px) */
   @variant sm {
     padding-inline: 20px;
-    /*background-color: lightslategrey;*/
   }
 
   /* 48rem (768px) */
   @variant md {
     padding-inline: 40px;
-    /*background-color: grey;*/
   }
 
   /* 64rem (1024px) */
   @variant lg {
     padding-inline: 80px;
-    /*background-color: slategrey;*/
   }
 
   /* 80rem (1280px) */
   @variant xl {
     padding-inline: 120px;
-    /*background-color: dimgrey;*/
   }
 
   /* 96rem (1536px) */
   @variant 2xl {
     padding-inline: 140px;
-    /*background-color: darkslategrey;*/
   }
 }

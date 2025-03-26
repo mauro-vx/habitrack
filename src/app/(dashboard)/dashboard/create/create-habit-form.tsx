@@ -7,8 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { addDays, addWeeks, format, isBefore, isMonday, isSunday, startOfDay, startOfWeek } from "date-fns";
 import { AlertCircle, CalendarIcon } from "lucide-react";
 
-import { ErrorStatus } from "@/app/enums";
+import { Status } from "@/app/enums";
 import { HabitType } from "../create/enums";
+import { CreateHabitState } from "../create/types";
 import { CreateHabitSchema, createHabitSchema } from "../create/schema";
 import { createHabit } from "@/lib/actions/create-habit";
 import { useCapitalizeFirst } from "@/hooks/use-capitalize-first";
@@ -42,7 +43,7 @@ const dayNameMap = {
   7: "Saturday",
 };
 
-const initState = {
+const initState: CreateHabitState = {
   name: "",
   description: "",
   type: HabitType.DAILY,
@@ -85,9 +86,9 @@ export default function CreateHabitForm({ className }: { className?: string }) {
   async function onSubmit(data: CreateHabitSchema) {
     React.startTransition(() => formAction(data));
 
-    if (state?.status === ErrorStatus.FORM_ERROR && state.formErrors) {
-      for (const [key, value] of Object.entries(state.formErrors)) {
-        form.setError(key as keyof typeof state.formErrors, {
+    if (state?.status === Status.VALIDATION_ERROR && state.validationErrors) {
+      for (const [key, value] of Object.entries(state.validationErrors)) {
+        form.setError(key as keyof typeof state.validationErrors, {
           type: "manual",
           message: value?.[0] || "Invalid value",
         });
@@ -354,11 +355,11 @@ export default function CreateHabitForm({ className }: { className?: string }) {
           {isPending ? "Creating..." : "Create Habit"}
         </Button>
 
-        {state?.serverError && (
+        {state?.dbError && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{state.serverError.message || "An error occurred."}</AlertDescription>
+            <AlertDescription>{state.dbError.message || "An error occurred."}</AlertDescription>
           </Alert>
         )}
       </form>

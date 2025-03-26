@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DatePicker } from "@/app/(dashboard)/dashboard/_components/header/date-picker";
+import { DatePicker } from "./header/date-picker";
 
 export default function Header() {
   return (

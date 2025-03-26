@@ -1,5 +1,6 @@
 import type { User, PostgrestError } from "@supabase/supabase-js";
 import { StorageError } from "@supabase/storage-js";
+import { Status } from "@/app/enums";
 
 export interface UserProfile {
   id: User["id"];
@@ -9,15 +10,11 @@ export interface UserProfile {
   publicUrl: string;
 }
 
-type Status = string;
-
 interface EditFormErrors {
   fullName?: string[];
   username?: string[];
   avatar?: string[];
 }
-
-type ServerError = StorageError;
 
 export interface EditProfileState {
   fullName: UserProfile["full_name"];
@@ -26,7 +23,7 @@ export interface EditProfileState {
   avatar?: File;
   noEdits?: string;
   status?: Status;
-  formErrors?: EditFormErrors;
-  bucketError?: ServerError | null;
-  serverError?: PostgrestError | null;
+  validationErrors?: EditFormErrors;
+  storageError?: StorageError | null;
+  dbError?: PostgrestError | null;
 }

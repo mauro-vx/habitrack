@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 
-import { ErrorStatus } from "@/app/enums";
+import { Status } from "@/app/enums";
 import { CreateHabitState } from "@/app/(dashboard)/dashboard/create/types";
 import { CreateHabitSchema, createHabitSchema } from "@/app/(dashboard)/dashboard/create/schema";
 import { createClient } from "@/lib/supabase/server";
@@ -15,8 +15,8 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
   if (!validation.success) {
     return {
       ...prevState,
-      status: ErrorStatus.FORM_ERROR,
-      formErrors: validation.error.flatten().fieldErrors,
+      status: Status.VALIDATION_ERROR,
+      validationErrors: validation.error.flatten().fieldErrors,
     };
   }
 
@@ -29,7 +29,7 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
     redirect("/sign-in");
   }
 
-  const { error: serverError } = await supabase.from("habits").insert({
+  const { error: dbError } = await supabase.from("habits").insert({
     user_id: user.id,
     id: uuidv4(),
     ...validation.data,
@@ -37,14 +37,17 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
     updated_at: new Date(),
   });
 
-  if (serverError) {
+  if (dbError) {
     return {
       ...prevState,
-      status: ErrorStatus.SERVER_ERROR,
-      serverError: serverError,
+      status: Status.DATABASE_ERROR,
+      dbError: dbError,
     };
   }
 
   revalidatePath("/dashboard", "page");
-  return prevState;
+  return {
+    ...prevState,
+    status: Status.SUCCESS,
+  };
 }

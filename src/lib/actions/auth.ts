@@ -3,76 +3,63 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { ErrorStatus } from "@/app/enums";
+import { Status } from "@/app/enums";
 import { SignInState, SignUpState } from "@/app/(default)/(auth)/types";
-import { signInSchema, signUpSchema } from "@/app/(default)/(auth)/schema";
+import { SignInSchema, signInSchema, signUpSchema } from "@/app/(default)/(auth)/schema";
 import { createClient } from "@/lib/supabase/server";
 
+export async function signIn(prevState: SignInState, formData: SignInSchema): Promise<SignInState> {
+  const validation = signInSchema.safeParse(formData);
 
-export async function signIn(
-  prevState: SignInState,
-  formData: { email: string; password: string },
-): Promise<SignInState> {
-  const validatedFields = signInSchema.safeParse(formData);
-
-  if (!validatedFields.success) {
-    const errors = validatedFields.error.flatten().fieldErrors;
+  if (!validation.success) {
     return {
-      status: ErrorStatus.FORM_ERROR,
-      formErrors: errors,
-      email: prevState.email,
-      password: prevState.password,
+      ...prevState,
+      status: Status.VALIDATION_ERROR,
+      validationErrors: validation.error.flatten().fieldErrors,
     };
   }
-
-  const { email, password } = validatedFields.data;
 
   const supabase = await createClient();
+  const { error: dbError } = await supabase.auth.signInWithPassword(validation.data);
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
+  if (dbError) {
     return {
-      status: ErrorStatus.SERVER_ERROR,
-      serverError: error,
-      email: prevState.email,
-      password: prevState.password,
+      ...prevState,
+      status: Status.DATABASE_ERROR,
+      dbError: dbError,
     };
+  } else {
   }
 
-  redirect("/");
+  redirect("/dashboard");
 }
 
 export async function signUp(
   prevState: SignUpState,
   formData: { email: string; setPassword: string; verifyPassword: string },
 ): Promise<SignUpState> {
-  const validatedFields = signUpSchema.safeParse(formData);
+  const validation = signUpSchema.safeParse(formData);
 
-  if (!validatedFields.success) {
-    const errors = validatedFields.error.flatten().fieldErrors;
+  if (!validation.success) {
     return {
-      status: ErrorStatus.FORM_ERROR,
-      formErrors: errors,
+      status: Status.VALIDATION_ERROR,
+      validationErrors: validation.error.flatten().fieldErrors,
       email: prevState.email,
       setPassword: prevState.setPassword,
       verifyPassword: prevState.verifyPassword,
     };
   }
 
-  const { email, setPassword: password } = validatedFields.data;
+  const { email, setPassword: password } = validation.data;
 
   const supabase = await createClient();
+  const { error: dbError } = await supabase.auth.signUp({ email, password });
 
-  const { error } = await supabase.auth.signUp({ email, password });
-
-  if (error) {
+  if (dbError) {
     return {
-      status: ErrorStatus.SERVER_ERROR,
-      serverError: error,
-      email: prevState.email,
-      setPassword: prevState.setPassword,
-      verifyPassword: prevState.verifyPassword,
+      ...prevState,
+      status: Status.DATABASE_ERROR,
+      dbError: dbError,
     };
   }
 
@@ -90,10 +77,10 @@ export async function signOut() {
     redirect("/sign-in");
   }
 
-  const { error } = await supabase.auth.signOut();
+  const { error: dbError } = await supabase.auth.signOut();
 
-  if (error) {
-    return { status: ErrorStatus.SERVER_ERROR, serverError: error };
+  if (dbError) {
+    return { status: Status.DATABASE_ERROR, serverError: dbError };
   }
 
   revalidatePath("/", "layout");

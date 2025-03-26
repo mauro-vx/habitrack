@@ -7,7 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
 
-import { ErrorStatus } from "@/app/enums";
+import { Status } from "@/app/enums";
+import { SignUpState } from "@/app/(default)/(auth)/types";
 import { type SignUpSchema, signUpSchema } from "../schema";
 import { signUp } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
@@ -15,29 +16,27 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+const initState: SignUpState = {
+  email: "",
+  setPassword: "",
+  verifyPassword: "",
+};
+
 export default function SignUpForm() {
-  const [state, formAction, isPending] = React.useActionState(signUp, {
-    email: "",
-    setPassword: "",
-    verifyPassword: "",
-  });
+  const [state, formAction, isPending] = React.useActionState(signUp, initState);
 
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      email: "",
-      setPassword: "",
-      verifyPassword: "",
-    },
+    defaultValues: initState,
     mode: "onChange",
   });
 
   async function onSubmit(data: SignUpSchema) {
     React.startTransition(() => formAction(data));
 
-    if (state?.status === ErrorStatus.FORM_ERROR && state.formErrors) {
-      for (const [key, value] of Object.entries(state.formErrors)) {
-        form.setError(key as keyof typeof state.formErrors, {
+    if (state?.status === Status.VALIDATION_ERROR && state.validationErrors) {
+      for (const [key, value] of Object.entries(state.validationErrors)) {
+        form.setError(key as keyof typeof state.validationErrors, {
           type: "manual",
           message: value?.[0] || "Invalid value",
         });
@@ -104,11 +103,11 @@ export default function SignUpForm() {
           {isPending ? "Signing up..." : "Sign Up"}
         </Button>
 
-        {state?.serverError && (
+        {state?.dbError && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{state.serverError.message || "Invalid email or password."}</AlertDescription>
+            <AlertDescription>{state.dbError.message || "Invalid email or password."}</AlertDescription>
           </Alert>
         )}
       </form>

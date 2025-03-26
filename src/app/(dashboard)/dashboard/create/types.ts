@@ -1,10 +1,9 @@
 import type { PostgrestError } from "@supabase/supabase-js";
+import { Status } from "@/app/enums";
 
 import { HabitType } from "./enums";
 
-type Status = string;
-
-interface EditFormErrors {
+interface CreateValidationErrors {
   name?: string[];
   description?: string[];
   type?: string[];
@@ -23,6 +22,6 @@ export interface CreateHabitState {
   start_date: Date;
   end_date: Date | null;
   status?: Status;
-  formErrors?: EditFormErrors;
-  serverError?: PostgrestError | null;
+  validationErrors?: CreateValidationErrors;
+  dbError?: PostgrestError | null;
 }

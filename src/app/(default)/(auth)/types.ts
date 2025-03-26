@@ -1,5 +1,5 @@
-import { ErrorStatus } from "@/app/enums";
-import { ServerError } from "@/app/types";
+import { AuthError } from "@supabase/auth-js";
+import { Status } from "@/app/enums";
 
 interface SignInFormErrors {
   email?: string[];
@@ -15,16 +15,16 @@ interface SignUpFormErrors {
 export interface SignInState {
   email: string;
   password: string;
-  status?: ErrorStatus;
-  formErrors?: SignInFormErrors;
-  serverError?: ServerError;
+  status?: Status;
+  validationErrors?: SignInFormErrors;
+  dbError?: AuthError;
 }
 
 export interface SignUpState {
   email: string;
   setPassword: string;
   verifyPassword: string;
-  status?: ErrorStatus;
-  formErrors?: SignUpFormErrors;
-  serverError?: ServerError;
+  status?: Status;
+  validationErrors?: SignUpFormErrors;
+  dbError?: AuthError;
 }

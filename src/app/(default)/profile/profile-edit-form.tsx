@@ -6,8 +6,8 @@ import { AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { ErrorStatus } from "@/app/enums";
-import { UserProfile } from "./types";
+import { Status } from "@/app/enums";
+import { EditProfileState, UserProfile } from "./types";
 import { type UpdateUserProfileSchema, updateUserProfileSchema } from "./schema";
 import { cn } from "@/lib/utils";
 import { updateUserProfile } from "@/lib/actions/profile";
@@ -16,21 +16,20 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/label";
 
 export default function ProfileEditForm({ userProfile }: { userProfile: UserProfile }) {
-  const [state, formAction, isPending] = React.useActionState(updateUserProfile, {
+  const initState: EditProfileState = {
     fullName: userProfile.full_name,
     username: userProfile.username,
     avatarPublicUrl: userProfile.publicUrl,
-  });
+  };
+
+  const [state, formAction, isPending] = React.useActionState(updateUserProfile, initState);
 
   const form = useForm<UpdateUserProfileSchema>({
     resolver: zodResolver(updateUserProfileSchema),
-    defaultValues: {
-      fullName: userProfile.full_name || "",
-      username: userProfile.username || "",
-    },
+    defaultValues: initState,
     mode: "onChange",
   });
 
@@ -55,9 +54,9 @@ export default function ProfileEditForm({ userProfile }: { userProfile: UserProf
 
     React.startTransition(() => formAction(data));
 
-    if (state?.status === ErrorStatus.FORM_ERROR && state.formErrors) {
-      for (const [key, value] of Object.entries(state.formErrors)) {
-        form.setError(key as keyof typeof state.formErrors, {
+    if (state?.status === Status.VALIDATION_ERROR && state.validationErrors) {
+      for (const [key, value] of Object.entries(state.validationErrors)) {
+        form.setError(key as keyof typeof state.validationErrors, {
           type: "manual",
           message: value?.[0] || "Invalid value",
         });
@@ -73,17 +72,11 @@ export default function ProfileEditForm({ userProfile }: { userProfile: UserProf
         onChange={() => form.clearErrors("noEdits")}
       >
         <div className="flex flex-col items-center gap-4">
-          <Label  htmlFor="avatarUpload" className="flex cursor-pointer items-center justify-center">
+          <Label htmlFor="avatarUpload" className="flex cursor-pointer items-center justify-center">
             <ProfileAvatar userProfile={userProfile} alt="User's avatar" size={150} />
-          </Label >
+          </Label>
 
-          <Input
-            id="avatarUpload"
-            type="file"
-            className="hidden"
-            onChange={handleAvatarChange}
-            disabled={isPending}
-          />
+          <Input id="avatarUpload" type="file" className="hidden" onChange={handleAvatarChange} disabled={isPending} />
           <p className={cn("text-sm text-gray-500", form.getValues("avatar")?.name && "text-accent-foreground")}>
             {form.getValues("avatar")?.name || "Click the avatar to change."}
           </p>
@@ -96,7 +89,7 @@ export default function ProfileEditForm({ userProfile }: { userProfile: UserProf
             <FormItem>
               <FormLabel>Full name:</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} disabled={isPending} type="text" />
+                <Input placeholder="John Doe" {...field} disabled={isPending} type="text" value={field.value ?? ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -110,7 +103,13 @@ export default function ProfileEditForm({ userProfile }: { userProfile: UserProf
             <FormItem>
               <FormLabel>Username:</FormLabel>
               <FormControl>
-                <Input placeholder="Your preferred username" {...field} disabled={isPending} type="text" />
+                <Input
+                  placeholder="Your preferred username"
+                  {...field}
+                  disabled={isPending}
+                  type="text"
+                  value={field.value ?? ""}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -124,12 +123,9 @@ export default function ProfileEditForm({ userProfile }: { userProfile: UserProf
         <>
           {[
             { condition: state?.noEdits, message: state.noEdits },
-            { condition: form.formState.errors.noEdits?.message, message: form.formState.errors.noEdits?.message },
-            {
-              condition: state.serverError?.message,
-              message: state.serverError?.message || "Invalid full name or username.",
-            },
-            { condition: state.bucketError?.message, message: state.bucketError?.message },
+            { condition: form.formState.errors.noEdits, message: form.formState.errors.noEdits?.message },
+            { condition: state.dbError, message: state.dbError?.message || "Invalid full name or username." },
+            { condition: state.storageError, message: state.storageError?.message },
           ].map(
             (error) =>
               error.condition && (

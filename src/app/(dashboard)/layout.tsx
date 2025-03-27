@@ -6,6 +6,7 @@ import { Fredoka, Poppins } from "next/font/google";
 import "@/app/globals.css";
 
 import Providers from "@/context/providers";
+import { Toaster } from "@/components/ui/sonner";
 import Header from "./_components/header";
 
 const fredoka = Fredoka({
@@ -32,8 +33,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${fredoka.variable} ${poppins.variable} antialiased`}>
-      <Header/>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+          <Toaster richColors/>
+        </Providers>
       </body>
     </html>
   );

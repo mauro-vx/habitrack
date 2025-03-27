@@ -23,6 +23,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+import { toast } from "sonner";
+
 const defaultWeekState = {
   1: false,
   2: false,
@@ -67,7 +69,7 @@ export default function CreateHabitForm({ className }: { className?: string }) {
   const isWeekly = form.watch("type") === HabitType.WEEKLY;
   const isCustom = form.watch("type") === HabitType.CUSTOM;
 
-  const handleDateChanges = (value: string) => {
+  const onHabitTypeChange = (value: string) => {
     if (value === HabitType.WEEKLY || value === HabitType.CUSTOM) {
       const currentStartDate = form.getValues("start_date");
       const newStartDate = isMonday(currentStartDate)
@@ -95,6 +97,14 @@ export default function CreateHabitForm({ className }: { className?: string }) {
       }
     }
   }
+
+  React.useEffect(() => {
+    if (state?.status === Status.SUCCESS && !isPending) {
+      toast.success("Habit has been created", {
+        description: form.getValues("name"),
+      });
+    }
+  }, [state?.status, isPending, form]);
 
   return (
     <Form {...form}>
@@ -148,7 +158,7 @@ export default function CreateHabitForm({ className }: { className?: string }) {
                   value={field.value}
                   onValueChange={(value) => {
                     field.onChange(value);
-                    handleDateChanges(value);
+                    onHabitTypeChange(value);
                   }}
                   disabled={isPending}
                 >

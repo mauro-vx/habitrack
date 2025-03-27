@@ -8,19 +8,15 @@ export const createHabitSchema = z
     name: z.string().min(1, "Name is required."),
     description: z.string().optional(),
     type: z.nativeEnum(HabitType, { errorMap: () => ({ message: "Invalid habit type." }) }),
-    days_of_week: z
-      .object({
-        1: z.boolean(),
-        2: z.boolean(),
-        3: z.boolean(),
-        4: z.boolean(),
-        5: z.boolean(),
-        6: z.boolean(),
-        7: z.boolean(),
-      })
-      .refine((weekDays) => Object.values(weekDays).some(Boolean), {
-        message: "At least one weekday must be selected.",
-      }),
+    days_of_week: z.object({
+      1: z.boolean(),
+      2: z.boolean(),
+      3: z.boolean(),
+      4: z.boolean(),
+      5: z.boolean(),
+      6: z.boolean(),
+      7: z.boolean(),
+    }),
     frequency: z.number().min(1, { message: "Frequency must be at least 1." }),
     start_date: z.coerce.date({ errorMap: () => ({ message: "Invalid start date." }) }),
     end_date: z.coerce.date({ errorMap: () => ({ message: "Invalid end date." }) }).nullable(),
@@ -53,22 +49,12 @@ export const createHabitSchema = z
     }
 
     if (type === HabitType.CUSTOM) {
-      if (!days_of_week) {
+      if (!Object.values(days_of_week).some(Boolean)) {
         ctx.addIssue({
           code: "custom",
-          path: ["weekDays"],
-          message: "Weekdays must be specified for custom habits.",
+          path: ["days_of_week"],
+          message: "At least one weekday must be selected for custom habits.",
         });
-      } else {
-        const hasAtLeastOneDaySelected = Object.values(days_of_week).some(Boolean);
-
-        if (!hasAtLeastOneDaySelected) {
-          ctx.addIssue({
-            code: "custom",
-            path: ["weekDays"],
-            message: "At least one weekday must be selected for custom habits.",
-          });
-        }
       }
     }
 

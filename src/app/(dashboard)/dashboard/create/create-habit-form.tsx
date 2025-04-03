@@ -4,16 +4,15 @@ import * as React from "react";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDays, addWeeks, format, isBefore, isMonday, isSunday, startOfDay, startOfWeek } from "date-fns";
+import { format, isBefore, isMonday, isSunday, startOfDay } from "date-fns";
 import { AlertCircle, CalendarIcon } from "lucide-react";
 
-import { Status } from "@/app/enums";
-import { HabitType } from "../create/enums";
+import { Status, HabitType } from "@/app/enums";
 import { CreateHabitState } from "../create/types";
 import { CreateHabitSchema, createHabitSchema } from "../create/schema";
 import { createHabit } from "@/lib/actions/create-habit";
 import { useCapitalizeFirst } from "@/hooks/use-capitalize-first";
-import { cn } from "@/lib/utils";
+import { cn, getFirstPossibleMonday } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,17 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { toast } from "sonner";
 
-const defaultWeekState = {
+const DAILY_DAYS_OF_WEEK = {
+  1: true,
+  2: true,
+  3: true,
+  4: true,
+  5: true,
+  6: true,
+  7: true,
+};
+
+const DEFAULT_DAYS_OF_WEEK = {
   1: false,
   2: false,
   3: false,
@@ -49,10 +58,12 @@ const initState: CreateHabitState = {
   name: "",
   description: "",
   type: HabitType.DAILY,
-  start_date: new Date(),
-  end_date: null,
-  frequency: 1,
-  days_of_week: defaultWeekState,
+  date_range: {
+    start_date: getFirstPossibleMonday(new Date()),
+    end_date: null,
+  },
+  target_count: 1,
+  days_of_week: DAILY_DAYS_OF_WEEK,
 };
 
 export default function CreateHabitForm({ className }: { className?: string }) {
@@ -65,24 +76,16 @@ export default function CreateHabitForm({ className }: { className?: string }) {
     mode: "onChange",
   });
 
-  const isDaily = form.watch("type") === HabitType.DAILY;
-  const isWeekly = form.watch("type") === HabitType.WEEKLY;
-  const isCustom = form.watch("type") === HabitType.CUSTOM;
+  const onHabitTypeChange = (value: HabitType) => {
+    const currentStartDate = form.getValues("date_range.start_date");
+    const newStartDate = isMonday(currentStartDate) ? currentStartDate : getFirstPossibleMonday(currentStartDate);
 
-  const onHabitTypeChange = (value: string) => {
-    if (value === HabitType.WEEKLY || value === HabitType.CUSTOM) {
-      const currentStartDate = form.getValues("start_date");
-      const newStartDate = isMonday(currentStartDate)
-        ? currentStartDate
-        : startOfWeek(addWeeks(currentStartDate, 1), { weekStartsOn: 1 });
-      form.setValue("start_date", newStartDate);
+    form.setValue("date_range", { start_date: newStartDate, end_date: null });
+
+    if (value === HabitType.DAILY) {
+      form.setValue("days_of_week", DAILY_DAYS_OF_WEEK);
     }
-
-    if (value === HabitType.DAILY || value === HabitType.WEEKLY) {
-      form.setValue("days_of_week", defaultWeekState);
-    }
-
-    form.setValue("end_date", null);
+    form.setValue("days_of_week", DEFAULT_DAYS_OF_WEEK);
   };
 
   async function onSubmit(data: CreateHabitSchema) {
@@ -158,7 +161,7 @@ export default function CreateHabitForm({ className }: { className?: string }) {
                   value={field.value}
                   onValueChange={(value) => {
                     field.onChange(value);
-                    onHabitTypeChange(value);
+                    onHabitTypeChange(value as HabitType);
                   }}
                   disabled={isPending}
                 >
@@ -192,8 +195,8 @@ export default function CreateHabitForm({ className }: { className?: string }) {
                 <FormLabel>Days of the Week:</FormLabel>
                 <FormControl>
                   <div className="flex flex-wrap gap-2">
-                    {Object.keys(defaultWeekState).map((dayKey) => {
-                      const dayIdx = Number(dayKey) as keyof typeof defaultWeekState;
+                    {Object.keys(DAILY_DAYS_OF_WEEK).map((dayKey) => {
+                      const dayIdx = Number(dayKey) as keyof typeof DAILY_DAYS_OF_WEEK;
 
                       return (
                         <div key={dayIdx}>
@@ -235,14 +238,14 @@ export default function CreateHabitForm({ className }: { className?: string }) {
 
         {/* endregion */}
 
-        {/* region frequency */}
+        {/* region target_count */}
 
         <FormField
           control={form.control}
-          name="frequency"
+          name="target_count"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Frequency:</FormLabel>
+              <FormLabel>target_count:</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -259,96 +262,66 @@ export default function CreateHabitForm({ className }: { className?: string }) {
 
         {/* endregion */}
 
-        {/* region start date */}
+        {/* region start & end date */}
 
         <FormField
           control={form.control}
-          name="start_date"
+          name="date_range"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Start Date:</FormLabel>
+              <FormLabel>Pick a date range(Start: Monday, End: Following Sunday):</FormLabel>
               <FormControl>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-fit justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      <CalendarIcon />
-                      {field.value ? format(new Date(field.value), "PPP") : <span>Pick a start date</span>}
+                    <Button variant="outline">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {/* Display selected range or placeholder */}
+                      {field.value?.start_date
+                        ? field.value.end_date
+                          ? `${format(field.value.start_date, "LLL dd, y")} - ${format(
+                              new Date(field.value.end_date),
+                              "LLL dd, y",
+                            )}`
+                          : `${format(new Date(field.value.start_date), "LLL dd, y")}`
+                        : "Select a date range"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
-                      mode="single"
+                      mode="range"
                       weekStartsOn={1}
-                      selected={field.value && new Date(field.value)}
-                      onSelect={(date) => field.onChange(date?.toISOString() || null)}
+                      numberOfMonths={2}
                       initialFocus
-                      disabled={(date) => {
-                        const isPastDisabled = isBefore(startOfDay(date), startOfDay(new Date()));
-                        const isNotMondayDisabled = !isMonday(date);
-                        const isNotStartOfWeekDisabled = isPastDisabled || isNotMondayDisabled;
-
-                        if (isDaily) return isPastDisabled;
-                        else if (isWeekly || isCustom) return isNotStartOfWeekDisabled;
-                        else return isPastDisabled;
+                      selected={{
+                        from: field.value?.start_date ? field.value.start_date : undefined,
+                        to: field.value?.end_date ? field.value.end_date : undefined,
                       }}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* endregion */}
-
-        {/* region end date */}
-
-        <FormField
-          control={form.control}
-          name="end_date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>End Date:</FormLabel>
-              <FormControl>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-fit justify-start text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      <CalendarIcon />
-                      {field.value ? format(new Date(field.value), "PPP") : <span>Pick an end date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      weekStartsOn={1}
-                      selected={field.value || undefined}
-                      onSelect={(date) => field.onChange(date?.toISOString() || null)}
-                      initialFocus
+                      onSelect={(range) => {
+                        if (range?.from && isMonday(range?.from)) {
+                          field.onChange({
+                            start_date: range?.from,
+                            end_date: range?.to || null,
+                          });
+                        } else if (range?.to && field.value?.start_date) {
+                          field.onChange({
+                            start_date: field.value?.start_date,
+                            end_date: range.to,
+                          });
+                        } else {
+                          field.onChange({
+                            start_date: null,
+                            end_date: null,
+                          });
+                        }
+                      }}
                       disabled={(date) => {
-                        const start_date = form.watch("start_date");
-                        const normalizedStartDate = startOfDay(new Date(start_date));
+                        const startDate = field.value?.start_date ? startOfDay(field.value.start_date) : null;
                         const normalizedDate = startOfDay(date);
+                        const today = startOfDay(new Date());
 
-                        const isStartOrEqualDisabled = isBefore(normalizedDate, addDays(normalizedStartDate, 1));
-                        const isNotSundayDisabled = !isSunday(date);
-                        const isNotEndOfWeekDisabled = isStartOrEqualDisabled || isNotSundayDisabled;
-
-                        if (isDaily) return isStartOrEqualDisabled;
-                        else if (isWeekly || isCustom) return isNotEndOfWeekDisabled;
-                        else return isNotEndOfWeekDisabled;
+                        if (isBefore(normalizedDate, today)) return true;
+                        if (!startDate) return !isMonday(normalizedDate);
+                        return isBefore(normalizedDate, startDate) || !isSunday(normalizedDate);
                       }}
                     />
                   </PopoverContent>
@@ -360,10 +333,16 @@ export default function CreateHabitForm({ className }: { className?: string }) {
         />
 
         {/* endregion */}
+
+        {/* region submit */}
 
         <Button type="submit" disabled={isPending}>
           {isPending ? "Creating..." : "Create Habit"}
         </Button>
+
+        {/* endregion */}
+
+        {/* region errors */}
 
         {state?.dbError && (
           <Alert variant="destructive">
@@ -372,6 +351,8 @@ export default function CreateHabitForm({ className }: { className?: string }) {
             <AlertDescription>{state.dbError.message || "An error occurred."}</AlertDescription>
           </Alert>
         )}
+
+        {/* endregion */}
       </form>
     </Form>
   );

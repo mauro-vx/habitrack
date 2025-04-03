@@ -12,6 +12,7 @@ import Header from "./_components/header";
 const fredoka = Fredoka({
   variable: "--font-fredoka",
   subsets: ["latin"],
+  weight: "400",
 });
 
 const poppins = Poppins({
@@ -36,7 +37,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           {children}
-          <Toaster richColors/>
+          <Toaster richColors />
         </Providers>
       </body>
     </html>

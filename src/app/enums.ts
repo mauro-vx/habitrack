@@ -15,3 +15,8 @@ export enum Status {
   STORAGE_ERROR = "supabase-storage-error",
 }
 
+export enum HabitType {
+  DAILY = "daily",
+  WEEKLY = "weekly",
+  CUSTOM = "custom",
+}

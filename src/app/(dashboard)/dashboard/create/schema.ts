@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { addDays, isMonday, isSunday, nextMonday, nextSunday, startOfDay, startOfToday } from "date-fns";
+import { isMonday, isSunday, nextMonday, nextSunday, startOfDay, startOfToday } from "date-fns";
 
 import { HabitType } from "../create/enums";
 
@@ -17,34 +17,37 @@ export const createHabitSchema = z
       6: z.boolean(),
       7: z.boolean(),
     }),
-    frequency: z.number().min(1, { message: "Frequency must be at least 1." }),
-    start_date: z.coerce.date({ errorMap: () => ({ message: "Invalid start date." }) }),
-    end_date: z.coerce.date({ errorMap: () => ({ message: "Invalid end date." }) }).nullable(),
+    target_count: z.number().min(1, { message: "Target must be at least 1." }),
+    date_range: z.object({
+      start_date: z.coerce.date({ errorMap: () => ({ message: "Invalid start date." }) }),
+      end_date: z.coerce.date({ errorMap: () => ({ message: "Invalid end date." }) }).nullable(),
+    }),
   })
   .superRefine((data, ctx) => {
-    const { start_date, end_date, type, days_of_week } = data;
+    const {
+      date_range: { start_date, end_date },
+      type,
+      days_of_week,
+    } = data;
     const normalizedStartDate = startOfDay(start_date);
     const today = startOfToday();
 
-    if (type === HabitType.DAILY) {
-      if (normalizedStartDate < today) {
+    if (normalizedStartDate < today) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["date_range", "start_date"],
+        message: "Start date must be today or a future date.",
+      });
+    }
+
+    if (!isMonday(normalizedStartDate)) {
+      const nextAllowedMonday = nextMonday(today);
+      if (normalizedStartDate < nextAllowedMonday) {
         ctx.addIssue({
           code: "custom",
-          path: ["start_date"],
-          message: "Start date for daily habits must be today or a future date.",
+          path: ["date_range", "start_date"],
+          message: "Start date must be the first Monday from today.",
         });
-      }
-    } else if (type === HabitType.WEEKLY || type === HabitType.CUSTOM) {
-      if (!isMonday(normalizedStartDate)) {
-        const nextAllowedMonday = nextMonday(today);
-
-        if (normalizedStartDate < nextAllowedMonday) {
-          ctx.addIssue({
-            code: "custom",
-            path: ["start_date"],
-            message: "Start date for weekly or custom habits must be the first Monday from today.",
-          });
-        }
       }
     }
 
@@ -53,34 +56,29 @@ export const createHabitSchema = z
         ctx.addIssue({
           code: "custom",
           path: ["days_of_week"],
-          message: "At least one weekday must be selected for custom habits.",
+          message: "At least one weekday must be selected for monthly habits.",
         });
       }
     }
 
     if (end_date) {
       const normalizedEndDate = startOfDay(end_date);
+      const firstSundayAfterStart = nextSunday(normalizedStartDate);
 
-      if (type === HabitType.DAILY) {
-        const minDailyEndDate = addDays(normalizedStartDate, 1);
-
-        if (normalizedEndDate < minDailyEndDate) {
-          ctx.addIssue({
-            code: "custom",
-            path: ["end_date"],
-            message: "End date for daily habits must be at least one day after the start date.",
-          });
-        }
-      } else if (type === HabitType.WEEKLY || type === HabitType.CUSTOM) {
-        const firstSundayAfterStart = nextSunday(normalizedStartDate);
-
-        if (normalizedEndDate < firstSundayAfterStart || !isSunday(normalizedEndDate)) {
-          ctx.addIssue({
-            code: "custom",
-            path: ["end_date"],
-            message: "End date for weekly or custom habits must be the first Sunday after the start date.",
-          });
-        }
+      if (normalizedEndDate < firstSundayAfterStart || !isSunday(normalizedEndDate)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["date_range", "end_date"],
+          message: "End date must be a Sunday on or after the first Sunday after the selected Monday.",
+        });
+      }
+    } else {
+      if (!isMonday(normalizedStartDate)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["date_range", "end_date"],
+          message: "End date can only be null if the start date is a valid Monday.",
+        });
       }
     }
   });

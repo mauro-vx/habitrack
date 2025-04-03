@@ -1,16 +1,13 @@
 import type { PostgrestError } from "@supabase/supabase-js";
-import { Status } from "@/app/enums";
-
-import { HabitType } from "./enums";
+import { Status, HabitType } from "@/app/enums";
 
 interface CreateValidationErrors {
   name?: string[];
   description?: string[];
   type?: string[];
   days_of_week?: string[];
-  frequency?: string[];
-  start_date?: string[];
-  end_date?: string[];
+  target_count?: string[];
+  date_range?: string[];
 }
 
 export interface CreateHabitState {
@@ -18,9 +15,11 @@ export interface CreateHabitState {
   description?: string;
   type: HabitType;
   days_of_week: Record<1 | 2 | 3 | 4 | 5 | 6 | 7, boolean>;
-  frequency: number;
-  start_date: Date;
-  end_date: Date | null;
+  target_count: number;
+  date_range: {
+    start_date: Date;
+    end_date: Date | null;
+  };
   status?: Status;
   validationErrors?: CreateValidationErrors;
   dbError?: PostgrestError | null;

@@ -61,11 +61,9 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
 
   revalidatePath("/dashboard", "page");
 
-
   // TODO: Revalidate specific cache tag (cache key) in the future
   // const cacheKey = generateCacheKey(user, start_date);
   // revalidateTag();
-
 
   return {
     ...prevState,

@@ -5,16 +5,15 @@ import * as React from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle } from "lucide-react";
 
 import { Status } from "@/app/enums";
-import { SignUpState } from "@/app/(default)/(auth)/types";
+import { SignUpState } from "../types";
 import { type SignUpSchema, signUpSchema } from "../schema";
 import { signUp } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Form } from "@/components/ui/form";
+import FormInputField from "../_components/form-input-field";
+import AlertMessage from "../_components/alert-message";
 
 const initState: SignUpState = {
   email: "",
@@ -54,62 +53,41 @@ export default function SignUpForm() {
           </Button>
         </div>
 
-        <FormField
-          control={form.control}
+        <FormInputField
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="example@example.com" {...field} disabled={isPending} />
-              </FormControl>
-              <FormDescription>Provide the email address you&#39;d like to sign up with.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Email"
+          placeholder="example@example.com"
+          type="email"
+          res="Provide the email address you'd like to sign up with."
+          control={form.control}
+          disabled={isPending}
         />
 
-        <FormField
-          control={form.control}
+        <FormInputField
           name="setPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Chose a password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Enter your password" {...field} disabled={isPending} />
-              </FormControl>
-              <FormDescription>Enter a secure password with at least 6 characters.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Choose a password"
+          placeholder="Enter your password"
+          type="password"
+          res="Enter a secure password with at least 6 characters."
+          control={form.control}
+          disabled={isPending}
         />
 
-        <FormField
-          control={form.control}
+        <FormInputField
           name="verifyPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Verify password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Repeat the password" {...field} disabled={isPending} />
-              </FormControl>
-              <FormDescription>Re-enter the password to confirm your choice.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Verify password"
+          placeholder="Repeat the password"
+          type="password"
+          res="Re-enter the password to confirm your choice."
+          control={form.control}
+          disabled={isPending}
         />
 
         <Button type="submit" disabled={isPending} className="self-end">
           {isPending ? "Signing up..." : "Sign Up"}
         </Button>
 
-        {state?.dbError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{state.dbError.message || "Invalid email or password."}</AlertDescription>
-          </Alert>
-        )}
+        <AlertMessage error={state?.dbError} />
       </form>
     </Form>
   );

@@ -91,7 +91,7 @@ export default function CreateHabitForm({ className }: { className?: string }) {
         <TargetCount control={form.control} disabled={isPending} />
         <DateRangeField control={form.control} disabled={isPending} />
         <SubmitButton isSubmitting={isPending} />
-        <ErrorAlert error={state?.dbError?.message} />
+        <ErrorAlert error={state?.dbError} />
       </form>
     </Form>
   );

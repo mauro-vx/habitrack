@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 
 import { Status } from "@/app/enums";
-import { UserProfile } from "@/app/(default)/profile/types";
-import { EditProfileState } from "@/app/(default)/profile/types";
-import { updateUserProfileSchema } from "@/app/(default)/profile/schema";
+import { UserProfile } from "@/app/(public)/profile/types";
+import { EditProfileState } from "@/app/(public)/profile/types";
+import { updateUserProfileSchema } from "@/app/(public)/profile/schema";
 import { createClient } from "@/lib/supabase/server";
 
 export async function updateUserProfile(
@@ -36,7 +36,13 @@ export async function updateUserProfile(
     redirect("/sign-in");
   }
 
-  const changes: Partial<UserProfile & { updated_at: string }> = { id: user.id };
+  const changes: {
+    id: string;
+    avatar_url?: string;
+    full_name?: string;
+    username?: string;
+    updated_at?: string;
+  } = { id: user.id };
 
   if (avatar) {
     const fileExtension = avatar.name.split(".").pop();
@@ -51,7 +57,6 @@ export async function updateUserProfile(
         storageError: storageError,
       };
     }
-
     changes.avatar_url = fileName;
   }
 

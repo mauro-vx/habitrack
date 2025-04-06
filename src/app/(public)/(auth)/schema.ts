@@ -1,8 +1,15 @@
 import { z } from "zod";
 
-export const signUpSchema = z
-  .object({
-    email: z.string().email("Invalid email address."),
+const baseAuthSchema = z.object({
+  email: z.string().email("Invalid email address."),
+});
+
+export const signInSchema = baseAuthSchema.extend({
+  password: z.string().min(6, "Password must be at least 6 characters long."),
+});
+
+export const signUpSchema = baseAuthSchema
+  .extend({
     setPassword: z.string().min(6, "Password must be at least 6 characters long."),
     verifyPassword: z.string().min(6, "Password must be at least 6 characters long."),
   })
@@ -11,11 +18,5 @@ export const signUpSchema = z
     path: ["verifyPassword"],
   });
 
-export type SignUpSchema = z.infer<typeof signUpSchema>;
-
-export const signInSchema = z.object({
-  email: z.string().email("Invalid email address."),
-  password: z.string().min(6, "Password must be at least 6 characters long."),
-});
-
 export type SignInSchema = z.infer<typeof signInSchema>;
+export type SignUpSchema = z.infer<typeof signUpSchema>;

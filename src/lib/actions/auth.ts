@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Status } from "@/app/enums";
-import { SignInState, SignUpState } from "@/app/(default)/(auth)/types";
-import { SignInSchema, signInSchema, signUpSchema } from "@/app/(default)/(auth)/schema";
+import { SignInState, SignUpState } from "@/app/(public)/(auth)/types";
+import { SignInSchema, signInSchema, signUpSchema } from "@/app/(public)/(auth)/schema";
 import { createClient } from "@/lib/supabase/server";
 
 export async function signIn(prevState: SignInState, formData: SignInSchema): Promise<SignInState> {

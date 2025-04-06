@@ -5,16 +5,15 @@ import * as React from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle } from "lucide-react";
 
 import { Status } from "@/app/enums";
-import { SignInState } from "@/app/(default)/(auth)/types";
+import { SignInState } from "../types";
 import { type SignInSchema, signInSchema } from "../schema";
 import { signIn } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Form } from "@/components/ui/form";
+import FormInputField from "../_components/form-input-field";
+import AlertMessage from "../_components/alert-message";
 
 const initState: SignInState = {
   email: "",
@@ -53,47 +52,31 @@ export default function SignInForm() {
           </Button>
         </div>
 
-        <FormField
-          control={form.control}
+        <FormInputField
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="example@example.com" {...field} disabled={isPending} />
-              </FormControl>
-              <FormDescription>Enter your email address.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Email"
+          placeholder="example@example.com"
+          type="email"
+          res="Enter your email address."
+          control={form.control}
+          disabled={isPending}
         />
 
-        <FormField
-          control={form.control}
+        <FormInputField
           name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Enter your password" {...field} disabled={isPending} />
-              </FormControl>
-              <FormDescription>Enter your account password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Password"
+          placeholder="Enter your password"
+          type="password"
+          res="Enter your account password."
+          control={form.control}
+          disabled={isPending}
         />
 
         <Button type="submit" disabled={isPending} className="self-end">
           {isPending ? "Signing in..." : "Sign In"}
         </Button>
 
-        {state?.dbError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{state.dbError.message || "Invalid email or password."}</AlertDescription>
-          </Alert>
-        )}
+        <AlertMessage error={state?.dbError} />
       </form>
     </Form>
   );

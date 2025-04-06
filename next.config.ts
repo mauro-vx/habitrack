@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
       test: /\.svg$/,
       use: ["@svgr/webpack"],
     });
-
     return config;
   },
   logging: {
@@ -25,13 +24,6 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/avatars/**",
       },
     ],
-  },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
   },
 };
 

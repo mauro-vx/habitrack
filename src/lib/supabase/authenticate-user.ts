@@ -12,8 +12,8 @@ export function generateCacheKey(user: User | null, date: Date) {
   return `cache-${user?.id}-${year}-${week}`;
 }
 
-export async function authenticateUser(date?: Date) {
-  const supabase = await createClient(date);
+export async function authenticateUser() {
+  const supabase = await createClient();
 
   const {
     data: { user },

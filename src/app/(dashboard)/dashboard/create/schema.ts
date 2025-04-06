@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { isMonday, isSunday, nextMonday, nextSunday, startOfDay, startOfToday } from "date-fns";
 
-import { HabitType } from "../create/enums";
+import { HabitType } from "@/app/enums";
 
 export const createHabitSchema = z
   .object({

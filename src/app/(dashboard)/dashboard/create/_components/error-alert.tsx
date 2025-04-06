@@ -6,7 +6,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 
-export const ErrorAlert = ({ error }: { error?:  PostgrestError }) => {
+export const ErrorAlert = ({ error }: { error?: PostgrestError | null }) => {
   if (!error) return null;
 
   return (

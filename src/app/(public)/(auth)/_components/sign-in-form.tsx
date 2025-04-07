@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -14,13 +13,22 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import FormInputField from "../_components/form-input-field";
 import AlertMessage from "../_components/alert-message";
+import { cn } from "@/lib/utils";
 
 const initState: SignInState = {
   email: "",
   password: "",
 };
 
-export default function SignInForm() {
+export default function SignInForm({
+  headerSlot,
+  footerSlot,
+  className,
+}: {
+  headerSlot?: React.ReactNode;
+  footerSlot?: React.ReactNode;
+  className?: string;
+}) {
   const [state, formAction, isPending] = React.useActionState(signIn, initState);
 
   const form = useForm({
@@ -43,41 +51,40 @@ export default function SignInForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full max-w-md flex-col space-y-6">
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="text-4xl font-bold">Sign in</h2>
-          <Button asChild variant="ghost" className="text-brand text-lg">
-            <Link href="/sign-up">Sign up</Link>
+    <div className={cn("flex w-full max-w-md flex-col", className)}>
+      {headerSlot}
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 flex flex-col space-y-2">
+          <FormInputField
+            name="email"
+            label="Email"
+            placeholder="example@example.com"
+            type="email"
+            res="Enter your email address."
+            control={form.control}
+            disabled={isPending}
+          />
+
+          <FormInputField
+            name="password"
+            label="Password"
+            placeholder="Enter your password"
+            type="password"
+            res="Enter your account password."
+            control={form.control}
+            disabled={isPending}
+          />
+
+          <Button type="submit" disabled={isPending} className="self-end">
+            {isPending ? "Signing in..." : "Sign In"}
           </Button>
-        </div>
+        </form>
+      </Form>
 
-        <FormInputField
-          name="email"
-          label="Email"
-          placeholder="example@example.com"
-          type="email"
-          res="Enter your email address."
-          control={form.control}
-          disabled={isPending}
-        />
+      {footerSlot}
 
-        <FormInputField
-          name="password"
-          label="Password"
-          placeholder="Enter your password"
-          type="password"
-          res="Enter your account password."
-          control={form.control}
-          disabled={isPending}
-        />
-
-        <Button type="submit" disabled={isPending} className="self-end">
-          {isPending ? "Signing in..." : "Sign In"}
-        </Button>
-
-        <AlertMessage error={state?.dbError} />
-      </form>
-    </Form>
+      <AlertMessage error={state?.dbError} />
+    </div>
   );
 }

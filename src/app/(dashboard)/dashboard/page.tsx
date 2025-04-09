@@ -1,30 +1,24 @@
-import { getAdjacentWeeksNumber } from "@/lib/utils";
+import { cookies } from "next/headers";
+
+import { getAdjacentWeeksNumber, getWeekNumberAndYear } from "@/lib/utils";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 import ViewSwitcher from "@/app/(dashboard)/_components/view-switcher";
 import WeekCarouselShadCn from "@/app/(dashboard)/_components/week-carousel-shad-cn";
 
-export default async function DashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ year: string; week: string }>;
-}) {
-  const { year, week } = await searchParams;
+export default async function DashboardPage() {
+  const cookieStore = await cookies();
+  const timezone = cookieStore.get("timezone")?.value || "Europe/Prague";
+  const now = new Date();
+  const localTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+  const { year, week } = getWeekNumberAndYear(localTime);
+  const { prevWeek, nextWeek } = getAdjacentWeeksNumber(year, week);
+
   const { authSupabase } = await authenticateUser();
-
-  const { previousWeek, nextWeek } = getAdjacentWeeksNumber(year, week);
-
-  // const { data: habits } = await authSupabase
-  //   .from("habits")
-  //   .select("*, habit_statuses(id, date, start_week, start_year, status, completion_count)")
-  //   .or(`start_year.lt.${year},and(start_year.eq.${year},start_week.lte.${week})`);
-
-  const [previousWeekHabits, currentWeekHabits, nextWeekHabits] = await Promise.all([
+  const initialState = await Promise.all([
     authSupabase
       .from("habits")
       .select("*, habit_statuses(id, date, start_week, start_year, status, completion_count)")
-      .or(
-        `start_year.lt.${previousWeek.year},and(start_year.eq.${previousWeek.year},start_week.lte.${previousWeek.weekNumber})`,
-      ),
+      .or(`start_year.lt.${prevWeek.year},and(start_year.eq.${prevWeek.year},start_week.lte.${prevWeek.weekNumber})`),
     authSupabase
       .from("habits")
       .select("*, habit_statuses(id, date, start_week, start_year, status, completion_count)")
@@ -36,27 +30,10 @@ export default async function DashboardPage({
   ]);
 
   const slots = [
-    // <div key="1">
-    //   <h1>Summary (daily, weekly, custom)</h1>
-    //   <div className="flex w-full flex-wrap gap-4">
-    //     {(habits as Habits)?.map((habit) => <HabitCard key={habit.id} {...habit} />)}
-    //   </div>
-    // </div>,
     { slotName: "Day", component: <div>Daily view</div> },
-    // { slotName: "Week", component: <WeeklyView /> },
-    // { slotName: "Week Carousel", component: <WeekCarousel /> },
-    // { slotName: "DayCN", component: <DayCarouselShadCn /> },
     {
       slotName: "WeekCN",
-      component: (
-        <WeekCarouselShadCn
-          previousWeekHabits={previousWeekHabits}
-          currentWeekHabits={currentWeekHabits}
-          nextWeekHabits={nextWeekHabits}
-          previousWeek={previousWeek}
-          nextWeek={nextWeek}
-        />
-      ),
+      component: <WeekCarouselShadCn initialState={initialState} />,
     },
     { slotName: "Month", component: <div>Monthly view</div> },
     { slotName: "Year", component: <div>Yearly view</div> },
@@ -65,10 +42,6 @@ export default async function DashboardPage({
   return (
     <main className="container flex h-screen flex-col gap-4 border-2 border-yellow-500">
       <ViewSwitcher slots={slots} />
-
-      {/*<div className="flex w-full flex-wrap gap-4">*/}
-      {/*  {(habits as Habits)?.map((habit) => <HabitCard key={habit.id} {...habit} />)}*/}
-      {/*</div>*/}
     </main>
   );
 }

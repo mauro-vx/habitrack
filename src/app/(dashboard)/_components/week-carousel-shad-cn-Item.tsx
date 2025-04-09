@@ -12,13 +12,13 @@ export default async function WeekCarouselShadCnItem({
   const { year, week } = await searchParams;
   const { authSupabase } = await authenticateUser();
 
-  const { previousWeek } = getAdjacentWeeksNumber(year, week);
+  const { prevWeek } = getAdjacentWeeksNumber(year, week);
 
   const previousWeekHabits = await authSupabase
     .from("habits")
     .select("*, habit_statuses(id, date, start_week, start_year, status, completion_count)")
     .or(
-      `start_year.lt.${previousWeek.year},and(start_year.eq.${previousWeek.year},start_week.lte.${previousWeek.weekNumber})`,
+      `start_year.lt.${prevWeek.year},and(start_year.eq.${prevWeek.year},start_week.lte.${prevWeek.weekNumber})`,
     );
 
   return (

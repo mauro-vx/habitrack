@@ -55,7 +55,7 @@ export function getAdjacentWeeksNumber(year: number | string, week: number | str
 
   return {
     currentWeek: { weekNumber: currentWeek, year: currentYear },
-    previousWeek: { weekNumber: previousWeek, year: previousYear },
+    prevWeek: { weekNumber: previousWeek, year: previousYear },
     nextWeek: { weekNumber: nextWeek, year: nextYear },
   };
 }

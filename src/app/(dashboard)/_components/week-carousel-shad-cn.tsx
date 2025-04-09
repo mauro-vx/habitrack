@@ -2,31 +2,17 @@
 
 import * as React from "react";
 
-import throttle from 'lodash.throttle';
+import throttle from "lodash.throttle";
 
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
-import { getWeekNumberAndYear } from "@/lib/utils";
+import { getAdjacentWeeksNumber, getWeekNumberAndYear } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { endOfWeek, format, setISOWeek, startOfWeek } from "date-fns";
 
-export default function WeekCarouselShadCn({
-  previousWeekHabits,
-  currentWeekHabits,
-  nextWeekHabits,
-  previousWeek,
-  nextWeek,
-}: {
-  previousWeekHabits: any;
-  currentWeekHabits: any;
-  nextWeekHabits: any;
-  previousWeek: { weekNumber: number; year: number };
-  nextWeek: { weekNumber: number; year: number };
-}) {
-  const { week, year } = getWeekNumberAndYear(new Date());
-
+export default function WeekCarouselShadCn({ initialState }: { initialState: any }) {
   const searchParams = useSearchParams();
   const params = React.useMemo(() => new URLSearchParams(searchParams), [searchParams]);
   const paramsString = searchParams.toString();
@@ -48,66 +34,62 @@ export default function WeekCarouselShadCn({
 
   React.useEffect(() => {
     if (!params.get("year") || !params.get("week")) {
+      const { week, year } = getWeekNumberAndYear(new Date());
       params.set("year", year.toString());
       params.set("week", week.toString());
       replace(`${pathname}?${params}`);
     }
-  }, [paramsString, pathname, replace, week, year]);
+  }, [paramsString, pathname, replace]);
 
   const handlePreviousWeek = React.useCallback(() => {
-    params.set("year", previousWeek.year.toString());
-    params.set("week", previousWeek.weekNumber.toString());
+    const { prevWeek } = getAdjacentWeeksNumber(params.get("year") || "", params.get("week") || "");
+    params.set("year", prevWeek.year.toString());
+    params.set("week", prevWeek.weekNumber.toString());
     replace(`${pathname}?${params}`);
-  }, [paramsString, previousWeek, pathname, replace]);
+  }, [paramsString, pathname, replace]);
 
   const handleNextWeek = React.useCallback(() => {
+    const { nextWeek } = getAdjacentWeeksNumber(params.get("year") || "", params.get("week") || "");
     params.set("year", nextWeek.year.toString());
     params.set("week", nextWeek.weekNumber.toString());
     replace(`${pathname}?${params}`);
-  }, [paramsString, nextWeek, pathname, replace]);
+  }, [paramsString, pathname, replace]);
 
-  const handlePrevious = React.useCallback(
-    throttle(() => {
-      handlePreviousWeek();
-      if (isApiInitialized) {
-        api.scrollTo(!currentSnapIndex ? totalSlots - 1 : currentSnapIndex - 1);
-      }
-    }, 300), // 300ms throttle interval
-    [handlePreviousWeek, isApiInitialized, api, currentSnapIndex, totalSlots]
-  );
+  const handlePrevious = React.useCallback(() => {
+    if (isApiInitialized) {
+      api.scrollTo(currentSnapIndex === 0 ? totalSlots - 1 : currentSnapIndex - 1);
+    }
+  }, [isApiInitialized, api, currentSnapIndex, totalSlots]);
 
-  const handleNext = React.useCallback(
-    throttle(() => {
-      handleNextWeek();
-      if (isApiInitialized) {
-        api.scrollTo(currentSnapIndex === totalSlots - 1 ? 0 : currentSnapIndex + 1);
-      }
-    }, 300), // 300ms throttle interval
-    [handleNextWeek, isApiInitialized, api, currentSnapIndex, totalSlots]
-  );
-
+  const handleNext = React.useCallback(() => {
+    if (isApiInitialized) {
+      api.scrollTo(currentSnapIndex === totalSlots - 1 ? 0 : currentSnapIndex + 1);
+    }
+  }, [isApiInitialized, api, currentSnapIndex, totalSlots]);
 
   React.useEffect(() => {
     if (!api) {
       return;
     }
 
-    api.on(
-      "select",
-      throttle(() => {
-        console.log("triggered");
-        const previousSnap = api.previousScrollSnap();
-        const currentSnap = api.selectedScrollSnap();
+    const throttledSelectHandler = throttle(() => {
+      console.log("triggered");
+      const previousSnap = api.previousScrollSnap();
+      const currentSnap = api.selectedScrollSnap();
 
-        if (currentSnap > previousSnap) {
-          handleNextWeek();
-        } else if (currentSnap < previousSnap) {
-          handlePreviousWeek();
-        }
-      }, 300)
-    );
+      if (currentSnap > previousSnap) {
+        handleNextWeek();
+      } else if (currentSnap < previousSnap) {
+        handlePreviousWeek();
+      }
+    }, 300);
+
+    api.on("select", throttledSelectHandler);
+
+    return () => {
+      api.off("select", throttledSelectHandler);
+    };
   }, [api, handleNextWeek, handlePreviousWeek]);
-
 
   return (
     <div className="flex w-full flex-col justify-center border-2 border-red-500">
@@ -131,9 +113,9 @@ export default function WeekCarouselShadCn({
             <Card className="h-[700px] w-full rounded-none">
               <CardContent className="flex h-full flex-col items-center justify-center">
                 <h3 className="mb-4 text-2xl font-bold">Previous week</h3>
-                {previousWeekHabits?.data?.map((habit: { id: string; name: string }) => (
-                  <div key={habit.id}>{habit.name}</div>
-                ))}
+                content 1{/*{previousWeekHabits?.data?.map((habit: { id: string; name: string }) => (*/}
+                {/*  <div key={habit.id}>{habit.name}</div>*/}
+                {/*))}*/}
               </CardContent>
             </Card>
           </CarouselItem>
@@ -141,9 +123,9 @@ export default function WeekCarouselShadCn({
             <Card className="h-[700px] w-full rounded-none">
               <CardContent className="flex h-full flex-col items-center justify-center">
                 <h3 className="mb-4 text-2xl font-bold">Current week</h3>
-                {currentWeekHabits?.data?.map((habit: { id: string; name: string }) => (
-                  <div key={habit.id}>{habit.name}</div>
-                ))}
+                content 2{/*{currentWeekHabits?.data?.map((habit: { id: string; name: string }) => (*/}
+                {/*  <div key={habit.id}>{habit.name}</div>*/}
+                {/*))}*/}
               </CardContent>
             </Card>
           </CarouselItem>
@@ -151,9 +133,9 @@ export default function WeekCarouselShadCn({
             <Card className="h-[700px] w-full rounded-none">
               <CardContent className="flex h-full flex-col items-center justify-center">
                 <h3 className="mb-4 text-2xl font-bold">Next week</h3>
-                {nextWeekHabits?.data?.map((habit: { id: string; name: string }) => (
-                  <div key={habit.id}>{habit.name}</div>
-                ))}
+                content 3{/*{nextWeekHabits?.data?.map((habit: { id: string; name: string }) => (*/}
+                {/*  <div key={habit.id}>{habit.name}</div>*/}
+                {/*))}*/}
               </CardContent>
             </Card>
           </CarouselItem>

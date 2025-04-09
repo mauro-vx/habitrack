@@ -35,7 +35,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${fredoka.variable} ${poppins.variable} antialiased`}>
         <Providers>
-          <Header />
+          {/*<Header />*/}
           {children}
           <Toaster richColors />
         </Providers>

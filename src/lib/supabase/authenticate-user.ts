@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { User } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/server";
@@ -18,6 +19,10 @@ export async function authenticateUser() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
 
   return { authSupabase: supabase, user };
 }

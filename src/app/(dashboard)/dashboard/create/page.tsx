@@ -1,4 +1,4 @@
-import { authenticateUser } from "@/lib/supabase/authenticate-user";
+import { authenticateUser } from "@/lib/supabase/authorize-user";
 import CreateHabitForm from "./_components/create-habit-form";
 import HabitsOverview from "./habits-overview";
 import { Separator } from "@/components/ui/separator";

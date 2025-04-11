@@ -60,7 +60,7 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.8.2)
       '@tanstack/react-query':
-        specifier: ^5.66.9
+        specifier: ^5.67.3
         version: 5.67.3(react@19.0.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.68.0

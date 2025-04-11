@@ -1,7 +1,7 @@
 import { CarouselItem } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import * as React from "react";
-import { authenticateUser } from "@/lib/supabase/authenticate-user";
+import { authenticateUser } from "@/lib/supabase/authorize-user";
 import { getAdjacentWeeksNumber } from "@/lib/utils";
 
 export default async function WeekCarouselShadCnItem({

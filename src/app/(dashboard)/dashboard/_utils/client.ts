@@ -52,6 +52,7 @@ export function useWeekData(week: number, year: number, initialState?: any) {
     staleTime: 1000 * 60 * 5, // Cache is valid for 5 minutes
     refetchOnWindowFocus: false,
     initialData: initialState, // Use server-prefetched data if available
+    suspense: true,
   });
 }
 

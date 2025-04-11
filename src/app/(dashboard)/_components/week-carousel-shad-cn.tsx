@@ -10,6 +10,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn, getAdjacentWeeksDate, getAdjacentWeeksNumber } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQueries } from "@tanstack/react-query";
+import { Suspense } from "react";
+import WeekContent from "@/app/(dashboard)/_components/week-content";
 
 export default function WeekCarouselShadCn() {
   const [api, setApi] = React.useState<CarouselApi>();
@@ -41,10 +43,6 @@ export default function WeekCarouselShadCn() {
   // }, []);
 
   // Fetch data for visible weeks
-  const prevWeekData = useWeekData(visibleWeeks[0].weekNumber, visibleWeeks[0].year);
-  const currentWeekData = useWeekData(visibleWeeks[1].weekNumber, visibleWeeks[1].year);
-  const nextWeekData = useWeekData(visibleWeeks[2].weekNumber, visibleWeeks[2].year);
-  const weeksData = [prevWeekData, currentWeekData, nextWeekData];
 
   // const weeksData = useQueries({
   //   queries: [
@@ -65,7 +63,6 @@ export default function WeekCarouselShadCn() {
   //     },
   //   ],
   // });
-
 
   // Carousel navigation logic
   // const handleScroll = React.useMemo(() => {
@@ -114,29 +111,6 @@ export default function WeekCarouselShadCn() {
   //   isApiInitialized,
   // ]);
 
-  // React.useEffect(() => {
-  //   if (!api) {
-  //     return;
-  //   }
-  //
-  //   const throttledSelectHandler = throttle(() => {
-  //     const previousSnap = api.previousScrollSnap();
-  //     const currentSnap = api.selectedScrollSnap();
-  //
-  //     if (currentSnap > previousSnap) {
-  //       handleScroll("right");
-  //     } else if (currentSnap < previousSnap) {
-  //       handleScroll("left");
-  //     }
-  //   }, 300);
-  //
-  //   api.on("select", throttledSelectHandler);
-  //
-  //   return () => {
-  //     api.off("select", throttledSelectHandler);
-  //   };
-  // }, [api, handleScroll]);
-
   const handlePreviousWeek = () => {
     setVisibleWeeks((prevState) => {
       // Get year and week from the first element in the array
@@ -146,7 +120,7 @@ export default function WeekCarouselShadCn() {
       // Add the previous week to the beginning and remove the last element
       return [prevWeek, ...prevState.slice(0, -1)];
     });
-  }
+  };
 
   const handleNextWeek = () => {
     setVisibleWeeks((prevState) => {
@@ -159,31 +133,61 @@ export default function WeekCarouselShadCn() {
     });
   };
 
+  const carouselRef = React.useRef<number>(1);
+
+  React.useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    let previousSnap = api.selectedScrollSnap(); // Initialize with the starting index
+
+    const selectHandler = () => {
+      const currentSnap = api.selectedScrollSnap();
+
+      carouselRef.current = currentSnap;
+
+      if (
+        (currentSnap === 0 && previousSnap === 1) ||
+        (currentSnap === 1 && previousSnap === 2) ||
+        (currentSnap === 2 && previousSnap === 0)
+      ) {
+        console.log("scrolled left");
+        handlePreviousWeek();
+      } else {
+        console.log("scrolled right");
+        handleNextWeek();
+      }
+
+      // Update previousSnap to the current snap
+      previousSnap = currentSnap;
+    };
+
+    api.on("select", selectHandler);
+
+    return () => {
+      api.off("select", selectHandler);
+    };
+  }, [api, handlePreviousWeek, handleNextWeek]);
 
   return (
     <div className="flex w-full flex-col justify-center">
       <div className="mb-4 flex items-center justify-between">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handlePreviousWeek}
-          aria-label="Previous week"
-          // disabled={loading}
-        >
+        <Button variant="outline" size="icon" onClick={handlePreviousWeek} aria-label="Previous week">
           <ChevronLeft className="h-4 w-4" />
         </Button>
         {/*<h2 className="text-lg font-medium">Week {currentWeekParam.weekNumber}</h2>*/}
 
-        <h1>prevYear: {visibleWeeks[0].year} prevWeek: {visibleWeeks[0].weekNumber}</h1>
-        <h1>currentYear: {visibleWeeks[1].year} currentWeek: {visibleWeeks[1].weekNumber}</h1>
-        <h1>nextYear: {visibleWeeks[2].year} nextWeek: {visibleWeeks[2].weekNumber}</h1>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handleNextWeek}
-          aria-label="Next week"
-          // disabled={loading}
-        >
+        <h1>
+          prevYear: {visibleWeeks[0].year} prevWeek: {visibleWeeks[0].weekNumber}
+        </h1>
+        <h1>
+          currentYear: {visibleWeeks[1].year} currentWeek: {visibleWeeks[1].weekNumber}
+        </h1>
+        <h1>
+          nextYear: {visibleWeeks[2].year} nextWeek: {visibleWeeks[2].weekNumber}
+        </h1>
+        <Button variant="outline" size="icon" onClick={handleNextWeek} aria-label="Next week">
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
@@ -194,26 +198,58 @@ export default function WeekCarouselShadCn() {
         setApi={setApi}
       >
         <CarouselContent>
-          {weeksData.map(({ data }, idx) => (
-            <CarouselItem key={idx} className="basis-full">
-              <Card className="h-[700px] w-full rounded-none">
-                <CardContent className="flex h-full flex-col items-center justify-center overflow-scroll border-2 border-red-500">
-                  <h3 className="mb-4 text-2xl font-bold">Week {visibleWeeks[1].weekNumber}</h3>
-                  {data ? (
-                    <div className="text-center">
-                      {data.map((habit) => (
-                        <h3 key={habit.id} className="mb-4 text-xl font-bold">
-                          {habit.name}
-                        </h3>
-                      ))}
-                    </div>
-                  ) : (
-                    <p>Loading...</p>
-                  )}
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
+          {/*{visibleWeeks.map(({ weekNumber, year }, idx) => (*/}
+          {/*  <CarouselItem key={`${weekNumber}-${year}`} className="basis-full">*/}
+          {/*    <Card className="h-[700px] w-full rounded-none">*/}
+          {/*      <CardContent className="flex h-full flex-col items-center justify-center overflow-scroll border-2 border-red-500">*/}
+          {/*        <Suspense fallback={<div>Loading data for week {visibleWeeks[idx].weekNumber}...</div>}>*/}
+          {/*          <WeekContent weekNumber={weekNumber} year={year} />*/}
+          {/*        </Suspense>*/}
+          {/*      </CardContent>*/}
+          {/*    </Card>*/}
+          {/*  </CarouselItem>*/}
+          {/*))}*/}
+
+          {console.log("🙀 carouselRef.current 🙀: ", carouselRef.current)}
+
+          <CarouselItem className="basis-full">
+            <Card className="h-[700px] w-full rounded-none">
+              <CardContent className="flex h-full flex-col items-center justify-center overflow-scroll border-2 border-red-500">
+                <Suspense fallback={<div>Loading data for week {visibleWeeks[0].weekNumber}...</div>}>
+                  <WeekContent
+                    weekNumber={visibleWeeks[carouselRef.current === 0 ? 1 : carouselRef.current].weekNumber}
+                    year={visibleWeeks[carouselRef.current === 0 ? 1 : carouselRef.current].year}
+                  />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </CarouselItem>
+
+          <CarouselItem className="basis-full">
+            <Card className="h-[700px] w-full rounded-none">
+              <CardContent className="flex h-full flex-col items-center justify-center overflow-scroll border-2 border-red-500">
+                <Suspense fallback={<div>Loading data for week {visibleWeeks[1].weekNumber}...</div>}>
+                  <WeekContent
+                    weekNumber={visibleWeeks[carouselRef.current === 1 ? 1 : carouselRef.current].weekNumber}
+                    year={visibleWeeks[carouselRef.current === 1 ? 1 : carouselRef.current].year}
+                  />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </CarouselItem>
+
+          <CarouselItem className="basis-full">
+            <Card className="h-[700px] w-full rounded-none">
+              <CardContent className="flex h-full flex-col items-center justify-center overflow-scroll border-2 border-red-500">
+                <Suspense fallback={<div>Loading data for week {visibleWeeks[1].weekNumber}...</div>}>
+                  <WeekContent
+                    weekNumber={visibleWeeks[carouselRef.current === 2 ? 1 : carouselRef.current].weekNumber}
+                    year={visibleWeeks[carouselRef.current === 2 ? 1 : carouselRef.current].year}
+                  />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </CarouselItem>
         </CarouselContent>
       </Carousel>
     </div>

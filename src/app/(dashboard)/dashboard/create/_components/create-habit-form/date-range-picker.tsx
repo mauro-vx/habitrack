@@ -4,7 +4,7 @@ import { Control } from "react-hook-form";
 import { CalendarIcon } from "lucide-react";
 import { format, isBefore, isMonday, isSunday, startOfDay } from "date-fns";
 
-import { CreateHabitSchema } from "../schema";
+import { CreateHabitSchema } from "../../schema";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";

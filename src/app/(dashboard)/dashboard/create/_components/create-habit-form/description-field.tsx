@@ -2,11 +2,11 @@ import * as React from "react";
 
 import { Control } from "react-hook-form";
 
-import { CreateHabitSchema } from "../schema";
+import { CreateHabitSchema } from "../../schema";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-export default function TargetCount({
+export default function DescriptionField({
   control,
   disabled,
 }: {
@@ -16,17 +16,12 @@ export default function TargetCount({
   return (
     <FormField
       control={control}
-      name="target_count"
+      name="description"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Target Count:</FormLabel>
+          <FormLabel>Description:</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              type="number"
-              min="1"
-              disabled={disabled}
-            />
+            <Input {...field} placeholder="Description (optional)" disabled={disabled} type="text" />
           </FormControl>
           <FormMessage />
         </FormItem>

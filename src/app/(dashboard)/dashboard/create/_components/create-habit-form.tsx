@@ -5,24 +5,23 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isMonday } from "date-fns";
+import { toast } from "sonner";
 
+import { DAILY_DAYS_OF_WEEK, DEFAULT_DAYS_OF_WEEK } from "../constants";
 import { Status, HabitType } from "@/app/enums";
 import { CreateHabitState } from "../types";
 import { CreateHabitSchema, createHabitSchema } from "../schema";
 import { createHabit } from "@/lib/actions/create-habit";
 import { cn, getFirstPossibleMonday } from "@/lib/utils";
 import { Form } from "@/components/ui/form";
-
-import { toast } from "sonner";
-import { DAILY_DAYS_OF_WEEK, DEFAULT_DAYS_OF_WEEK } from "../constants";
-import NameField from "@/app/(dashboard)/dashboard/create/_components/name-field";
-import TypeField from "@/app/(dashboard)/dashboard/create/_components/habit-type-selector";
-import DaysOfWeekField from "@/app/(dashboard)/dashboard/create/_components/days-of-week-checkbox-group";
-import TargetCount from "@/app/(dashboard)/dashboard/create/_components/target-count";
-import DateRangeField from "@/app/(dashboard)/dashboard/create/_components/date-range-picker";
-import { SubmitButton } from "@/app/(dashboard)/dashboard/create/_components/submit-button";
-import { ErrorAlert } from "@/app/(dashboard)/dashboard/create/_components/error-alert";
-import DescriptionField from "@/app/(dashboard)/dashboard/create/_components/description-field";
+import NameField from "./create-habit-form/name-field";
+import TypeField from "./create-habit-form/habit-type-selector";
+import DaysOfWeekField from "./create-habit-form/days-of-week-checkbox-group";
+import TargetCount from "./create-habit-form/target-count";
+import DateRangeField from "./create-habit-form/date-range-picker";
+import SubmitButton from "./create-habit-form/submit-button";
+import ErrorAlert from "./create-habit-form/error-alert";
+import DescriptionField from "./create-habit-form/description-field";
 
 const { DAILY, CUSTOM } = HabitType;
 

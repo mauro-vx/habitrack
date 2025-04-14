@@ -3,7 +3,7 @@ import * as React from "react";
 import { Control } from "react-hook-form";
 
 import { HabitType } from "@/app/enums";
-import { CreateHabitSchema } from "../schema";
+import { CreateHabitSchema } from "../../schema";
 import { useCapitalizeFirst } from "@/hooks/use-capitalize-first";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";

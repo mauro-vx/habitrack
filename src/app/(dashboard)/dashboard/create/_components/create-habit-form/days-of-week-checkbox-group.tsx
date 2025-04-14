@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { Control } from "react-hook-form";
 
-import { DAILY_DAYS_OF_WEEK, dayNameMap } from "../constants";
-import { CreateHabitSchema } from "../schema";
+import { DAILY_DAYS_OF_WEEK, dayNamesMap } from "../../constants";
+import { CreateHabitSchema } from "../../schema";
 import { cn } from "@/lib/utils";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -70,7 +70,7 @@ export default function DaysOfWeekField({
                     key={dayIndex}
                     dayId={dayId}
                     dayIndex={dayIndex}
-                    label={dayNameMap[dayIndex]}
+                    label={dayNamesMap[dayIndex]}
                     checked={field.value[dayIndex]}
                     onCheckedChange={() => {
                       field.onChange({

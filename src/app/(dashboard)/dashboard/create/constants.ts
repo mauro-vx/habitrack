@@ -1,4 +1,5 @@
 import { getDayNamesByFormat } from "@/app/(dashboard)/dashboard/_utils/date";
+import { DayNumber, DaysOfWeekRecord } from "@/app/(dashboard)/dashboard/create/types";
 
 export const dayNamesMap = getDayNamesByFormat("full").reduce(
   (map: Record<number, string>, dayName: string, idx: number) => {
@@ -7,9 +8,6 @@ export const dayNamesMap = getDayNamesByFormat("full").reduce(
   },
   {},
 );
-
-type DayNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
-type DaysOfWeekRecord = Record<DayNumber, boolean>;
 
 const createDefaultDaysObject = (defaultValue: boolean): DaysOfWeekRecord => {
   return Object.keys(dayNamesMap).reduce((acc, key) => {

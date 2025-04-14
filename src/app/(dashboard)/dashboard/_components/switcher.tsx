@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-export default function ViewSwitcher({ slots }: { slots: { slotName: string; component: React.ReactNode }[] }) {
+export default function Switcher({ slots }: { slots: { slotName: string; component: React.ReactNode }[] }) {
   const [selectedSlotIndex, setSelectedSlotIndex] = useState(0);
 
   return (

@@ -1,7 +1,9 @@
 import { Database } from "@/lib/supabase/database.types";
 
-export type Habit = Database["public"]["Tables"]["habits"]["Row"] & {
-  habit_statuses: Database["public"]["Tables"]["habit_statuses"]["Row"][];
-};
+export type HabitInfo = Database["public"]["Tables"]["habits"]["Row"];
 
-export type Habits = Habit[];
+export type HabitStatus = Database["public"]["Tables"]["habit_statuses"]["Row"];
+export type HabitStatuses = HabitStatus[];
+
+export type HabitEntity = HabitInfo & { habit_statuses: HabitStatuses };
+export type HabitEntities = HabitEntity[];

@@ -1,9 +1,9 @@
-import { authenticateUser } from "@/lib/supabase/authorize-user";
+import { HabitEntities } from "@/app/types";
+import { getWeekNumberAndYear } from "@/lib/utils";
+import { authenticateUser } from "@/lib/supabase/authenticate-user";
+import { Separator } from "@/components/ui/separator";
 import CreateHabitForm from "./_components/create-habit-form";
 import HabitsOverview from "./habits-overview";
-import { Separator } from "@/components/ui/separator";
-import { getWeekNumberAndYear } from "@/lib/utils";
-import { Habits } from "@/app/types";
 
 export default async function CreatePage() {
   const { week, year } = getWeekNumberAndYear(new Date());
@@ -18,7 +18,7 @@ export default async function CreatePage() {
     <main className="container flex h-screen flex-col justify-center gap-4 sm:flex-row">
       <CreateHabitForm className="min-h-fit overflow-y-auto sm:grow" />
       <Separator className="sm:hidden" />
-      <HabitsOverview className="overflow-y-auto sm:grow" habits={data as Habits} />
+      <HabitsOverview className="overflow-y-auto sm:grow" habits={data as HabitEntities} />
     </main>
   );
 }

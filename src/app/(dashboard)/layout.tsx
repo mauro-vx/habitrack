@@ -7,7 +7,6 @@ import "@/app/globals.css";
 
 import Providers from "@/context/providers";
 import { Toaster } from "@/components/ui/sonner";
-import Header from "./_components/header";
 
 const fredoka = Fredoka({
   variable: "--font-fredoka",
@@ -35,7 +34,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${fredoka.variable} ${poppins.variable} antialiased`}>
         <Providers>
-          {/*<Header />*/}
           {children}
           <Toaster richColors />
         </Providers>

@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function generateCacheKey(user: User | null, date: Date) {
+export function generateCacheKey(user: User | null, date: Date): string {
   if (!user || !user.id) {
     console.error("Invalid user object. User must contain an 'id' property.");
   }
@@ -20,14 +20,18 @@ export function getFirstPossibleMonday(date: Date): Date {
   return startOfWeek(addWeeks(date, 1), { weekStartsOn: 1 });
 }
 
-export function getWeekNumberAndYear(date: Date) {
+export function getWeekNumberAndYear(date: Date): { week: number; year: number } {
   const year = getYear(date);
   const week = getISOWeek(date);
 
   return { week, year };
 }
 
-export function getAdjacentWeeksDate(date: Date) {
+export function getAdjacentWeeksDate(date: Date): {
+  currentWeek: { week: number; year: number };
+  prevWeek: { week: number; year: number };
+  nextWeek: { week: number; year: number };
+} {
   const currentYear = getYear(date);
   const currentWeek = getISOWeek(date);
 
@@ -40,13 +44,16 @@ export function getAdjacentWeeksDate(date: Date) {
   const nextWeek = getISOWeek(nextDate);
 
   return {
-    currentWeek: { weekNumber: currentWeek, year: currentYear },
-    prevWeek: { weekNumber: previousWeek, year: previousYear },
-    nextWeek: { weekNumber: nextWeek, year: nextYear },
+    currentWeek: { week: currentWeek, year: currentYear },
+    prevWeek: { week: previousWeek, year: previousYear },
+    nextWeek: { week: nextWeek, year: nextYear },
   };
 }
 
-export function getAdjacentWeeksNumber(year: number | string, week: number | string) {
+export function getAdjacentWeeksNumber(
+  year: number | string,
+  week: number | string,
+): { prevWeek: { week: number; year: number }; nextWeek: { week: number; year: number } } {
   const parsedYear = typeof year === "string" ? Number(year) : year;
   const parsedWeek = typeof week === "string" ? Number(week) : week;
 
@@ -61,7 +68,7 @@ export function getAdjacentWeeksNumber(year: number | string, week: number | str
   const nextWeek = getISOWeek(nextDate);
 
   return {
-    prevWeek: { weekNumber: previousWeek, year: previousYear },
-    nextWeek: { weekNumber: nextWeek, year: nextYear },
+    prevWeek: { week: previousWeek, year: previousYear },
+    nextWeek: { week: nextWeek, year: nextYear },
   };
 }

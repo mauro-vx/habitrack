@@ -60,8 +60,21 @@ interface SelectDayStatusProps {
   onChange?: (option: (typeof STATUS_OPTIONS)[0]) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  className?: string;
+  dayNumber: number;
 }
+
+const getColStartClass = (dayIndex: number) => {
+  const colStartClasses: Record<number, string> = {
+    1: "col-start-2",
+    2: "col-start-3",
+    3: "col-start-4",
+    4: "col-start-5",
+    5: "col-start-6",
+    6: "col-start-7",
+    7: "col-start-8",
+  };
+  return colStartClasses[dayIndex];
+};
 
 export default function SelectDayStatus({
   status,
@@ -71,7 +84,7 @@ export default function SelectDayStatus({
   onChange = () => {},
   open: controlledOpen,
   onOpenChange = () => {},
-  className,
+  dayNumber,
 }: SelectDayStatusProps) {
   const [internalOpen, setInternalOpen] = React.useState(false);
 
@@ -97,8 +110,10 @@ export default function SelectDayStatus({
     }
   };
 
+  const baseClassName = cn(getColStartClass(dayNumber), "place-self-center");
+
   return (
-    <div className={className}>
+    <div className={baseClassName}>
       <Select value={status} onValueChange={handleValueChange} open={open} onOpenChange={handleOpenChange}>
         <SelectTrigger className="flex min-h-fit min-w-fit items-center justify-center rounded-full p-1 [&>svg:last-child]:hidden">
           {/*<Circle className={cn("min-h-8 min-w-8", selectedOption.color)} />*/}

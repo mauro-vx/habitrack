@@ -1,14 +1,11 @@
 import { DefinedUseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { HabitEntities } from "@/app/types";
+import { HabitEntities, HabitEntitiesRpc } from "@/app/types";
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
 
-export async function fetchWeekDataClient(
-  year: number,
-  week: number,
-): Promise<HabitEntities> {
+export async function fetchWeekDataClient(year: number, week: number): Promise<HabitEntities> {
   const { data, error } = await supabase
     .from("habits")
     .select("*, habit_statuses(*)")
@@ -44,6 +41,28 @@ export function useWeekData(year: number, week: number): DefinedUseQueryResult<H
   return useQuery({
     queryKey,
     queryFn: () => fetchWeekDataClient(year, week),
+    // @ts-expect-error: TypeScript doesn't recognize 'suspense' as a valid property
+    suspense: true,
+  });
+}
+
+
+export async function fetchWeekDataMapped(year: number, week: number): Promise<HabitEntitiesRpc> {
+  const { data, error } = await supabase.rpc("fetch_week_data", { _year: year, _week: week });
+
+  if (error) {
+    throw new Error(error.message || "Failed to fetch week data");
+  }
+
+  return data as HabitEntitiesRpc;
+}
+
+export function useWeekDataMapped(year: number, week: number):DefinedUseQueryResult<HabitEntitiesRpc> {
+  const queryKey = ["weekData", year, week];
+
+  return useQuery({
+    queryKey,
+    queryFn: () => fetchWeekDataMapped(year, week),
     // @ts-expect-error: TypeScript doesn't recognize 'suspense' as a valid property
     suspense: true,
   });

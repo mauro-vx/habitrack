@@ -26,6 +26,10 @@ export default function TargetCount({
               type="number"
               min="1"
               disabled={disabled}
+              onChange={(e) => {
+                const value = e.target.value === "" ? "" : Number(e.target.value);
+                field.onChange(value);
+              }}
             />
           </FormControl>
           <FormMessage />

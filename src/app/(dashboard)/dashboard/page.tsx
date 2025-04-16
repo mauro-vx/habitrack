@@ -5,7 +5,6 @@ import { prefetchDataForDashboard } from "../dashboard/_utils/server";
 import Switcher from "./_components/switcher";
 import WeekSelector from "./_components/week-selector";
 
-
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value || "Europe/Prague";
@@ -15,7 +14,7 @@ export default async function DashboardPage() {
   const slots = [
     { slotName: "Day", component: <div>Daily view</div> },
     {
-      slotName: "WeekCN",
+      slotName: "Week",
       component: <WeekSelector />,
     },
     { slotName: "Month", component: <div>Monthly view</div> },

@@ -1,4 +1,14 @@
-import { addDays, eachDayOfInterval, endOfWeek, format, Locale, startOfWeek } from "date-fns";
+import {
+  addDays,
+  addWeeks,
+  eachDayOfInterval,
+  endOfWeek,
+  format,
+  isBefore,
+  Locale,
+  startOfToday,
+  startOfWeek,
+} from "date-fns";
 
 export function getDayNumbersOfWeek(year: number, week: number): number[] {
   const startDate = startOfWeek(new Date(year, 0, 1), { weekStartsOn: 1 });
@@ -42,3 +52,21 @@ export function getDayNamesByFormat(
   const formatStyle = formatStyles[formatChoice] || "EEEE";
   return getDayNames(locale, formatStyle);
 }
+
+function calculateTargetDate(year: number, weekNumber: number, dayNumber: number): Date {
+  const yearStart = new Date(year, 0, 1);
+  const firstWeekStart = startOfWeek(yearStart, { weekStartsOn: 1 });
+  return addDays(addWeeks(firstWeekStart, weekNumber - 1), dayNumber - 1);
+}
+
+export function isBeforeToday(year: number, weekNumber: number, dayNumber: number): boolean {
+  const targetDate = calculateTargetDate(year, weekNumber, dayNumber);
+  return isBefore(targetDate, startOfToday());
+}
+
+export function isToday(year: number, weekNumber: number, dayNumber: number): boolean {
+  const targetDate = calculateTargetDate(year, weekNumber, dayNumber);
+  return targetDate.toDateString() === startOfToday().toDateString();
+}
+
+

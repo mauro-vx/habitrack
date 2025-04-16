@@ -20,3 +20,11 @@ export enum HabitType {
   WEEKLY = "weekly",
   CUSTOM = "custom",
 }
+
+export enum HabitStatus {
+  PENDING = "pending",
+  PROGRESS = "progress",
+  DONE = "done",
+  SKIP = "skip",
+  INCOMPLETE = "incomplete",
+}

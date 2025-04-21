@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 
@@ -12,6 +13,9 @@ import { Database } from "@/lib/supabase/database.types";
 
 export async function createHabit(prevState: CreateHabitState, formData: CreateHabitSchema): Promise<CreateHabitState> {
   const validation = createHabitSchema.safeParse(formData);
+
+  const cookieStore = await cookies();
+  const timezone = cookieStore.get("timezone")?.value || "Europe/Prague";
 
   if (!validation.success) {
     return {
@@ -45,6 +49,7 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
     days_of_week: validationData.days_of_week,
     start_date: start_date.toISOString(),
     end_date: end_date && end_date.toISOString(),
+    timezone: timezone,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };

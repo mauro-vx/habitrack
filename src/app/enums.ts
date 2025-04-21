@@ -21,7 +21,7 @@ export enum HabitType {
   CUSTOM = "custom",
 }
 
-export enum HabitStatus {
+export enum HabitState {
   PENDING = "pending",
   PROGRESS = "progress",
   DONE = "done",

@@ -3,7 +3,6 @@ import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { HabitEntities, HabitEntitiesRpc } from "@/app/types";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 import { getAdjacentWeeksNumber, getWeekNumberAndYear } from "@/lib/utils";
-import { fetchWeekDataMapped } from "@/app/(dashboard)/dashboard/_utils/client";
 
 export async function fetchWeekDataServer(year: number, week: number): Promise<HabitEntities> {
   const { authSupabase } = await authenticateUser();

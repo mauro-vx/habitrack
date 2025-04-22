@@ -10,6 +10,8 @@ import { Select } from "@radix-ui/react-select";
 import { SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
 import HabitTypeIcon from "@/app/(dashboard)/dashboard/_components/habit-type-icon";
 import FractionDisplay from "@/app/(dashboard)/dashboard/_components/fraction-display";
+import { updateHabitStatus } from "@/lib/actions/update-habit-status";
+import { createHabitStatus } from "@/lib/actions/create-habit-status";
 
 const STATUS_OPTIONS = [
   {
@@ -68,20 +70,26 @@ export default function SelectDayStatus({
   habitType,
   dailyCompletion,
   dailySkip,
-  onChange = () => {},
   open: controlledOpen,
   onOpenChange = () => {},
+  startYear,
+  startWeek,
   dayNumber,
+  habitId,
+  habitStatusId,
 }: {
   habitState: HabitState;
   habitType: Database["public"]["Enums"]["habit_type"];
   habitTarget: HabitEntity["target_count"];
   dailyCompletion: HabitEntity["habit_statuses"][0]["completion_count"];
   dailySkip: HabitEntity["habit_statuses"][0]["skipped_count"];
-  onChange?: (option: (typeof STATUS_OPTIONS)[0]) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  startYear: number;
+  startWeek:number;
   dayNumber: number;
+  habitId: HabitEntity["id"];
+  habitStatusId?: HabitEntity["habit_statuses"][0]["id"];
 }) {
   const [internalOpen, setInternalOpen] = React.useState(false);
 
@@ -102,10 +110,11 @@ export default function SelectDayStatus({
     onOpenChange(newOpen);
   };
 
-  const handleValueChange = (value: string) => {
-    const option = STATUS_OPTIONS.find((opt) => opt.value === value);
-    if (option) {
-      onChange(option);
+  const handleValueChange = async (value: HabitState) => {
+    if (habitStatusId) {
+      await updateHabitStatus(habitStatusId, value);
+    } else {
+      await createHabitStatus(habitId, startWeek, startYear, dayNumber, value);
     }
   };
 
@@ -115,7 +124,7 @@ export default function SelectDayStatus({
         <SelectTrigger className="relative min-h-fit min-w-fit p-2 text-xs [&_svg:not([class*='size-'])]:size-8 [&>svg:last-child]:hidden">
           <HabitTypeIcon habitType={habitType} className={selectedOption.color} />
           {!!dailySkip && (
-            <span className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 transform text-xs font-bold text-blue-500">
+            <span className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 transform text-xs font-bold text-blue-500">
               {dailySkip}
             </span>
           )}

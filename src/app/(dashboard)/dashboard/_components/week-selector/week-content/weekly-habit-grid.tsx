@@ -156,7 +156,11 @@ export function HabitGrid({ weekData }: { weekData: { year: number; week: number
                 habitTarget={habit.target_count}
                 dailyCompletion={habitDayValues?.completion_count}
                 dailySkip={habitDayValues?.skipped_count}
+                startYear={weekData.year}
+                startWeek={weekData.week}
                 dayNumber={dayNumber}
+                habitId={habit.id}
+                habitStatusId={habitDayValues?.id}
               />
             );
           })}

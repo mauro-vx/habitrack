@@ -9,7 +9,7 @@ export default function WeekContent({ weekData }: { weekData: { year: number; we
     <div className="h-full text-center">
       <h3 className="mb-4 text-2xl font-bold">{`Year: ${weekData.year} Week: ${weekData.week}`}</h3>
 
-      <div className="grid h-full grid-cols-8 place-content-start gap-2">
+      <div className="grid h-full grid-cols-8 place-content-start gap-4">
         <DayNameRow />
         <DayNumberRow weekData={weekData} />
         <HabitGrid weekData={weekData} />

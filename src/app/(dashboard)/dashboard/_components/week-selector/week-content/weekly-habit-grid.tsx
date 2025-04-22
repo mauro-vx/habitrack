@@ -8,139 +8,121 @@ import SelectDayStatus from "./weekly-habit-grid/select-day-status";
 
 const dayNames = getDayNamesByFormat("full");
 
-const getDailyValues = (habit: HabitEntityRpc, dayNumber: number, isCurrentDay: boolean, isPastDay: boolean) => {
-  const shouldRender = true;
-
-  const statusValues = habit.habit_statuses?.[dayNumber] || null;
-  const completionCount = statusValues?.completion_count ?? 0;
-  const skippedCount = statusValues?.skipped_count ?? 0;
+const getStatusForRender = (
+  habit: HabitEntityRpc,
+  dayNumber: number,
+  isCurrentDay: boolean,
+  isPastDay: boolean,
+): {
+  shouldRender: boolean;
+  habitState: HabitState;
+  habitDayValues: HabitEntityRpc["habit_statuses"][0]
+} => {
+  const habitDayStatus = habit.habit_statuses?.[dayNumber];
+  const completionCount = habitDayStatus?.completion_count ?? 0;
+  const skippedCount = habitDayStatus?.skipped_count ?? 0;
   const totalAttempts = completionCount + skippedCount;
 
-  let habitState: HabitState;
+  let shouldRender = false;
+  let habitState = HabitState.PENDING;
+  let habitDayValues = habitDayStatus;
 
-  switch (true) {
-    case isCurrentDay:
-      habitState = !statusValues
-        ? HabitState.PENDING
-        : totalAttempts < habit.target_count
-          ? HabitState.PROGRESS
-          : HabitState.DONE;
-      break;
+  if (habit.type === HabitType.DAILY) {
+    switch (true) {
+      case isCurrentDay:
+        shouldRender = true;
+        habitState = !habitDayStatus
+          ? HabitState.PENDING
+          : totalAttempts < habit.target_count
+            ? HabitState.PROGRESS
+            : HabitState.DONE;
+        habitDayValues = habitDayStatus;
+        break;
 
-    case isPastDay:
-      habitState = !statusValues
-        ? HabitState.INCOMPLETE
-        : totalAttempts < habit.target_count
+      case isPastDay:
+        shouldRender = true;
+        habitState = !habitDayStatus
           ? HabitState.INCOMPLETE
-          : HabitState.DONE;
-      break;
+          : totalAttempts < habit.target_count
+            ? HabitState.INCOMPLETE
+            : HabitState.DONE;
+        habitDayValues = habitDayStatus;
+        break;
 
-    default:
-      habitState = HabitState.PENDING;
-      break;
+      default:
+        shouldRender = true;
+    }
   }
 
-  return { shouldRender, habitState, statusValues };
-};
+  if (habit.type === HabitType.WEEKLY) {
+    const statesSum = Object.values(habit.habit_statuses || {}).reduce(
+      (acc, status) => {
+        acc.completion_count += status.completion_count || 0;
+        acc.skipped_count += status.skipped_count || 0;
+        return acc;
+      },
+      { completion_count: 0, skipped_count: 0 },
+    );
 
-const getWeeklyValues = (habit: HabitEntityRpc, dayNumber: number, isCurrentDay: boolean, isPastDay: boolean) => {
-  const dayStatusValues = habit.habit_statuses?.[dayNumber] || null;
+    const aggregatedValues = {
+      ...(habitDayStatus || {}),
+      completion_count: statesSum.completion_count,
+      skipped_count: statesSum.skipped_count,
+    };
 
-  const statesSum = Object.values(habit.habit_statuses || {}).reduce(
-    (acc, status) => {
-      acc.completion_count += status.completion_count || 0;
-      acc.skipped_count += status.skipped_count || 0;
-      return acc;
-    },
-    { completion_count: 0, skipped_count: 0 },
-  );
+    switch (true) {
+      case isCurrentDay:
+        shouldRender = !!habitDayStatus || totalAttempts < habit.target_count;
+        habitState = !habitDayStatus && !statesSum.completion_count && !statesSum.skipped_count
+          ? HabitState.PENDING
+          : totalAttempts < habit.target_count
+            ? HabitState.PROGRESS
+            : HabitState.DONE;
+        habitDayValues = aggregatedValues;
+        break;
 
-  const totalAttempts = statesSum.completion_count + statesSum.skipped_count;
+      case isPastDay:
+        shouldRender = !!habitDayStatus;
+        habitState = !habitDayStatus
+          ? HabitState.PENDING
+          : totalAttempts < habit.target_count
+            ? HabitState.PROGRESS
+            : HabitState.DONE;
+        habitDayValues = habitDayStatus;
+        break;
+    }
+  }
 
-  const aggregatedValues = {
-    ...(dayStatusValues || {}),
-    completion_count: statesSum.completion_count,
-    skipped_count: statesSum.skipped_count,
-  };
+  if (habit.type === HabitType.CUSTOM) {
+    const isHabitActiveToday = !!habit.days_of_week?.[dayNumber as keyof HabitEntityRpc["days_of_week"]];
 
-  let habitState: HabitState;
-  let shouldRender = true;
+    switch (true) {
+      case isCurrentDay:
+        shouldRender = isHabitActiveToday;
+        habitState = !habitDayStatus
+          ? HabitState.PENDING
+          : totalAttempts < habit.target_count
+            ? HabitState.PROGRESS
+            : HabitState.DONE;
+        habitDayValues = habitDayStatus;
+        break;
 
-  switch (true) {
-    case isCurrentDay:
-      habitState = !dayStatusValues
-        ? HabitState.PENDING
-        : totalAttempts < habit.target_count
-          ? HabitState.PROGRESS
-          : HabitState.DONE;
-      break;
-
-    case isPastDay:
-      habitState = !dayStatusValues
-        ? HabitState.INCOMPLETE
-        : totalAttempts < habit.target_count
+      case isPastDay:
+        shouldRender = isHabitActiveToday;
+        habitState = !habitDayStatus
           ? HabitState.INCOMPLETE
-          : HabitState.DONE;
-      break;
+          : totalAttempts < habit.target_count
+            ? HabitState.INCOMPLETE
+            : HabitState.DONE;
+        habitDayValues = habitDayStatus;
+        break;
 
-    default:
-      habitState = HabitState.PENDING;
-      shouldRender = false;
+      default:
+        shouldRender = isHabitActiveToday;
+    }
   }
 
-  return { shouldRender, habitState, statusValues: aggregatedValues };
-};
-
-const getCustomValues = (habit: HabitEntityRpc, dayNumber: number, isCurrentDay: boolean, isPastDay: boolean) => {
-  const isHabitActiveToday = !!habit.days_of_week?.[dayNumber as keyof HabitEntityRpc["days_of_week"]];
-
-  if (!isHabitActiveToday) return { shouldRender: false, habitState: undefined, statusValues: undefined };
-
-  const statusValues = habit.habit_statuses?.[dayNumber] || null;
-  const completionCount = statusValues?.completion_count ?? 0;
-  const skippedCount = statusValues?.skipped_count ?? 0;
-  const totalAttempts = completionCount + skippedCount;
-
-  let habitState: HabitState;
-
-  switch (true) {
-    case isCurrentDay:
-      habitState = !statusValues
-        ? HabitState.PENDING
-        : totalAttempts < habit.target_count
-          ? HabitState.PROGRESS
-          : HabitState.DONE;
-      break;
-
-    case isPastDay:
-      habitState = !statusValues
-        ? HabitState.INCOMPLETE
-        : totalAttempts < habit.target_count
-          ? HabitState.INCOMPLETE
-          : HabitState.DONE;
-      break;
-
-    default:
-      habitState = HabitState.PENDING;
-  }
-
-  return { shouldRender: true, habitState, statusValues };
-};
-
-const getStatusForRender = (habit: HabitEntityRpc, dayNumber: number, isCurrentDay: boolean, isPastDay: boolean) => {
-  switch (habit.type) {
-    case HabitType.DAILY:
-      return getDailyValues(habit, dayNumber, isCurrentDay, isPastDay);
-
-    case HabitType.WEEKLY:
-      return getWeeklyValues(habit, dayNumber, isCurrentDay, isPastDay);
-
-    case HabitType.CUSTOM:
-      return getCustomValues(habit, dayNumber, isCurrentDay, isPastDay);
-
-    default:
-      throw new Error(`Unsupported habit type: ${habit.type}`);
-  }
+  return { shouldRender, habitState, habitDayValues };
 };
 
 export function HabitGrid({ weekData }: { weekData: { year: number; week: number } }) {
@@ -157,7 +139,7 @@ export function HabitGrid({ weekData }: { weekData: { year: number; week: number
             const isCurrentDay = isToday(weekData.year, weekData.week, dayNumber);
             const isPastDay = isBeforeToday(weekData.year, weekData.week, dayNumber);
 
-            const { shouldRender, habitState, statusValues } = getStatusForRender(
+            const { shouldRender, habitState, habitDayValues } = getStatusForRender(
               habit,
               dayNumber,
               isCurrentDay,
@@ -172,8 +154,8 @@ export function HabitGrid({ weekData }: { weekData: { year: number; week: number
                 habitState={habitState}
                 habitType={habit.type}
                 habitTarget={habit.target_count}
-                dailyCompletion={statusValues?.completion_count}
-                dailySkip={statusValues?.skipped_count}
+                dailyCompletion={habitDayValues?.completion_count}
+                dailySkip={habitDayValues?.skipped_count}
                 dayNumber={dayNumber}
               />
             );

@@ -1,23 +1,54 @@
-import { Circle, Triangle, Square } from "lucide-react";
+import * as React from "react";
 
-import { Database } from "@/lib/supabase/database.types";
-import { HabitType } from "@/app/enums";
+import { Circle, Triangle, Square, PlusCircle } from "lucide-react";
+
+import { Enums } from "@/lib/supabase/database.types";
+import { ShowHabitState } from "@/app/types";
+import { HabitState, HabitType } from "@/app/enums";
+
+const STATUS_OPTIONS_MAP = {
+  [HabitState.PENDING]: {
+    startIcon: <Circle className="fill-gray-500" />,
+    fill: "fill-gray-500",
+  },
+  [HabitState.PROGRESS]: {
+    startIcon: <Circle className="fill-violet-500" />,
+    fill: "fill-violet-500",
+  },
+  [HabitState.DONE]: {
+    startIcon: <PlusCircle className="stroke-green-500" />,
+    fill: "fill-green-500",
+  },
+  [HabitState.SKIP]: {
+    startIcon: <PlusCircle className="stroke-blue-500" />,
+    fill: "fill-blue-500",
+  },
+  [HabitState.INCOMPLETE]: {
+    startIcon: <Circle className="fill-red-500" />,
+    fill: "fill-red-500",
+  },
+};
 
 export default function HabitTypeIcon({
   habitType,
-  className,
+  habitState,
 }: {
-  habitType: Database["public"]["Enums"]["habit_type"];
-  className?: string;
+  habitType: Enums<"habit_type">;
+  habitState: ShowHabitState;
 }) {
-  switch (habitType) {
-    case HabitType.DAILY:
-      return <Circle className={className} />;
-    case HabitType.WEEKLY:
-      return <Triangle className={className} />;
-    case HabitType.CUSTOM:
-      return <Square className={className} />;
-    default:
-      return null;
+  const selectedOption = STATUS_OPTIONS_MAP[habitState];
+
+  const shapeIcons = {
+    [HabitType.DAILY]: Circle,
+    [HabitType.WEEKLY]: Triangle,
+    [HabitType.CUSTOM]: Square,
+  };
+
+  const ShapeIcon = shapeIcons[habitType] || null;
+
+  if (!ShapeIcon) {
+    return null;
   }
+
+  return <ShapeIcon className={selectedOption.fill} />;
 }

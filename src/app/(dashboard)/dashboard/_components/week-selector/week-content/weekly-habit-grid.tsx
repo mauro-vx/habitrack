@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import { HabitEntitiesRpc, HabitEntityRpc } from "@/app/types";
+import { HabitEntitiesRpc, HabitEntityRpc, ShowHabitState } from "@/app/types";
+import { Tables } from "@/lib/supabase/database.types";
 import { HabitState, HabitType } from "@/app/enums";
 import { useWeekDataMapped } from "@/app/(dashboard)/dashboard/_utils/client";
 import { getDayNamesByFormat, isBeforeToday, isToday } from "@/app/(dashboard)/dashboard/_utils/date";
@@ -15,8 +16,8 @@ const getStatusForRender = (
   isPastDay: boolean,
 ): {
   shouldRender: boolean;
-  habitState: HabitState;
-  habitDayValues: HabitEntityRpc["habit_statuses"][0]
+  habitState: ShowHabitState;
+  habitDayValues: Tables<"habit_statuses">
 } => {
   const habitDayStatus = habit.habit_statuses?.[dayNumber];
   const completionCount = habitDayStatus?.completion_count ?? 0;
@@ -151,16 +152,16 @@ export function HabitGrid({ weekData }: { weekData: { year: number; week: number
             return (
               <SelectDayStatus
                 key={`${habit.id}-${dayName}`}
-                habitState={habitState}
+                habitId={habit.id}
                 habitType={habit.type}
                 habitTarget={habit.target_count}
+                habitState={habitState}
                 dailyCompletion={habitDayValues?.completion_count}
                 dailySkip={habitDayValues?.skipped_count}
-                startYear={weekData.year}
-                startWeek={weekData.week}
-                dayNumber={dayNumber}
-                habitId={habit.id}
                 habitStatusId={habitDayValues?.id}
+                year={weekData.year}
+                week={weekData.week}
+                dayNumber={dayNumber}
               />
             );
           })}

@@ -69,4 +69,7 @@ export function isToday(year: number, weekNumber: number, dayNumber: number): bo
   return targetDate.toDateString() === startOfToday().toDateString();
 }
 
-
+export function isAfterToday(year: number, weekNumber: number, dayNumber: number): boolean {
+  const targetDate = calculateTargetDate(year, weekNumber, dayNumber);
+  return isBefore(startOfToday(), targetDate);
+}

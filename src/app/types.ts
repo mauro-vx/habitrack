@@ -1,8 +1,9 @@
-import { Database } from "@/lib/supabase/database.types";
+import { Tables } from "@/lib/supabase/database.types";
+import { HabitState } from "@/app/enums";
 
-export type HabitInfo = Database["public"]["Tables"]["habits"]["Row"];
+export type HabitInfo = Tables<"habits">;
 
-export type HabitStatus = Database["public"]["Tables"]["habit_statuses"]["Row"];
+export type HabitStatus = Tables<"habit_statuses">;
 export type HabitStatuses = HabitStatus[];
 
 export type HabitEntity = HabitInfo & { habit_statuses: HabitStatuses };
@@ -11,3 +12,10 @@ export type HabitEntities = HabitEntity[];
 export type HabitStatusesMapped = Record<number, HabitStatus> | Record<number, never>;
 export type HabitEntityRpc = HabitInfo & { habit_statuses: HabitStatusesMapped };
 export type HabitEntitiesRpc = HabitEntityRpc[];
+
+export type ShowHabitState = Extract<
+  HabitState,
+  HabitState.PENDING | HabitState.PROGRESS | HabitState.DONE | HabitState.SKIP | HabitState.INCOMPLETE
+>;
+
+export type SelectHabitState = Extract<HabitState, HabitState.DONE | HabitState.UNDONE | HabitState.SKIP | HabitState.UNSKIP>;

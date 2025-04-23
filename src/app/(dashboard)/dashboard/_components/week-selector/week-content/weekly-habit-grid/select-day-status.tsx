@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import { Circle } from "lucide-react";
+import { PlusCircle, MinusCircle } from "lucide-react";
 
-import { HabitEntity } from "@/app/types";
-import { Database } from "@/lib/supabase/database.types";
+import { SelectHabitState, ShowHabitState } from "@/app/types";
+import { Tables, Enums } from "@/lib/supabase/database.types";
 import { HabitState } from "@/app/enums";
 import { cn } from "@/lib/utils";
 import { Select } from "@radix-ui/react-select";
@@ -12,44 +12,35 @@ import HabitTypeIcon from "@/app/(dashboard)/dashboard/_components/habit-type-ic
 import FractionDisplay from "@/app/(dashboard)/dashboard/_components/fraction-display";
 import { updateHabitStatus } from "@/lib/actions/update-habit-status";
 import { createHabitStatus } from "@/lib/actions/create-habit-status";
+import { isAfterToday } from "@/app/(dashboard)/dashboard/_utils/date";
+import { deleteHabitStatus } from "@/lib/actions/delete-habit-status";
 
-const STATUS_OPTIONS = [
-  {
-    value: HabitState.PENDING,
-    label: HabitState.PENDING[0].toUpperCase() + HabitState.PENDING.slice(1),
-    startIcon: <Circle className="fill-gray-500" />,
-    color: "fill-gray-500",
-    background: "bg-gray-500",
-  },
-  {
-    value: HabitState.PROGRESS,
-    label: HabitState.PROGRESS[0].toUpperCase() + HabitState.PROGRESS.slice(1),
-    startIcon: <Circle className="fill-violet-500" />,
-    color: "fill-violet-500",
-    background: "bg-violet-500",
-  },
-  {
-    value: HabitState.DONE,
+const STATUS_OPTIONS = {
+  [HabitState.DONE]: {
     label: HabitState.DONE[0].toUpperCase() + HabitState.DONE.slice(1),
-    startIcon: <Circle className="fill-green-500" />,
+    startIcon: <PlusCircle className="stroke-green-500" />,
     color: "fill-green-500",
     background: "bg-green-500",
   },
-  {
-    value: HabitState.SKIP,
+  [HabitState.UNDONE]: {
+    label: HabitState.UNDONE[0].toUpperCase() + HabitState.UNDONE.slice(1),
+    startIcon: <MinusCircle className="stroke-yellow-500" />,
+    color: "fill-yellow-500",
+    background: "bg-yellow-500",
+  },
+  [HabitState.SKIP]: {
     label: HabitState.SKIP[0].toUpperCase() + HabitState.SKIP.slice(1),
-    startIcon: <Circle className="fill-blue-500" />,
+    startIcon: <PlusCircle className="stroke-blue-500" />,
     color: "fill-blue-500",
     background: "bg-blue-500",
   },
-  {
-    value: HabitState.INCOMPLETE,
-    label: HabitState.INCOMPLETE[0].toUpperCase() + HabitState.INCOMPLETE.slice(1),
-    startIcon: <Circle className="fill-red-500" />,
-    color: "fill-red-500",
-    background: "bg-red-500",
+  [HabitState.UNSKIP]: {
+    label: HabitState.UNSKIP[0].toUpperCase() + HabitState.UNSKIP.slice(1),
+    startIcon: <MinusCircle className="stroke-yellow-500" />,
+    color: "fill-yellow-500",
+    background: "bg-yellow-500",
   },
-];
+};
 
 const getColStartClass = (dayIndex: number) => {
   const colStartClasses: Record<number, string> = {
@@ -72,34 +63,29 @@ export default function SelectDayStatus({
   dailySkip,
   open: controlledOpen,
   onOpenChange = () => {},
-  startYear,
-  startWeek,
+  year,
+  week,
   dayNumber,
   habitId,
   habitStatusId,
 }: {
-  habitState: HabitState;
-  habitType: Database["public"]["Enums"]["habit_type"];
-  habitTarget: HabitEntity["target_count"];
-  dailyCompletion: HabitEntity["habit_statuses"][0]["completion_count"];
-  dailySkip: HabitEntity["habit_statuses"][0]["skipped_count"];
+  habitState: ShowHabitState;
+  habitType: Enums<"habit_type">;
+  habitTarget: Tables<"habits">["target_count"];
+  dailyCompletion: Tables<"habit_statuses">["completion_count"];
+  dailySkip: Tables<"habit_statuses">["skipped_count"];
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  startYear: number;
-  startWeek:number;
+  year: number;
+  week: number;
   dayNumber: number;
-  habitId: HabitEntity["id"];
-  habitStatusId?: HabitEntity["habit_statuses"][0]["id"];
+  habitId: Tables<"habits">["id"];
+  habitStatusId?: Tables<"habit_statuses">["id"];
 }) {
   const [internalOpen, setInternalOpen] = React.useState(false);
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
-
-  const selectedOption = React.useMemo(
-    () => STATUS_OPTIONS.find((option) => option.value === habitState) || STATUS_OPTIONS[0],
-    [habitState],
-  );
 
   const baseClassName = cn(getColStartClass(dayNumber), "place-self-center");
 
@@ -112,17 +98,41 @@ export default function SelectDayStatus({
 
   const handleValueChange = async (value: HabitState) => {
     if (habitStatusId) {
+      if (value === HabitState.UNSKIP && dailySkip === 1 && !dailyCompletion) {
+        await deleteHabitStatus(habitStatusId);
+      }
+      if (value === HabitState.UNDONE && dailyCompletion === 1 && !dailySkip) {
+        await deleteHabitStatus(habitStatusId);
+      }
+
       await updateHabitStatus(habitStatusId, value);
     } else {
-      await createHabitStatus(habitId, startWeek, startYear, dayNumber, value);
+      console.log("🙀 dayNumber 🙀: ", dayNumber);
+
+      await createHabitStatus(habitId, week, year, dayNumber, value);
     }
   };
+
+  const isFutureDay = isAfterToday(year, week, dayNumber);
+
+  const filteredStatusOptions = Object.keys(STATUS_OPTIONS).filter((key) => {
+    if (key === HabitState.UNDONE && !dailyCompletion) return false;
+    if (key === HabitState.UNSKIP && !dailySkip) return false;
+
+    return !(
+      (key === HabitState.DONE || key === HabitState.SKIP) &&
+      (dailyCompletion || 0) + (dailySkip || 0) === habitTarget
+    );
+  });
 
   return (
     <div className={baseClassName}>
       <Select value={habitState} onValueChange={handleValueChange} open={open} onOpenChange={handleOpenChange}>
-        <SelectTrigger className="relative min-h-fit min-w-fit p-2 text-xs [&_svg:not([class*='size-'])]:size-8 [&>svg:last-child]:hidden">
-          <HabitTypeIcon habitType={habitType} className={selectedOption.color} />
+        <SelectTrigger
+          disabled={isFutureDay}
+          className="relative min-h-fit min-w-fit p-2 text-xs [&_svg:not([class*='size-'])]:size-8 [&>svg:last-child]:hidden"
+        >
+          <HabitTypeIcon habitType={habitType} habitState={habitState} />
           {!!dailySkip && (
             <span className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 transform text-xs font-bold text-blue-500">
               {dailySkip}
@@ -143,11 +153,13 @@ export default function SelectDayStatus({
         {open && (
           <SelectContent>
             <SelectGroup>
-              {STATUS_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.startIcon} {option.label}
-                </SelectItem>
-              ))}
+              {filteredStatusOptions.map((key) => {
+                return (
+                  <SelectItem key={key} value={key}>
+                    {STATUS_OPTIONS[key as SelectHabitState].startIcon} {STATUS_OPTIONS[key as SelectHabitState].label}
+                  </SelectItem>
+                );
+              })}
             </SelectGroup>
           </SelectContent>
         )}

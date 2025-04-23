@@ -25,6 +25,8 @@ export enum HabitState {
   PENDING = "pending",
   PROGRESS = "progress",
   DONE = "done",
+  UNDONE = "undone",
   SKIP = "skip",
+  UNSKIP = "unskip",
   INCOMPLETE = "incomplete",
 }

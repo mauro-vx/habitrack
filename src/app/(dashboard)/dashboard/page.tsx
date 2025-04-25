@@ -23,9 +23,7 @@ export default async function DashboardPage() {
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <main className="container flex h-screen flex-col gap-4 border-2 border-yellow-500">
-        <Switcher slots={slots} />
-      </main>
+      <Switcher slots={slots} />
     </HydrationBoundary>
   );
 }

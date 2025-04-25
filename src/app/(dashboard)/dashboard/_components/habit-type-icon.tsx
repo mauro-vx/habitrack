@@ -5,6 +5,7 @@ import { Circle, Triangle, Square, PlusCircle } from "lucide-react";
 import { Enums } from "@/lib/supabase/database.types";
 import { ShowHabitState } from "@/app/types";
 import { HabitState, HabitType } from "@/app/enums";
+import { cn } from "@/lib/utils";
 
 const STATUS_OPTIONS_MAP = {
   [HabitState.PENDING]: {
@@ -32,9 +33,11 @@ const STATUS_OPTIONS_MAP = {
 export default function HabitTypeIcon({
   habitType,
   habitState,
+  className,
 }: {
   habitType: Enums<"habit_type">;
   habitState: ShowHabitState;
+  className?: string;
 }) {
   const selectedOption = STATUS_OPTIONS_MAP[habitState];
 
@@ -50,5 +53,5 @@ export default function HabitTypeIcon({
     return null;
   }
 
-  return <ShapeIcon className={selectedOption.fill} />;
+  return <ShapeIcon className={cn(selectedOption.fill, className)}/>;
 }

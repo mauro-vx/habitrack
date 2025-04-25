@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { getAdjacentWeeksDate, getAdjacentWeeksNumber } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import WeekContent from "./week-selector/week-content";
 
@@ -98,51 +97,38 @@ export default function WeekSelector() {
   }, [api, handlePreviousWeek, handleNextWeek]);
 
   return (
-    <div className="flex w-full flex-col justify-center">
-      <div className="mb-4 flex items-center justify-between">
-        <Button variant="outline" size="icon" onClick={() => scrollHandler("left")} aria-label="Previous week">
-          <ChevronLeft className="h-4 w-4" />
+    <>
+      <div className="flex items-center gap-x-4">
+        <Button variant="ghost" size="icon" onClick={() => scrollHandler("left")} aria-label="Previous week">
+          <ChevronLeft className="size-4" />
         </Button>
-        <h1>
-          previous: {visibleWeeks[0].year} - {visibleWeeks[0].week}
-        </h1>
-        <h1>
-          current: {visibleWeeks[1].year} - {visibleWeeks[1].week}
-        </h1>
-        <h1>
-          next: {visibleWeeks[2].year} - {visibleWeeks[2].week}
-        </h1>
-        <Button variant="outline" size="icon" onClick={() => scrollHandler("right")} aria-label="Next week">
-          <ChevronRight className="h-4 w-4" />
+        <span>
+          Week {visibleWeeks[1].week} - {visibleWeeks[1].year}
+        </span>
+        <Button variant="ghost" size="icon" onClick={() => scrollHandler("right")} aria-label="Next week">
+          <ChevronRight className="size-4" />
         </Button>
       </div>
 
-      <Carousel
-        opts={{ loop: true, inViewThreshold: 1, startIndex: 1, breakpoints: {} }}
-        className="w-full max-w-[1200px]"
-        setApi={setApi}
-      >
-        <CarouselContent>
-          {[carouselItem0, carouselItem1, carouselItem2].map((carouselItem, idx) => (
-            <CarouselItem key={`carousel-item-${idx}`} className="basis-full">
-              <Card className="h-[700px] w-full rounded-none">
-                <CardContent className="flex h-full flex-col items-center justify-center overflow-scroll border-2 border-red-500">
-                  <React.Suspense
-                    fallback={<div>Loading data for week {visibleWeeks[carouselItem.current].week}...</div>}
-                  >
-                    <WeekContent
-                      weekData={{
-                        year: visibleWeeks[carouselItem.current].year,
-                        week: visibleWeeks[carouselItem.current].week,
-                      }}
-                    />
-                  </React.Suspense>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
-    </div>
+      <div className="flex h-full flex-col overflow-y-hidden">
+        <Carousel
+          opts={{ loop: true, inViewThreshold: 1, startIndex: 1, breakpoints: {} }}
+          className="h-full border-2 border-blue-500"
+          setApi={setApi}
+        >
+          <CarouselContent className="h-full" parentClassName="h-full">
+            {[carouselItem0, carouselItem1, carouselItem2].map((carouselItem, idx) => (
+              <CarouselItem key={`carousel-item-${idx}`} className="flex h-full flex-col border-2 border-yellow-200">
+                <React.Suspense
+                  fallback={<div>Loading data for week {visibleWeeks[carouselItem.current].week}...</div>}
+                >
+                  <WeekContent weekData={visibleWeeks[carouselItem.current]} />
+                </React.Suspense>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
+    </>
   );
 }

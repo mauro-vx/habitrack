@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { Medal } from "lucide-react";
+
 import { HabitEntitiesRpc, HabitEntityRpc, ShowHabitState } from "@/app/types";
 import { Tables } from "@/lib/supabase/database.types";
 import { HabitState, HabitType } from "@/app/enums";
@@ -14,10 +16,12 @@ const getStatusForRender = (
   dayNumber: number,
   isCurrentDay: boolean,
   isPastDay: boolean,
+  weeklyCompletion: number,
+  weeklySkip: number,
 ): {
   shouldRender: boolean;
   habitState: ShowHabitState;
-  habitDayValues: Tables<"habit_statuses">
+  habitDayValues: Tables<"habit_statuses">;
 } => {
   const habitDayStatus = habit.habit_statuses?.[dayNumber];
   const completionCount = habitDayStatus?.completion_count ?? 0;
@@ -49,44 +53,30 @@ const getStatusForRender = (
             : HabitState.DONE;
         habitDayValues = habitDayStatus;
         break;
-
-      default:
-        shouldRender = true;
     }
   }
 
   if (habit.type === HabitType.WEEKLY) {
-    const statesSum = Object.values(habit.habit_statuses || {}).reduce(
-      (acc, status) => {
-        acc.completion_count += status.completion_count || 0;
-        acc.skipped_count += status.skipped_count || 0;
-        return acc;
-      },
-      { completion_count: 0, skipped_count: 0 },
-    );
-
-    const aggregatedValues = {
-      ...(habitDayStatus || {}),
-      completion_count: statesSum.completion_count,
-      skipped_count: statesSum.skipped_count,
-    };
+    const habitStatuses = Object.values(habit.habit_statuses || {});
+    const lastEntry = habitStatuses.at(-1);
 
     switch (true) {
       case isCurrentDay:
-        shouldRender = !!habitDayStatus || totalAttempts < habit.target_count;
-        habitState = !habitDayStatus && !statesSum.completion_count && !statesSum.skipped_count
-          ? HabitState.PENDING
-          : totalAttempts < habit.target_count
-            ? HabitState.PROGRESS
-            : HabitState.DONE;
-        habitDayValues = aggregatedValues;
+        shouldRender = !!habitDayStatus || weeklyCompletion + weeklySkip < habit.target_count;
+        habitState =
+          !habitDayStatus && !weeklyCompletion && !weeklySkip
+            ? HabitState.PENDING
+            : weeklyCompletion + weeklySkip < habit.target_count
+              ? HabitState.PROGRESS
+              : HabitState.DONE;
+        habitDayValues = habitDayStatus;
         break;
 
       case isPastDay:
-        shouldRender = !!habitDayStatus;
+        shouldRender = !!habitDayStatus || weeklyCompletion + weeklySkip < habit.target_count;
         habitState = !habitDayStatus
           ? HabitState.PENDING
-          : totalAttempts < habit.target_count
+          : weeklyCompletion + weeklySkip < habit.target_count || habitDayStatus !== lastEntry
             ? HabitState.PROGRESS
             : HabitState.DONE;
         habitDayValues = habitDayStatus;
@@ -117,9 +107,6 @@ const getStatusForRender = (
             : HabitState.DONE;
         habitDayValues = habitDayStatus;
         break;
-
-      default:
-        shouldRender = isHabitActiveToday;
     }
   }
 
@@ -131,42 +118,68 @@ export function HabitGrid({ weekData }: { weekData: { year: number; week: number
 
   return React.useMemo(
     () =>
-      habits.map((habit) => (
-        <React.Fragment key={habit.id}>
-          <div className="col-start-1 p-2 text-xl font-bold">{habit.name}</div>
+      habits.map((habit) => {
+        const { weeklyCompletion, weeklySkip } = Object.values(habit.habit_statuses || {}).reduce(
+          (acc, status) => {
+            acc.weeklyCompletion += status.completion_count || 0;
+            acc.weeklySkip += status.skipped_count || 0;
+            return acc;
+          },
+          { weeklyCompletion: 0, weeklySkip: 0 },
+        );
 
-          {dayNames.map((dayName, idx) => {
-            const dayNumber = idx + 1;
-            const isCurrentDay = isToday(weekData.year, weekData.week, dayNumber);
-            const isPastDay = isBeforeToday(weekData.year, weekData.week, dayNumber);
+        return (
+          <React.Fragment key={habit.id}>
+            <div className="col-start-1 truncate text-xs lg:text-lg lg:font-semibold">{habit.name}</div>
 
-            const { shouldRender, habitState, habitDayValues } = getStatusForRender(
-              habit,
-              dayNumber,
-              isCurrentDay,
-              isPastDay,
-            );
+            {dayNames.map((dayName, idx) => {
+              const dayNumber = idx + 1;
+              const isCurrentDay = isToday(weekData.year, weekData.week, dayNumber);
+              const isPastDay = isBeforeToday(weekData.year, weekData.week, dayNumber);
 
-            if (!shouldRender) return null;
+              const cumulativeCountUntilToday = Object.keys(habit.habit_statuses || {})
+                .filter((dayKey) => +dayKey <= dayNumber)
+                .reduce((cumulativeCount, dayKey) => {
+                  const status = habit.habit_statuses?.[+dayKey];
+                  return cumulativeCount + (status?.completion_count || 0) + (status?.skipped_count || 0);
+                }, 0);
 
-            return (
-              <SelectDayStatus
-                key={`${habit.id}-${dayName}`}
-                habitId={habit.id}
-                habitType={habit.type}
-                habitTarget={habit.target_count}
-                habitState={habitState}
-                dailyCompletion={habitDayValues?.completion_count}
-                dailySkip={habitDayValues?.skipped_count}
-                habitStatusId={habitDayValues?.id}
-                year={weekData.year}
-                week={weekData.week}
-                dayNumber={dayNumber}
-              />
-            );
-          })}
-        </React.Fragment>
-      )),
+              const { shouldRender, habitState, habitDayValues } = getStatusForRender(
+                habit,
+                dayNumber,
+                isCurrentDay,
+                isPastDay,
+                weeklyCompletion,
+                weeklySkip,
+              );
+
+              if (!shouldRender) return null;
+
+              return (
+                <SelectDayStatus
+                  key={`${habit.id}-${dayName}`}
+                  habitId={habit.id}
+                  habitType={habit.type}
+                  habitTarget={habit.target_count}
+                  habitState={habitState}
+                  dailyCompletion={habitDayValues?.completion_count}
+                  dailySkip={habitDayValues?.skipped_count}
+                  weeklyCompletion={weeklyCompletion}
+                  weeklySkip={weeklySkip}
+                  cumulativeCountUntilToday={cumulativeCountUntilToday}
+                  habitStatusId={habitDayValues?.id}
+                  year={weekData.year}
+                  week={weekData.week}
+                  dayNumber={dayNumber}
+                  isPast={isPastDay}
+                />
+              );
+            })}
+
+            <Medal className="col-start-9 size-5 stroke-yellow-500" />
+          </React.Fragment>
+        );
+      }),
     [habits, weekData.week, weekData.year],
   );
 }

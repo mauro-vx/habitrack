@@ -16,15 +16,15 @@ export function DayNumberRow({ weekData }: { weekData: { year: number; week: num
   const isCurrentWeekAndYear = weekData.week === currentWeek && weekData.year === currentYear;
 
   return dayNumbers.map((dayNumber, idx) => (
-    <div
+    <span
       key={dayNumber}
       className={cn(
-        "p-2 font-medium",
+        "flex size-8 lg:size-12 items-center justify-center text-sm lg:text-base lg:font-medium",
         !idx && "col-start-2",
-        isCurrentWeekAndYear && dayNumber === currentDay && "rounded-full border-2 border-blue-500"
+        isCurrentWeekAndYear && dayNumber === currentDay && "rounded-md border-2 border-blue-500",
       )}
     >
       {dayNumber}
-    </div>
+    </span>
   ));
 }

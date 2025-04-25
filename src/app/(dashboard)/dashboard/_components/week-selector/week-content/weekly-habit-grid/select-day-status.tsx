@@ -4,7 +4,7 @@ import { PlusCircle, MinusCircle } from "lucide-react";
 
 import { SelectHabitState, ShowHabitState } from "@/app/types";
 import { Tables, Enums } from "@/lib/supabase/database.types";
-import { HabitState } from "@/app/enums";
+import { HabitState, HabitType } from "@/app/enums";
 import { cn } from "@/lib/utils";
 import { Select } from "@radix-ui/react-select";
 import { SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
@@ -61,6 +61,9 @@ export default function SelectDayStatus({
   habitType,
   dailyCompletion,
   dailySkip,
+  weeklyCompletion,
+  weeklySkip,
+  cumulativeCountUntilToday,
   open: controlledOpen,
   onOpenChange = () => {},
   year,
@@ -68,12 +71,16 @@ export default function SelectDayStatus({
   dayNumber,
   habitId,
   habitStatusId,
+  isPast,
 }: {
   habitState: ShowHabitState;
   habitType: Enums<"habit_type">;
   habitTarget: Tables<"habits">["target_count"];
   dailyCompletion: Tables<"habit_statuses">["completion_count"];
   dailySkip: Tables<"habit_statuses">["skipped_count"];
+  weeklyCompletion: number;
+  weeklySkip: number;
+  cumulativeCountUntilToday: number;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   year: number;
@@ -81,13 +88,14 @@ export default function SelectDayStatus({
   dayNumber: number;
   habitId: Tables<"habits">["id"];
   habitStatusId?: Tables<"habit_statuses">["id"];
+  isPast: boolean;
 }) {
   const [internalOpen, setInternalOpen] = React.useState(false);
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
 
-  const baseClassName = cn(getColStartClass(dayNumber), "place-self-center");
+  const baseClassName = getColStartClass(dayNumber);
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!isControlled) {
@@ -107,8 +115,6 @@ export default function SelectDayStatus({
 
       await updateHabitStatus(habitStatusId, value);
     } else {
-      console.log("🙀 dayNumber 🙀: ", dayNumber);
-
       await createHabitStatus(habitId, week, year, dayNumber, value);
     }
   };
@@ -119,10 +125,15 @@ export default function SelectDayStatus({
     if (key === HabitState.UNDONE && !dailyCompletion) return false;
     if (key === HabitState.UNSKIP && !dailySkip) return false;
 
-    return !(
-      (key === HabitState.DONE || key === HabitState.SKIP) &&
-      (dailyCompletion || 0) + (dailySkip || 0) === habitTarget
-    );
+    const isCompletionOrSkipAction = key === HabitState.DONE || key === HabitState.SKIP;
+    const isAtTargetLimit =
+      habitType === HabitType.WEEKLY
+        ? weeklyCompletion + weeklySkip === habitTarget
+        : (dailyCompletion || 0) + (dailySkip || 0) === habitTarget;
+
+    if (isCompletionOrSkipAction && isAtTargetLimit) return false;
+
+    return true;
   });
 
   return (
@@ -130,21 +141,29 @@ export default function SelectDayStatus({
       <Select value={habitState} onValueChange={handleValueChange} open={open} onOpenChange={handleOpenChange}>
         <SelectTrigger
           disabled={isFutureDay}
-          className="relative min-h-fit min-w-fit p-2 text-xs [&_svg:not([class*='size-'])]:size-8 [&>svg:last-child]:hidden"
+          className={cn(
+            "relative flex aspect-square items-center justify-center p-0 text-xs font-medium lg:text-base lg:font-bold [&>svg:last-child]:hidden",
+            habitType === HabitType.WEEKLY &&
+              habitState === HabitState.PENDING &&
+              isPast &&
+              "border-2 border-dashed border-gray-500",
+          )}
         >
-          <HabitTypeIcon habitType={habitType} habitState={habitState} />
+          <HabitTypeIcon habitType={habitType} habitState={habitState} className="size-5 lg:size-8" />
           {!!dailySkip && (
-            <span className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 transform text-xs font-bold text-blue-500">
+            <span className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 transform text-blue-500 lg:-translate-x-1/2 lg:-translate-y-1/2">
               {dailySkip}
             </span>
           )}
           <FractionDisplay
-            numerator={(dailyCompletion || 0) + (dailySkip || 0)}
+            numerator={
+              habitType === HabitType.WEEKLY ? cumulativeCountUntilToday : (dailyCompletion || 0) + (dailySkip || 0)
+            }
             denominator={habitTarget}
-            className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 transform"
+            className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 transform lg:translate-x-1/2 lg:-translate-y-1/2"
           />
           {!!dailyCompletion && (
-            <span className="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2 transform text-xs font-bold text-green-500">
+            <span className="absolute right-0 bottom-0 translate-x-1/3 translate-y-1/3 transform text-green-500 lg:translate-x-1/2 lg:translate-y-1/2">
               {dailyCompletion}
             </span>
           )}

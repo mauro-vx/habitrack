@@ -68,17 +68,8 @@ export function SelectDayStatus({
     onOpenChange(newOpen);
   };
 
-  const handleValueChange = async (value: HabitState) => {
-    if (habitDayStatus?.id) {
-      if (value === HabitState.UNSKIP && habitDayStatus?.skipped_count === 1 && !habitDayStatus?.completion_count) {
-        React.startTransition(() => deleteAction(habitDayStatus.id));
-      }
-      if (value === HabitState.UNDONE && habitDayStatus?.completion_count === 1 && !habitDayStatus?.skipped_count) {
-        React.startTransition(() => deleteAction(habitDayStatus.id));
-      } else {
-        React.startTransition(() => updateAction({ habitStatusId: habitDayStatus?.id, action: value }));
-      }
-    } else {
+  const handleValueChange = async (value: SelectHabitState) => {
+    if (!habitDayStatus?.id) {
       React.startTransition(() =>
         createAction({
           habitId: habit.id,
@@ -88,7 +79,20 @@ export function SelectDayStatus({
           initialState: value,
         }),
       );
+      return;
     }
+
+    if (value === HabitState.UNSKIP && habitDayStatus.skipped_count === 1 && !habitDayStatus.completion_count) {
+      React.startTransition(() => deleteAction(habitDayStatus.id));
+      return;
+    }
+
+    if (value === HabitState.UNDONE && habitDayStatus.completion_count === 1 && !habitDayStatus.skipped_count) {
+      React.startTransition(() => deleteAction(habitDayStatus.id));
+      return;
+    }
+
+    React.startTransition(() => updateAction({ habitStatusId: habitDayStatus.id, action: value }));
   };
 
   const isPending = isPendingCreate || isPendingUpdate || isPendingDelete;

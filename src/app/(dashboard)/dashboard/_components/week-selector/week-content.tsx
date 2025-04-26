@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import { HabitGrid } from "./week-content/weekly-habit-grid";
+import { WeeklyHabitGrid } from "./week-content/weekly-habit-grid";
 import { DayNameRow } from "./week-content/day-name-row";
 import { DayNumberRow } from "./week-content/day-number-row";
 
-export default function WeekContent({ weekData }: { weekData: { year: number; week: number } }) {
+export function WeekContent({ weekData }: { weekData: { year: number; week: number } }) {
   return (
     <>
       <div className="grid grid-cols-9 place-content-start place-items-center gap-2 lg:gap-4">
@@ -13,7 +13,7 @@ export default function WeekContent({ weekData }: { weekData: { year: number; we
       </div>
 
       <div className="grid grid-cols-9 place-items-center gap-2 overflow-y-scroll lg:gap-4 py-2 lg:pt-4">
-        <HabitGrid weekData={weekData} />
+        <WeeklyHabitGrid weekData={weekData} />
       </div>
     </>
   );

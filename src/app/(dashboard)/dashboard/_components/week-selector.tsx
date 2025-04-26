@@ -7,9 +7,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAdjacentWeeksDate, getAdjacentWeeksNumber } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import WeekContent from "./week-selector/week-content";
+import { WeekContent } from "./week-selector/week-content";
 
-export default function WeekSelector() {
+export function WeekSelector() {
   const [api, setApi] = React.useState<CarouselApi>();
 
   const {

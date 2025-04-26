@@ -1,4 +1,4 @@
-export default function FractionDisplay({
+export function FractionDisplay({
   numerator,
   denominator,
   className,

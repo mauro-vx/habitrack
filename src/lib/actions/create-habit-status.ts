@@ -3,27 +3,33 @@
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 
-import { Database } from "@/lib/supabase/database.types";
+import { TablesInsert } from "@/lib/supabase/database.types";
 import { HabitEntity } from "@/app/types";
 import { HabitState, Status } from "@/app/enums";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 
 export async function createHabitStatus(
-  habitId: HabitEntity["id"],
-  week: number,
-  year: number,
-  dayNumber: number,
-  initialState: HabitState,
-) {
+  prevstate: { status: Status; message: string } | null,
+  payload: {
+    habitId: HabitEntity["id"];
+    week: number;
+    year: number;
+    dayNumber: number;
+    initialState: HabitState;
+  },
+): Promise<{
+  status: Status;
+  message: string;
+}> {
   const { authSupabase } = await authenticateUser();
 
   const { data: existingStatus, error: dbError } = await authSupabase
     .from("habit_statuses")
     .select("*")
-    .eq("habit_id", habitId)
-    .eq("year", year)
-    .eq("week", week)
-    .eq("day_number", dayNumber)
+    .eq("habit_id", payload.habitId)
+    .eq("year", payload.year)
+    .eq("week", payload.week)
+    .eq("day_number", payload.dayNumber)
     .maybeSingle();
 
   if (dbError) {
@@ -31,22 +37,22 @@ export async function createHabitStatus(
   }
 
   if (existingStatus) {
-    return { status: "EXISTS", data: existingStatus };
+    return { status: Status.DATABASE_ERROR, message: "Habit status already exists." };
   }
 
-  const newHabitStatus: Database["public"]["Tables"]["habit_statuses"]["Insert"] = {
+  const newHabitStatus: TablesInsert<"habit_statuses"> = {
     id: uuidv4(),
-    habit_id: habitId,
-    week: week,
-    year: year,
-    day_number: dayNumber,
-    completion_count: initialState === HabitState.DONE ? 1 : 0,
-    skipped_count: initialState === HabitState.SKIP ? 1 : 0,
+    habit_id: payload.habitId,
+    week: payload.week,
+    year: payload.year,
+    day_number: payload.dayNumber,
+    completion_count: payload.initialState === HabitState.DONE ? 1 : 0,
+    skipped_count: payload.initialState === HabitState.SKIP ? 1 : 0,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
 
-  const { error: insertError, data: insertedData } = await authSupabase
+  const { error: insertError } = await authSupabase
     .from("habit_statuses")
     .insert([newHabitStatus])
     .select();
@@ -57,5 +63,5 @@ export async function createHabitStatus(
 
   revalidatePath("/dashboard", "page");
 
-  return { status: Status.SUCCESS, data: insertedData };
+  return { status: Status.SUCCESS, message: "Habit status created successfully." };
 }

@@ -6,13 +6,19 @@ import { TablesUpdate } from "@/lib/supabase/database.types";
 import { HabitState, Status } from "@/app/enums";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 
-export async function updateHabitStatus(habitStatusId: string, action: HabitState) {
+export async function updateHabitStatus(
+  prevstate: { status: Status; message: string } | null,
+  payload: { habitStatusId: string; action: HabitState }
+): Promise<{
+  status: Status;
+  message: string;
+}> {
   const { authSupabase } = await authenticateUser();
 
   const { data: habitStatus, error: fetchError } = await authSupabase
     .from("habit_statuses")
     .select("*")
-    .eq("id", habitStatusId)
+    .eq("id", payload.habitStatusId)
     .single();
 
   if (fetchError || !habitStatus) {
@@ -23,20 +29,20 @@ export async function updateHabitStatus(habitStatusId: string, action: HabitStat
     updated_at: new Date().toISOString(),
   };
 
-  if (action === HabitState.DONE) {
+  if (payload.action === HabitState.DONE) {
     updatePayload.completion_count = habitStatus.completion_count! + 1;
-  } else if (action === HabitState.SKIP) {
+  } else if (payload.action === HabitState.SKIP) {
     updatePayload.skipped_count = habitStatus.skipped_count! + 1;
-  } else if (action === HabitState.UNDONE) {
+  } else if (payload.action === HabitState.UNDONE) {
     updatePayload.completion_count = !!habitStatus.completion_count ? habitStatus.completion_count - 1 : 0;
-  } else if (action === HabitState.UNSKIP) {
+  } else if (payload.action === HabitState.UNSKIP) {
     updatePayload.skipped_count = !!habitStatus.skipped_count ? habitStatus.skipped_count - 1 : 0;
   }
 
   const { error: updateError } = await authSupabase
     .from("habit_statuses")
     .update(updatePayload)
-    .eq("id", habitStatusId);
+    .eq("id", payload.habitStatusId);
 
   if (updateError) {
     return { status: Status.DATABASE_ERROR, message: updateError.message };
@@ -44,5 +50,5 @@ export async function updateHabitStatus(habitStatusId: string, action: HabitStat
 
   revalidatePath("/dashboard", "page");
 
-  return { status: Status.SUCCESS };
+  return { status: Status.SUCCESS, message: "Habit status successfully updated." };
 }

@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { HydrationBoundary } from "@tanstack/react-query";
 
 import { prefetchDataForDashboardRpc } from "../dashboard/_utils/server";
-import Switcher from "./_components/switcher";
-import WeekSelector from "./_components/week-selector";
+import { Switcher } from "./_components/switcher";
+import { WeekSelector } from "./_components/week-selector";
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();

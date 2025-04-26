@@ -30,7 +30,7 @@ const STATUS_OPTIONS_MAP = {
   },
 };
 
-export default function HabitTypeIcon({
+export function HabitTypeIcon({
   habitType,
   habitState,
   className,

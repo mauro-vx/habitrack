@@ -7,7 +7,7 @@ import { Home, SquarePlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-export default function Switcher({ slots }: { slots: { slotName: string; component: React.ReactNode }[] }) {
+export function Switcher({ slots }: { slots: { slotName: string; component: React.ReactNode }[] }) {
   const [selectedSlotIndex, setSelectedSlotIndex] = React.useState(0);
 
   return (

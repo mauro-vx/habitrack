@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAdjacentWeeksDate, getAdjacentWeeksNumber } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { WeekContent } from "./week-selector/week-content";
+import { WeekView } from "./week-selector/week-view";
 
 export function WeekSelector() {
   const [api, setApi] = React.useState<CarouselApi>();
@@ -122,7 +122,7 @@ export function WeekSelector() {
                 <React.Suspense
                   fallback={<div>Loading data for week {visibleWeeks[carouselItem.current].week}...</div>}
                 >
-                  <WeekContent weekData={visibleWeeks[carouselItem.current]} />
+                  <WeekView weekData={visibleWeeks[carouselItem.current]} />
                 </React.Suspense>
               </CarouselItem>
             ))}

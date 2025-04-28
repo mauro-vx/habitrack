@@ -18,16 +18,21 @@ import {
   IceCreamCone,
   TrendingUp,
 } from "lucide-react";
+import { HabitEntityRpc } from "@/app/types";
+import { HabitType } from "@/app/enums";
 
-export function MedalIcon({
+export function WeekProgressBadge({
+  habit,
   weeklyTotalCount,
-  targetCount,
-  className = "size-4",
+  className = "size-4 col-start-9",
 }: {
+  habit: HabitEntityRpc;
   weeklyTotalCount: number;
-  targetCount: number;
   className?: string;
 }) {
+  const weeklyTarget = calculateWeeklyTarget(habit);
+
+
   const getRandomIcon = (icons: React.ElementType[]) => {
     const randomIndex = Math.floor(Math.random() * icons.length);
     return icons[randomIndex];
@@ -39,7 +44,7 @@ export function MedalIcon({
     return <ZeroIcon className={`${className} stroke-fuchsia-300`} />;
   }
 
-  const completionRatio = weeklyTotalCount / targetCount;
+  const completionRatio = weeklyTotalCount / weeklyTarget;
 
   if (completionRatio >= 1) {
     const fullIcons = [Trophy, Medal, Award];
@@ -60,4 +65,16 @@ export function MedalIcon({
   }
 
   return <Circle className={`${className} stroke-gray-300`} />;
+}
+
+function calculateWeeklyTarget(habit: HabitEntityRpc): number {
+  if (habit.type === HabitType.WEEKLY) {
+    return habit.target_count;
+  } else if (habit.type === HabitType.DAILY) {
+    return habit.target_count * 7;
+  } else if (habit.type === HabitType.CUSTOM) {
+    const activeDays = Object.values(habit.days_of_week || {}).filter(Boolean).length;
+    return habit.target_count * activeDays;
+  }
+  return 0;
 }

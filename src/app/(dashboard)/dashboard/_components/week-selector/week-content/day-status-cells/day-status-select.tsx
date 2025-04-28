@@ -15,7 +15,7 @@ import { updateHabitStatus } from "@/lib/actions/update-habit-status";
 import { createHabitStatus } from "@/lib/actions/create-habit-status";
 import { isAfterToday, isBeforeToday, isToday } from "@/app/(dashboard)/dashboard/_utils/date";
 
-export function SelectDayStatus({
+export function DayStatusSelect({
   habit,
   habitDayStatus,
   cumulativeCountWeekly,
@@ -26,6 +26,7 @@ export function SelectDayStatus({
   dayNumber,
   open: controlledOpen,
   onOpenChange = () => {},
+  className,
 }: {
   habit: HabitEntityRpc;
   habitDayStatus: Tables<"habit_statuses">;
@@ -38,6 +39,7 @@ export function SelectDayStatus({
   dayNumber: number;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }) {
   const [internalOpen, setInternalOpen] = React.useState(false);
   const isControlled = controlledOpen !== undefined;
@@ -117,7 +119,7 @@ export function SelectDayStatus({
   });
 
   return (
-    <div className={COL_START_CLASSES[dayNumber]}>
+    <div className={className}>
       <Select value={habitState} onValueChange={handleValueChange} open={open} onOpenChange={handleOpenChange}>
         <SelectTrigger
           disabled={isFutureDay || isPendingDelete || isPendingUpdate || isPendingCreate}
@@ -197,16 +199,6 @@ const STATUS_OPTIONS = {
     color: "fill-yellow-500",
     background: "bg-yellow-500",
   },
-};
-
-const COL_START_CLASSES: Record<number, string> = {
-  1: "col-start-2",
-  2: "col-start-3",
-  3: "col-start-4",
-  4: "col-start-5",
-  5: "col-start-6",
-  6: "col-start-7",
-  7: "col-start-8",
 };
 
 function getHabitState(

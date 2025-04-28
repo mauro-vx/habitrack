@@ -46,6 +46,8 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --color-brand: var(--brand);
+  --text-tiny: 0.625rem;
+  --text-extra-tiny: 0.5rem;
 }
 
 :root {

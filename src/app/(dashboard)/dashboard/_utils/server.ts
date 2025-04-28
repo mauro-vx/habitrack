@@ -45,3 +45,48 @@ export async function prefetchDataForDashboardRpc(timezone: string) {
   return dehydrate(queryClient);
 }
 
+export async function fetchHabitsByTimezone(timezone: string) {
+  const { authSupabase } = await authenticateUser();
+
+  const now = new Date();
+  const localTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+
+  const { year, week } = getWeekNumberAndYear(localTime);
+
+  if (year == null || week == null) {
+    throw new Error("Both `year` and `week` are required for fetching habits.");
+  }
+
+  const [activeHabits, futureHabits, pastHabits] = await Promise.all([
+    authSupabase
+      .from("habits")
+      .select("*, habit_statuses(*)")
+      .or(`start_year.lt.${year},and(start_year.eq.${year},start_week.lte.${week})`)
+      .or(`end_year.gte.${year},and(end_year.eq.${year},end_week.gte.${week})`),
+
+    authSupabase
+      .from("habits")
+      .select("*, habit_statuses(*)")
+      .or(`start_year.gt.${year},and(start_year.eq.${year},start_week.gt.${week})`),
+
+    authSupabase
+      .from("habits")
+      .select("*, habit_statuses(*)")
+      .or(`end_year.lt.${year},and(end_year.eq.${year},end_week.lt.${week})`),
+  ]);
+
+  if (activeHabits.error || futureHabits.error || pastHabits.error) {
+    throw new Error(
+      activeHabits.error?.message ||
+        futureHabits.error?.message ||
+        pastHabits.error?.message ||
+        "Failed to fetch habits",
+    );
+  }
+
+  return {
+    active: activeHabits.data || [],
+    future: futureHabits.data || [],
+    past: pastHabits.data || [],
+  };
+}

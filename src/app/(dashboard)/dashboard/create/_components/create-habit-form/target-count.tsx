@@ -1,10 +1,11 @@
 import * as React from "react";
 
 import { Control } from "react-hook-form";
+import { Plus, Minus } from "lucide-react";
 
 import { CreateHabitSchema } from "../../schema";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function TargetCount({
   control,
@@ -21,16 +22,41 @@ export default function TargetCount({
         <FormItem>
           <FormLabel>Target Count:</FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              type="number"
-              min="1"
-              disabled={disabled}
-              onChange={(e) => {
-                const value = e.target.value === "" ? "" : Number(e.target.value);
-                field.onChange(value);
-              }}
-            />
+            <div className="flex items-center">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                disabled={disabled || field.value <= 1}
+                onClick={() => {
+                  const newValue = Math.max(1, Number(field.value) - 1);
+                  field.onChange(newValue);
+                }}
+                className="h-9 w-9 rounded-r-none"
+                aria-label="Decrease target count"
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+
+              <div className="border-input bg-background flex h-9 min-w-[3rem] items-center justify-center border border-x-0 px-3 text-sm">
+                {field.value || 1}
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                disabled={disabled}
+                onClick={() => {
+                  const newValue = Number(field.value || 1) + 1;
+                  field.onChange(newValue);
+                }}
+                className="h-9 w-9 rounded-l-none"
+                aria-label="Increase target count"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>

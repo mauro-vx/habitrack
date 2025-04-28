@@ -47,7 +47,7 @@ const SwitcherHeader = React.memo(
 SwitcherHeader.displayName = "SwitcherHeader";
 
 export function Switcher({ slots }: { slots: { slotName: string; component: React.ReactNode }[] }) {
-  const [selectedSlotIndex, setSelectedSlotIndex] = React.useState(0);
+  const [selectedSlotIndex, setSelectedSlotIndex] = React.useState(1);
 
   const SelectedComponent = React.useMemo(() => slots[selectedSlotIndex].component, [slots, selectedSlotIndex]);
 

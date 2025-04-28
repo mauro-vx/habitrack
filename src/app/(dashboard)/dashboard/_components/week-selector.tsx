@@ -113,12 +113,11 @@ export function WeekSelector() {
       <div className="flex h-full flex-col overflow-y-hidden">
         <Carousel
           opts={{ loop: true, inViewThreshold: 1, startIndex: 1, breakpoints: {} }}
-          className="h-full border-2 border-blue-500"
           setApi={setApi}
         >
           <CarouselContent className="h-full" parentClassName="h-full">
             {[carouselItem0, carouselItem1, carouselItem2].map((carouselItem, idx) => (
-              <CarouselItem key={`carousel-item-${idx}`} className="flex h-full flex-col border-2 border-yellow-200">
+              <CarouselItem key={`carousel-item-${idx}`} className="flex h-full flex-col">
                 <React.Suspense
                   fallback={<div>Loading data for week {visibleWeeks[carouselItem.current].week}...</div>}
                 >

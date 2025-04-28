@@ -2,10 +2,11 @@ import * as React from "react";
 
 import { HabitEntityRpc } from "@/app/types";
 import { HabitType } from "@/app/enums";
-import { isAfterToday } from "@/app/(dashboard)/dashboard/_utils/date";
-import { DayStatusSelect } from "@/app/(dashboard)/dashboard/_components/week-selector/week-content/day-status-cells/day-status-select";
-import { COL_START_CLASSES } from "@/app/(dashboard)/dashboard/_components/week-selector/week-content/_utils/grid-column-utils";
 import { DAYS_OF_WEEK } from "@/app/(dashboard)/dashboard/constants";
+import { isAfterToday } from "@/app/(dashboard)/dashboard/_utils/date";
+import { COL_START_CLASSES } from "../_utils/grid-column-utils";
+import { calculateCountUntilDay, getDayStatusCount } from "./day-status-cells/utils";
+import { DayStatusSelect } from "./day-status-cells/day-status-select";
 
 export function DayStatusCells({
   habit,
@@ -48,15 +49,4 @@ export function DayStatusCells({
       />
     );
   });
-}
-
-function calculateCountUntilDay(habit: HabitEntityRpc, dayNumber: number): number {
-  return Object.values(habit.habit_statuses || {})
-    .filter((_, idx) => +Object.keys(habit.habit_statuses || {})[idx] <= dayNumber)
-    .reduce((total, status) => total + (status?.completion_count || 0) + (status?.skipped_count || 0), 0);
-}
-
-function getDayStatusCount(habit: HabitEntityRpc, dayNumber: number): number {
-  const status = habit.habit_statuses?.[dayNumber];
-  return (status?.completion_count || 0) + (status?.skipped_count || 0);
 }

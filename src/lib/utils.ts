@@ -7,6 +7,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function capitalizeFirstLetter(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 export function generateCacheKey(user: User | null, date: Date): string {
   if (!user || !user.id) {
     console.error("Invalid user object. User must contain an 'id' property.");

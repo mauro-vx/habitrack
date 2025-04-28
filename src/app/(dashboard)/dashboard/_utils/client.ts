@@ -1,4 +1,4 @@
-import { DefinedUseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DefinedUseQueryResult, useQuery } from "@tanstack/react-query";
 
 import { HabitEntities, HabitEntitiesRpc } from "@/app/types";
 import { createClient } from "@/lib/supabase/client";
@@ -19,33 +19,6 @@ export async function fetchWeekDataClient(year: number, week: number): Promise<H
 
   return data;
 }
-
-export function usePrefetchWeekData(): { (year: number, week: number): Promise<void> } {
-  const queryClient = useQueryClient();
-
-  return async (year: number, week: number) => {
-    const queryKey = ["weekData", { year, week }];
-
-    if (!queryClient.getQueryData(queryKey)) {
-      await queryClient.prefetchQuery({
-        queryKey,
-        queryFn: () => fetchWeekDataClient(year, week),
-      });
-    }
-  };
-}
-
-export function useWeekData(year: number, week: number): DefinedUseQueryResult<HabitEntities> {
-  const queryKey = ["weekData", { year, week }];
-
-  return useQuery({
-    queryKey,
-    queryFn: () => fetchWeekDataClient(year, week),
-    // @ts-expect-error: TypeScript doesn't recognize 'suspense' as a valid property
-    suspense: true,
-  });
-}
-
 
 export async function fetchWeekDataMapped(year: number, week: number): Promise<HabitEntitiesRpc> {
   const { data, error } = await supabase.rpc("fetch_week_data", { _year: year, _week: week });

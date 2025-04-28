@@ -1,19 +1,21 @@
 import * as React from "react";
 
-import { PlusCircle, MinusCircle, RefreshCcw, TriangleAlert } from "lucide-react";
+import { RefreshCcw, TriangleAlert } from "lucide-react";
 
-import { HabitEntityRpc, SelectHabitState, ShowHabitState } from "@/app/types";
+import { HabitEntityRpc, SelectHabitState } from "@/app/types";
 import { Tables } from "@/lib/supabase/database.types";
 import { HabitState, HabitType, Status } from "@/app/enums";
+import { STATUS_OPTIONS } from "./day-status-select/constants";
+import { getHabitState } from "./day-status-select/utils";
 import { cn } from "@/lib/utils";
 import { deleteHabitStatus } from "@/lib/actions/delete-habit-status";
 import { Select } from "@radix-ui/react-select";
 import { SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { HabitTypeIcon } from "@/app/(dashboard)/dashboard/_components/habit-type-icon";
 import { FractionDisplay } from "@/app/(dashboard)/dashboard/_components/fraction-display";
 import { updateHabitStatus } from "@/lib/actions/update-habit-status";
 import { createHabitStatus } from "@/lib/actions/create-habit-status";
 import { isAfterToday, isBeforeToday, isToday } from "@/app/(dashboard)/dashboard/_utils/date";
+import { HabitTypeIcon } from "./day-status-select/habit-type-icon";
 
 export function DayStatusSelect({
   habit,
@@ -159,10 +161,13 @@ export function DayStatusSelect({
         {open && (
           <SelectContent>
             <SelectGroup>
-              {filteredStatusOptions.map((key) => {
+              {filteredStatusOptions.map((statusKey) => {
+                const option = STATUS_OPTIONS[statusKey as SelectHabitState];
+                const Icon = option.startIcon;
+
                 return (
-                  <SelectItem key={key} value={key}>
-                    {STATUS_OPTIONS[key as SelectHabitState].startIcon} {STATUS_OPTIONS[key as SelectHabitState].label}
+                  <SelectItem key={statusKey} value={statusKey}>
+                    <Icon className={cn("size-4", option.color)} /> {option.label}
                   </SelectItem>
                 );
               })}
@@ -172,109 +177,4 @@ export function DayStatusSelect({
       </Select>
     </div>
   );
-}
-
-const STATUS_OPTIONS = {
-  [HabitState.DONE]: {
-    label: HabitState.DONE[0].toUpperCase() + HabitState.DONE.slice(1),
-    startIcon: <PlusCircle className="stroke-green-500" />,
-    color: "fill-green-500",
-    background: "bg-green-500",
-  },
-  [HabitState.UNDONE]: {
-    label: HabitState.UNDONE[0].toUpperCase() + HabitState.UNDONE.slice(1),
-    startIcon: <MinusCircle className="stroke-yellow-500" />,
-    color: "fill-yellow-500",
-    background: "bg-yellow-500",
-  },
-  [HabitState.SKIP]: {
-    label: HabitState.SKIP[0].toUpperCase() + HabitState.SKIP.slice(1),
-    startIcon: <PlusCircle className="stroke-blue-500" />,
-    color: "fill-blue-500",
-    background: "bg-blue-500",
-  },
-  [HabitState.UNSKIP]: {
-    label: HabitState.UNSKIP[0].toUpperCase() + HabitState.UNSKIP.slice(1),
-    startIcon: <MinusCircle className="stroke-yellow-500" />,
-    color: "fill-yellow-500",
-    background: "bg-yellow-500",
-  },
-};
-
-function getHabitState(
-  habit: HabitEntityRpc,
-  habitDayStatus: Tables<"habit_statuses">,
-  cumulativeCountWeekly: number,
-  cumulativeCountDay: number,
-  dayNumber: number,
-  isCurrentDay: boolean,
-  isPastDay: boolean,
-): ShowHabitState {
-  let habitState = HabitState.PENDING;
-
-  if (habit.type === HabitType.DAILY) {
-    switch (true) {
-      case isCurrentDay:
-        habitState = !habitDayStatus
-          ? HabitState.PENDING
-          : cumulativeCountDay < habit.target_count
-            ? HabitState.PROGRESS
-            : HabitState.DONE;
-        break;
-
-      case isPastDay:
-        habitState = !habitDayStatus
-          ? HabitState.INCOMPLETE
-          : cumulativeCountDay < habit.target_count
-            ? HabitState.INCOMPLETE
-            : HabitState.DONE;
-        break;
-    }
-  }
-
-  if (habit.type === HabitType.WEEKLY) {
-    const habitStatuses = Object.keys(habit.habit_statuses || {});
-    const lastEntry = Number(habitStatuses.at(-1));
-
-    switch (true) {
-      case isCurrentDay:
-        habitState =
-          !habitDayStatus && !cumulativeCountWeekly
-            ? HabitState.PENDING
-            : cumulativeCountWeekly < habit.target_count
-              ? HabitState.PROGRESS
-              : HabitState.DONE;
-        break;
-
-      case isPastDay:
-        habitState = !habitDayStatus
-          ? HabitState.PENDING
-          : cumulativeCountWeekly < habit.target_count || dayNumber !== lastEntry
-            ? HabitState.PROGRESS
-            : HabitState.DONE;
-        break;
-    }
-  }
-
-  if (habit.type === HabitType.CUSTOM) {
-    switch (true) {
-      case isCurrentDay:
-        habitState = !habitDayStatus
-          ? HabitState.PENDING
-          : cumulativeCountDay < habit.target_count
-            ? HabitState.PROGRESS
-            : HabitState.DONE;
-        break;
-
-      case isPastDay:
-        habitState = !habitDayStatus
-          ? HabitState.INCOMPLETE
-          : cumulativeCountDay < habit.target_count
-            ? HabitState.INCOMPLETE
-            : HabitState.DONE;
-        break;
-    }
-  }
-
-  return habitState;
 }

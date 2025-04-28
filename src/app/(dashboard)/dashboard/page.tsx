@@ -13,10 +13,7 @@ export default async function DashboardPage() {
 
   const slots = [
     { slotName: "Day", component: <div>Daily view</div> },
-    {
-      slotName: "Week",
-      component: <WeekSelector />,
-    },
+    { slotName: "Week", component: <WeekSelector /> },
     { slotName: "Month", component: <div>Monthly view</div> },
     { slotName: "Year", component: <div>Yearly view</div> },
   ];

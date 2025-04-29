@@ -23,13 +23,13 @@ const SwitcherHeader = React.memo(
           <Home />
         </Link>
 
-        <div className="col-span-1 flex gap-x-1 lg:gap-x-4">
+        <div className="col-span-1 flex gap-x-2 lg:gap-x-4">
           {slots.map(({ slotName }, idx) => (
             <Button
               key={slotName}
               variant={selectedIndex === idx ? "default" : "outline"}
               onClick={() => onSlotSelect(idx)}
-              className="text-sm lg:text-base"
+              className="text-xs lg:text-base"
             >
               {slotName}
             </Button>

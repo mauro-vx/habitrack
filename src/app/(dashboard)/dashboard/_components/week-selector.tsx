@@ -95,6 +95,7 @@ export function WeekSelector() {
       api.off("select", selectHandler);
     };
   }, [api, handlePreviousWeek, handleNextWeek]);
+  
 
   return (
     <>
@@ -114,6 +115,7 @@ export function WeekSelector() {
         <Carousel
           opts={{ loop: true, inViewThreshold: 1, startIndex: 1, breakpoints: {} }}
           setApi={setApi}
+          className="h-full"
         >
           <CarouselContent className="h-full" parentClassName="h-full">
             {[carouselItem0, carouselItem1, carouselItem2].map((carouselItem, idx) => (
@@ -121,7 +123,7 @@ export function WeekSelector() {
                 <React.Suspense
                   fallback={<div>Loading data for week {visibleWeeks[carouselItem.current].week}...</div>}
                 >
-                  <WeekView weekData={visibleWeeks[carouselItem.current]} />
+                  <WeekView weekData={visibleWeeks[!api ? 1 : carouselItem.current]} />
                 </React.Suspense>
               </CarouselItem>
             ))}

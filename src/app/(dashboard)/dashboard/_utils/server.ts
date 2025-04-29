@@ -20,10 +20,9 @@ export async function fetchWeekDataServerRpc(year: number, week: number): Promis
   return data as HabitEntitiesRpc;
 }
 
-export async function prefetchDataForDashboardRpc(timezone: string) {
+export async function prefetchDataForDashboardRpc(date: Date, timezone: string) {
   const queryClient = new QueryClient();
-  const now = new Date();
-  const localTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+  const localTime = new Date(date.toLocaleString("en-US", { timeZone: timezone }));
   const { year, week } = getWeekNumberAndYear(localTime);
   const { prevWeek, nextWeek } = getAdjacentWeeksNumber(year, week);
 

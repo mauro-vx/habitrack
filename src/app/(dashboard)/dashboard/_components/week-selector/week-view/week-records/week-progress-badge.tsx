@@ -31,50 +31,60 @@ export function WeekProgressBadge({
   className?: string;
 }) {
   const weeklyTarget = calculateWeeklyTarget(habit);
-
-
-  const getRandomIcon = (icons: React.ElementType[]) => {
-    const randomIndex = Math.floor(Math.random() * icons.length);
-    return icons[randomIndex];
+  
+  const getIconByHabitProperty = (icons: React.ElementType[]) => {
+    const hashValue = habit.id?.toString() || habit.name || "";
+    let hashNumber = 0;
+    for (let i = 0; i < hashValue.length; i++) {
+      hashNumber += hashValue.charCodeAt(i);
+    }
+    const index = hashNumber % icons.length;
+    return icons[index];
   };
+
+  let IconComponent: React.ElementType = Circle;
+  let iconClassName = "stroke-gray-300";
 
   if (weeklyTotalCount === 0) {
     const zeroIcons = [Banana, Bean, CloudHail];
-    const ZeroIcon = getRandomIcon(zeroIcons);
-    return <ZeroIcon className={`${className} stroke-fuchsia-300`} />;
+    IconComponent = getIconByHabitProperty(zeroIcons);
+    iconClassName = "stroke-fuchsia-300";
+  } else {
+    const completionRatio = weeklyTotalCount / weeklyTarget;
+
+    if (completionRatio >= 1) {
+      const fullIcons = [Trophy, Medal, Award];
+      IconComponent = getIconByHabitProperty(fullIcons);
+      iconClassName = "stroke-yellow-500";
+    } else if (completionRatio >= 0.75) {
+      const mostlyIcons = [Milestone, Sun, Sparkle];
+      IconComponent = getIconByHabitProperty(mostlyIcons);
+      iconClassName = "stroke-gray-500";
+    } else if (completionRatio >= 0.5) {
+      const halfIcons = [ThumbsUp, Smile, SmilePlus];
+      IconComponent = getIconByHabitProperty(halfIcons);
+      iconClassName = "stroke-brown-500";
+    } else if (completionRatio > 0) {
+      const startedIcons = [BicepsFlexed, IceCreamCone, TrendingUp];
+      IconComponent = getIconByHabitProperty(startedIcons);
+      iconClassName = "stroke-orange-500";
+    }
   }
 
-  const completionRatio = weeklyTotalCount / weeklyTarget;
-
-  if (completionRatio >= 1) {
-    const fullIcons = [Trophy, Medal, Award];
-    const FullIcon = getRandomIcon(fullIcons);
-    return <FullIcon className={`${className} stroke-yellow-500`} />;
-  } else if (completionRatio >= 0.75) {
-    const mostlyIcons = [Milestone, Sun, Sparkle];
-    const MostlyIcon = getRandomIcon(mostlyIcons);
-    return <MostlyIcon className={`${className} stroke-gray-500`} />;
-  } else if (completionRatio >= 0.5) {
-    const halfIcons = [ThumbsUp, Smile, SmilePlus];
-    const HalfIcon = getRandomIcon(halfIcons);
-    return <HalfIcon className={`${className} stroke-brown-500`} />;
-  } else if (completionRatio > 0) {
-    const startedIcons = [BicepsFlexed, IceCreamCone, TrendingUp];
-    const StartedIcon = getRandomIcon(startedIcons);
-    return <StartedIcon className={`${className} stroke-orange-500`} />;
-  }
-
-  return <Circle className={`${className} stroke-gray-300`} />;
+  return <IconComponent className={`${className} ${iconClassName}`} />;
 }
 
 function calculateWeeklyTarget(habit: HabitEntityRpc): number {
+  if (!habit) return 0;
+
   if (habit.type === HabitType.WEEKLY) {
-    return habit.target_count;
+    return habit.target_count || 0;
   } else if (habit.type === HabitType.DAILY) {
-    return habit.target_count * 7;
+    return (habit.target_count || 0) * 7;
   } else if (habit.type === HabitType.CUSTOM) {
-    const activeDays = Object.values(habit.days_of_week || {}).filter(Boolean).length;
-    return habit.target_count * activeDays;
+    const daysOfWeek = habit.days_of_week || {};
+    const activeDays = Object.values(daysOfWeek).filter(Boolean).length;
+    return (habit.target_count || 0) * activeDays;
   }
   return 0;
 }

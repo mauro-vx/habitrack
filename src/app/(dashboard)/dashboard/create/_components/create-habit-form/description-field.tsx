@@ -6,7 +6,7 @@ import { CreateHabitSchema } from "../../schema";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-export default function DescriptionField({
+export function DescriptionField({
   control,
   disabled,
 }: {

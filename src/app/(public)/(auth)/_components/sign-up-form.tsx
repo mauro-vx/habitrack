@@ -11,8 +11,8 @@ import { type SignUpSchema, signUpSchema } from "../schema";
 import { signUp } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import FormInputField from "../_components/form-input-field";
-import AlertMessage from "../_components/alert-message";
+import { FormInputField } from "../_components/form-input-field";
+import { AlertMessage } from "../_components/alert-message";
 import { cn } from "@/lib/utils";
 
 const initState: SignUpState = {
@@ -21,7 +21,7 @@ const initState: SignUpState = {
   verifyPassword: "",
 };
 
-export default function SignUpForm({
+export function SignUpForm({
   headerSlot,
   footerSlot,
   className,

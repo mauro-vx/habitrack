@@ -5,7 +5,7 @@ import { AuthError } from "@supabase/auth-js";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-export default function AlertMessage({
+export function AlertMessage({
   title = "Error",
   icon: Icon = AlertCircle,
   error,

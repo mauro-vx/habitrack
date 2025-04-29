@@ -5,7 +5,7 @@ import { Fredoka, Poppins } from "next/font/google";
 
 import "@/app/globals.css";
 
-import Providers from "@/context/providers";
+import { Providers } from "@/context/providers";
 import { Toaster } from "@/components/ui/sonner";
 
 const fredoka = Fredoka({

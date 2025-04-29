@@ -5,7 +5,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-export default function ProfileModeWrapper({ view, edit }: { view: React.ReactNode; edit: React.ReactNode }) {
+export function ProfileModeWrapper({ view, edit }: { view: React.ReactNode; edit: React.ReactNode }) {
   const [mode, setMode] = React.useState<"view" | "edit">("view");
 
   const toggleMode = React.useCallback(() => {

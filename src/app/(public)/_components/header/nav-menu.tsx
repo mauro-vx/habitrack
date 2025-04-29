@@ -42,7 +42,7 @@ const habitSections: { title: string; href: string; description: string }[] = [
   },
 ];
 
-export default function DocumentationNavMenu() {
+export function NavMenu() {
   const isLgScreen = useBreakpoint("lg");
 
   return (

@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
+
 import Logo from "~/public/icons/logo.svg";
-import AnimatedSection from "@/components/ui/animated-section";
+import { AnimatedSection } from "@/components/ui/animated-section";
 
 export function WelcomeBanner({
   title = "Welcome to HabiTrack",

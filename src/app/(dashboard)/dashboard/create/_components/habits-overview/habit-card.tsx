@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function HabitCard({
+export function HabitCard({
   title,
 }: {
   title: string;

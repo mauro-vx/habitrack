@@ -7,7 +7,7 @@ import { CreateHabitSchema } from "../../schema";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-export default function TargetCount({
+export function TargetCount({
   control,
   disabled,
 }: {

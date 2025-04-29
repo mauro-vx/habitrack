@@ -25,7 +25,7 @@ const AvatarFrame = ({
   );
 };
 
-export default function ProfileAvatar({
+export function ProfileAvatar({
   userProfile,
   alt,
   size = 40,

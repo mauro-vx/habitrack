@@ -3,7 +3,7 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 
-export default function PathGuard({
+export function PathGuard({
   hideWhen = [],
   showWhen = [],
   children,

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-export default function TimezoneProvider() {
+export function TimezoneProvider() {
   useEffect(() => {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 

@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { createClient } from "@/lib/supabase/server";
 
-export default async function AuthGuard({
+export async function AuthGuard({
   userStatus,
   children,
 }: {

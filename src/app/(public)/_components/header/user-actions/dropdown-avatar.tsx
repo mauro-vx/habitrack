@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuButtonAuth } from "./dropdown-avatar/dropdown-menu-button-auth";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 
-export default async function DropdownAvatar() {
+export async function DropdownAvatar() {
   const { authSupabase, user } = await authenticateUser();
 
   const { data: profileData, error } = await authSupabase

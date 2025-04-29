@@ -14,8 +14,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import SignInForm from "@/app/(public)/(auth)/_components/sign-in-form";
-import SignUpForm from "@/app/(public)/(auth)/_components/sign-up-form";
+import { SignInForm } from "@/app/(public)/(auth)/_components/sign-in-form";
+import { SignUpForm } from "@/app/(public)/(auth)/_components/sign-up-form";
 
 const authModeLabels = {
   [AuthMode.SignIn]: "Sign in",

@@ -3,7 +3,7 @@ import { Control, FieldValues, FieldPath } from "react-hook-form";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-export default function FormInputField<TFieldValues extends FieldValues>({
+export function FormInputField<TFieldValues extends FieldValues>({
   name,
   label,
   placeholder,

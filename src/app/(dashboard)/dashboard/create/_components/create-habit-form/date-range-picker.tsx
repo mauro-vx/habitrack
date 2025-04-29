@@ -10,7 +10,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 
-export default function DateRangeField({
+export function DateRangeField({
   control,
   disabled,
 }: {

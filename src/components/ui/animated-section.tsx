@@ -11,7 +11,7 @@ interface AnimatedWrapperProps {
   className?: string;
 }
 
-export default function AnimatedSection({ children, className }: AnimatedWrapperProps) {
+export function AnimatedSection({ children, className }: AnimatedWrapperProps) {
   const ref = React.useRef(null);
   const isVisible = useIsVisible(ref);
 

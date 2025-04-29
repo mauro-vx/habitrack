@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import Logo from "~/public/icons/logo.svg";
 
-export default function LogoSection() {
+export function LogoSection() {
   return (
     <section className="flex items-center gap-4">
       <Link href="/" aria-label="Navigate to home">

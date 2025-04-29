@@ -1,7 +1,7 @@
-import LogoSection from "./header/logo-section";
-import NavMenu from "./header/nav-menu";
-import UserActions from "./header/user-actions";
-import ModeToggle from "@/components/ui/mode-toggle";
+import { LogoSection } from "./header/logo-section";
+import { NavMenu } from "./header/nav-menu";
+import { UserActions } from "./header/user-actions";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 
 export default function Header() {
   return (

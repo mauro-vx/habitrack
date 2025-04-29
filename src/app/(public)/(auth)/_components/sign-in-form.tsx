@@ -11,8 +11,8 @@ import { type SignInSchema, signInSchema } from "../schema";
 import { signIn } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import FormInputField from "../_components/form-input-field";
-import AlertMessage from "../_components/alert-message";
+import { FormInputField } from "../_components/form-input-field";
+import { AlertMessage } from "../_components/alert-message";
 import { cn } from "@/lib/utils";
 
 const initState: SignInState = {
@@ -20,7 +20,7 @@ const initState: SignInState = {
   password: "",
 };
 
-export default function SignInForm({
+export function SignInForm({
   headerSlot,
   footerSlot,
   className,

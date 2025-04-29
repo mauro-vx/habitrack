@@ -3,7 +3,7 @@ import * as React from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import SignUpForm from "@/app/(public)/(auth)/_components/sign-up-form";
+import { SignUpForm } from "@/app/(public)/(auth)/_components/sign-up-form";
 
 export default function SignUpPage() {
   return (

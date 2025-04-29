@@ -41,7 +41,7 @@ function DayCheckboxButton({
   );
 }
 
-export default function DaysOfWeekField({
+export function DaysOfWeekField({
   control,
   disabled,
   isCustom,

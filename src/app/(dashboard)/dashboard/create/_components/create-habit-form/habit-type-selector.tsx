@@ -8,7 +8,7 @@ import { useCapitalizeFirst } from "@/hooks/use-capitalize-first";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";
 
-export default function TypeField({
+export function TypeField({
   control,
   disabled,
   onChange,

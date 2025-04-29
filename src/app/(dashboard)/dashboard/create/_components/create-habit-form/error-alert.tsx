@@ -5,7 +5,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-export default function ErrorAlert({ error }: { error?: PostgrestError | null }) {
+export function ErrorAlert({ error }: { error?: PostgrestError | null }) {
   if (!error) return null;
 
   return (

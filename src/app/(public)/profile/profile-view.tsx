@@ -1,5 +1,5 @@
 import { UserProfile } from "./types";
-import ProfileAvatar from "./provile-avatar";
+import { ProfileAvatar } from "./provile-avatar";
 
 export function ProfileView({ userProfile }: { userProfile: UserProfile }) {
   return (

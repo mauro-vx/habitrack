@@ -11,7 +11,7 @@ import { EditProfileState, UserProfile } from "./types";
 import { type UpdateUserProfileSchema, updateUserProfileSchema } from "./schema";
 import { cn } from "@/lib/utils";
 import { updateUserProfile } from "@/lib/actions/profile";
-import ProfileAvatar from "./provile-avatar";
+import { ProfileAvatar } from "./provile-avatar";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";

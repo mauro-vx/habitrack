@@ -1,12 +1,12 @@
 import Link from "next/link";
 
-import AuthGuard from "@/components/auth/auth-guard";
+import { AuthGuard } from "@/components/auth/auth-guard";
 import { Button } from "@/components/ui/button";
-import DropdownAvatar from "./user-actions/dropdown-avatar";
-import DashboardButton from "./user-actions/dashboard-button";
-import PathGuard from "@/components/auth/path_guard";
+import { DropdownAvatar } from "./user-actions/dropdown-avatar";
+import { DashboardButton } from "./user-actions/dashboard-button";
+import { PathGuard } from "@/components/auth/path_guard";
 
-export default function UserActions() {
+export function UserActions() {
   return (
     <div className="flex w-full flex-row-reverse gap-2 lg:gap-4 items-center">
       <AuthGuard userStatus="signedIn">

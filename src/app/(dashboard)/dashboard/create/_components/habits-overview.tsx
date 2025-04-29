@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { HabitEntities } from "@/app/types";
 import { cn } from "@/lib/utils";
-import HabitCard from "@/app/(dashboard)/dashboard/create/_components/habits-overview/habit-card";
+import { HabitCard } from "@/app/(dashboard)/dashboard/create/_components/habits-overview/habit-card";
 import { Button } from "@/components/ui/button";
 
 enum CategoryKey {

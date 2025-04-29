@@ -1,5 +1,5 @@
 import { UserProfile } from "./types";
-import ProfileModeWrapper from "./profile-mode-wrapper";
+import { ProfileModeWrapper } from "./profile-mode-wrapper";
 import { ProfileView } from "./profile-view";
 import { ProfileEditForm } from "./profile-edit-form";
 

@@ -14,14 +14,14 @@ import { CreateHabitSchema, createHabitSchema } from "../schema";
 import { createHabit } from "@/lib/actions/create-habit";
 import { cn, getFirstPossibleMonday } from "@/lib/utils";
 import { Form } from "@/components/ui/form";
-import NameField from "./create-habit-form/name-field";
-import TypeField from "./create-habit-form/habit-type-selector";
-import DaysOfWeekField from "./create-habit-form/days-of-week-checkbox-group";
-import TargetCount from "./create-habit-form/target-count";
-import DateRangeField from "./create-habit-form/date-range-picker";
-import SubmitButton from "./create-habit-form/submit-button";
-import ErrorAlert from "./create-habit-form/error-alert";
-import DescriptionField from "./create-habit-form/description-field";
+import { NameField } from "./create-habit-form/name-field";
+import { TypeField } from "./create-habit-form/habit-type-selector";
+import { DaysOfWeekField } from "./create-habit-form/days-of-week-checkbox-group";
+import { TargetCount } from "./create-habit-form/target-count";
+import { DateRangeField } from "./create-habit-form/date-range-picker";
+import { SubmitButton } from "./create-habit-form/submit-button";
+import { ErrorAlert } from "./create-habit-form/error-alert";
+import { DescriptionField } from "./create-habit-form/description-field";
 
 const { DAILY, CUSTOM } = HabitType;
 

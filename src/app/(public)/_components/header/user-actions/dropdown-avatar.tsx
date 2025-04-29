@@ -1,58 +1,47 @@
 import Link from "next/link";
-import {
-  Cloud,
-  CreditCard,
-  Keyboard,
-  LifeBuoy,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
-  User,
-  UserPlus,
-  Users,
-} from "lucide-react";
+import { LifeBuoy, User } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuButtonAuth } from "./dropdown-avatar/dropdown-menu-button-auth";
+import { authenticateUser } from "@/lib/supabase/authenticate-user";
 
 export default async function DropdownAvatar() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { authSupabase, user } = await authenticateUser();
+
+  const { data: profileData, error } = await authSupabase
+    .from("profiles")
+    .select("full_name, username, avatar_url")
+    .eq("id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Failed to fetch profile data:", error.message);
+  }
+
+  const avatarUrl = authSupabase.storage.from("avatars").getPublicUrl(profileData?.avatar_url || '').data.publicUrl
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="outline-primary outline-2">
-          <AvatarImage
-            src="https://i.pinimg.com/originals/4a/e2/f6/4ae2f6eff8bc0244a68b0bc569258fa1.png"
-            alt="User profile picture"
-          />
+        <Avatar className="outline-primary outline-2 size-6 lg:size-8">
+          <AvatarImage src={avatarUrl} alt={`${profileData?.full_name || "User"} profile picture`} />
           {/* Todo: username initials */}
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{profileData?.username || "Guest"}</DropdownMenuLabel>
 
         <DropdownMenuSeparator />
 
@@ -64,63 +53,6 @@ export default async function DropdownAvatar() {
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </Link>
           </DropdownMenuItem>
-
-          <DropdownMenuItem>
-            <CreditCard />
-            <span>Billing</span>
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem>
-            <Settings />
-            <span>Settings</span>
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem>
-            <Keyboard />
-            <span>Keyboard shortcuts</span>
-            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Users />
-            <span>Team</span>
-          </DropdownMenuItem>
-
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <UserPlus />
-              <span>Invite users</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>
-                  <Mail />
-                  <span>Email</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MessageSquare />
-                  <span>Message</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <PlusCircle />
-                  <span>More...</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-
-          <DropdownMenuItem>
-            <Plus />
-            <span>New Team</span>
-            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
@@ -128,11 +60,6 @@ export default async function DropdownAvatar() {
         <DropdownMenuItem>
           <LifeBuoy />
           <span>Support</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem disabled>
-          <Cloud />
-          <span>API</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

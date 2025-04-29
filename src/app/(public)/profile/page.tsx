@@ -1,5 +1,5 @@
-import Profile from "./profile";
-import Skeleton from "@/components/ui/skeleton";
+import { Profile } from "./profile";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 
 function ProfileSkeleton() {
@@ -16,10 +16,10 @@ function ProfileSkeleton() {
 
 export default function ProfilePage() {
   return (
-    <div className="container flex h-screen items-center justify-center">
+    <main className="container flex h-screen items-center justify-center">
       <Suspense fallback={<ProfileSkeleton />}>
         <Profile />
       </Suspense>
-    </div>
+    </main>
   );
 }

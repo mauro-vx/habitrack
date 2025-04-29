@@ -18,7 +18,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function ProfileEditForm({ userProfile }: { userProfile: UserProfile }) {
+export function ProfileEditForm({ userProfile }: { userProfile: UserProfile }) {
   const initState: EditProfileState = {
     fullName: userProfile.full_name,
     username: userProfile.username,

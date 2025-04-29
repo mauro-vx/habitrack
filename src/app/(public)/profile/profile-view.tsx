@@ -1,7 +1,7 @@
 import { UserProfile } from "./types";
 import ProfileAvatar from "./provile-avatar";
 
-export default function ProfileView({ userProfile }: { userProfile: UserProfile }) {
+export function ProfileView({ userProfile }: { userProfile: UserProfile }) {
   return (
     <div className="flex flex-col gap-4">
       <ProfileAvatar userProfile={userProfile} alt="User's avatar" size={150} />

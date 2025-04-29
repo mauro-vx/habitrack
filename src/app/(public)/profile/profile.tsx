@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import ProfileHub from "./profile-hub";
+import { ProfileHub } from "./profile-hub";
 
-export default async function Profile() {
+export async function Profile() {
   const supabase = await createClient();
 
   const {

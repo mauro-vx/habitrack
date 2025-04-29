@@ -20,7 +20,7 @@ export default function TargetCount({
       name="target_count"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Target Count:</FormLabel>
+          <FormLabel>Target Count</FormLabel>
           <FormControl>
             <div className="flex items-center">
               <Button

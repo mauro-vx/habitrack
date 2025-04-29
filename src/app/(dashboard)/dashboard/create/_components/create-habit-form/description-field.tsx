@@ -19,7 +19,7 @@ export default function DescriptionField({
       name="description"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Description:</FormLabel>
+          <FormLabel>Description</FormLabel>
           <FormControl>
             <Input {...field} placeholder="Description (optional)" disabled={disabled} type="text" />
           </FormControl>

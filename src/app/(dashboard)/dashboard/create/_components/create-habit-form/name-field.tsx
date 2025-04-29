@@ -13,7 +13,7 @@ export default function NameField({ control, disabled }: { control: Control<Crea
       name="name"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Name:</FormLabel>
+          <FormLabel></FormLabel>
           <FormControl>
             <Input {...field} placeholder="Name your habit" disabled={disabled} type="text" />
           </FormControl>

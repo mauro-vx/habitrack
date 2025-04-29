@@ -24,7 +24,7 @@ export default function DateRangeField({
       render={({ field }) => {
         return (
           <FormItem>
-            <FormLabel>Pick a date range (Start: Monday, End: Following Sunday):</FormLabel>
+            <FormLabel>Select a date range: Monday to Sunday</FormLabel>
             <FormControl>
               <Popover>
                 <PopoverTrigger asChild>

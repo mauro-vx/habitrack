@@ -25,7 +25,7 @@ export default function TypeField({
       name="type"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Type:</FormLabel>
+          <FormLabel>Type</FormLabel>
           <FormControl>
             <Select
               value={field.value}

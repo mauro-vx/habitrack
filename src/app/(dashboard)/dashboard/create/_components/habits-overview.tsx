@@ -36,8 +36,8 @@ export function HabitsOverview({
   }, [selectedCategory, initialData]);
 
   return (
-    <section className={cn("flex flex-col gap-1 sm:flex-col lg:gap-4", className)}>
-      <div className="flex gap-1 lg:gap-2">
+    <section className={cn("flex flex-col gap-1 sm:flex-col lg:gap-2", className)}>
+      <div className="flex gap-1 lg:gap-4">
         {categories.map((category) => (
           <Button
             variant="outline"
@@ -45,7 +45,7 @@ export function HabitsOverview({
             disabled={selectedCategory === category}
             key={category}
             onClick={() => setSelectedCategory(category)}
-            className={cn("text-xs", selectedCategory === category && "text-brand")}
+            className={cn("text-xs lg:text-base", selectedCategory === category && "text-brand")}
             style={{ opacity: "100" }}
           >
             {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -53,11 +53,13 @@ export function HabitsOverview({
         ))}
       </div>
 
-      {displayedHabits.length === 0 ? (
-        <p className="text-muted-foreground text-center">No habits in this category</p>
-      ) : (
-        displayedHabits.map((habit) => <HabitCard key={habit.id} title={habit.name} />)
-      )}
+      <div className="overflow-auto space-y-1 lg:space-y-2">
+        {displayedHabits.length === 0 ? (
+          <p className="text-muted-foreground text-center">No habits in this category</p>
+        ) : (
+          displayedHabits.map((habit) => <HabitCard key={habit.id} title={habit.name} />)
+        )}
+      </div>
     </section>
   );
 }

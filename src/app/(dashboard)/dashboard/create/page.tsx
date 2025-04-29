@@ -23,23 +23,18 @@ export default async function CreatePage() {
   };
 
   return (
-    <div className="container flex h-screen flex-col overflow-hidden py-2 lg:py-4">
-      <header className="grid grid-cols-[auto,1fr,auto] items-center gap-1 lg:gap-4">
+    <div className="container flex h-screen flex-col py-2 md:gap-4 lg:items-center lg:py-4">
+      <header className="grid w-full grid-cols-[auto,1fr,auto] items-center gap-1 lg:gap-4">
         <Link href="/dashboard">
           <ChevronLeft />
         </Link>
-        <h1 className="text-center text-lg font-bold">Create new habit</h1>
+        <h1 className="text-center text-lg font-bold lg:text-2xl">Create new habit</h1>
       </header>
 
-      <main className="flex flex-1 flex-col gap-2 overflow-auto sm:flex-row lg:gap-4">
-        <CreateHabitForm className="h-full min-h-fit flex-1 overflow-auto" />
-
+      <main className="flex flex-col gap-2 overflow-auto lg:flex-row lg:gap-4">
+        <CreateHabitForm />
         <Separator className="sm:hidden" />
-
-        <HabitsOverview
-          initialData={categoryData}
-          className="min-h-[200px] w-full flex-none overflow-auto sm:w-auto sm:shrink-0"
-        />
+        <HabitsOverview initialData={categoryData} className="min-h-48 overflow-auto" />
       </main>
     </div>
   );

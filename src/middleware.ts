@@ -4,7 +4,6 @@ import { updateSession } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
 
   const basicAuth = request.headers.get('authorization');
-  const url = request.nextUrl;
 
   if (basicAuth) {
     // Basic auth format is "Basic <base64encoded>"

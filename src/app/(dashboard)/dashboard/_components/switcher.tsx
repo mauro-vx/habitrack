@@ -52,7 +52,7 @@ export function Switcher({ slots }: { slots: { slotName: string; component: Reac
   const SelectedComponent = React.useMemo(() => slots[selectedSlotIndex].component, [slots, selectedSlotIndex]);
 
   return (
-    <div className="container flex h-screen flex-col items-center gap-2 border-2 border-yellow-500 py-2 lg:py-4">
+    <div className="container flex h-screen flex-col items-center gap-2 lg:gap-4 py-2 lg:py-4">
       <SwitcherHeader slots={slots} selectedIndex={selectedSlotIndex} onSlotSelect={setSelectedSlotIndex} />
 
       {SelectedComponent}

@@ -121,16 +121,17 @@ export function DayStatusSelect({
   });
 
   return (
-    <div className={className}>
+    <>
       <Select value={habitState} onValueChange={handleValueChange} open={open} onOpenChange={handleOpenChange}>
         <SelectTrigger
           disabled={isFutureDay || isPendingDelete || isPendingUpdate || isPendingCreate}
           className={cn(
-            "relative flex aspect-square items-center justify-center p-0 text-xs font-medium lg:text-base lg:font-bold [&>svg:last-child]:hidden",
+            "relative flex aspect-square min-h-fit min-w-auto p-1 items-center justify-center text-xs font-medium lg:p-2 lg:text-base lg:font-bold [&>svg:last-child]:hidden",
             habit.type === HabitType.WEEKLY &&
               habitState === HabitState.PENDING &&
               isPastDay &&
               "border-2 border-dashed border-gray-500",
+            className,
           )}
         >
           {isPending ? (
@@ -175,6 +176,6 @@ export function DayStatusSelect({
           </SelectContent>
         )}
       </Select>
-    </div>
+    </>
   );
 }

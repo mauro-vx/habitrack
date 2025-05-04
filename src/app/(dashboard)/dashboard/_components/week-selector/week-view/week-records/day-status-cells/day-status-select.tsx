@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { RefreshCcw, TriangleAlert } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { HabitEntityRpc, SelectHabitState } from "@/app/types";
 import { Tables } from "@/lib/supabase/database.types";
@@ -8,12 +9,12 @@ import { HabitState, HabitType, Status } from "@/app/enums";
 import { STATUS_OPTIONS } from "./day-status-select/constants";
 import { getHabitState } from "./day-status-select/utils";
 import { cn } from "@/lib/utils";
-import { deleteHabitStatus } from "@/lib/actions/delete-habit-status";
-import { Select } from "@radix-ui/react-select";
 import { SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { FractionDisplay } from "@/app/(dashboard)/dashboard/_components/fraction-display";
+import { deleteHabitStatus } from "@/lib/actions/delete-habit-status";
 import { updateHabitStatus } from "@/lib/actions/update-habit-status";
 import { createHabitStatus } from "@/lib/actions/create-habit-status";
+import { Select } from "@radix-ui/react-select";
 import { isAfterToday, isBeforeToday, isToday } from "@/app/(dashboard)/dashboard/_utils/date";
 import { HabitTypeIcon } from "./day-status-select/habit-type-icon";
 
@@ -47,6 +48,8 @@ export function DayStatusSelect({
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
 
+  const queryClient = useQueryClient();
+
   const [createState, createAction, isPendingCreate] = React.useActionState(createHabitStatus, null);
   const [updateState, updateAction, isPendingUpdate] = React.useActionState(updateHabitStatus, null);
   const [deleteState, deleteAction, isPendingDelete] = React.useActionState(deleteHabitStatus, null);
@@ -73,6 +76,8 @@ export function DayStatusSelect({
   };
 
   const handleValueChange = async (value: SelectHabitState) => {
+    console.log('🙀 value 🙀: ', value);
+    
     if (!habitDayStatus?.id) {
       React.startTransition(() =>
         createAction({
@@ -100,6 +105,12 @@ export function DayStatusSelect({
   };
 
   const isPending = isPendingCreate || isPendingUpdate || isPendingDelete;
+
+  const successfulState =
+    createState?.status === Status.SUCCESS ||
+    updateState?.status === Status.SUCCESS ||
+    deleteState?.status === Status.SUCCESS;
+
   const isError =
     createState?.status === Status.DATABASE_ERROR ||
     updateState?.status === Status.DATABASE_ERROR ||
@@ -120,13 +131,19 @@ export function DayStatusSelect({
     return true;
   });
 
+  React.useEffect(() => {
+    if (successfulState && !isPending) {
+      queryClient.invalidateQueries({ queryKey: ["weekData", year, week] });
+    }
+  }, [successfulState, isPending, queryClient, year, week]);
+
   return (
     <>
       <Select value={habitState} onValueChange={handleValueChange} open={open} onOpenChange={handleOpenChange}>
         <SelectTrigger
           disabled={isFutureDay || isPendingDelete || isPendingUpdate || isPendingCreate}
           className={cn(
-            "relative flex aspect-square min-h-fit min-w-auto p-1 items-center justify-center text-xs font-medium lg:p-2 lg:text-base lg:font-bold [&>svg:last-child]:hidden",
+            "relative flex aspect-square min-h-fit min-w-auto items-center justify-center p-1 text-xs font-medium lg:p-2 lg:text-base lg:font-bold [&>svg:last-child]:hidden",
             habit.type === HabitType.WEEKLY &&
               habitState === HabitState.PENDING &&
               isPastDay &&

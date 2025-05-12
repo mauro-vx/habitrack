@@ -152,11 +152,11 @@ export function DayStatusSelect({
           )}
         >
           {isPending ? (
-            <RefreshCcw className="size-5 animate-spin stroke-yellow-500 lg:size-8" />
+            <RefreshCcw className="size-5 animate-spin stroke-yellow-500 lg:size-6" />
           ) : isError ? (
-            <TriangleAlert className="size-5 stroke-red-500 lg:size-8" />
+            <TriangleAlert className="size-5 stroke-red-500 lg:size-6" />
           ) : (
-            <HabitTypeIcon habitType={habit.type} habitState={habitState} className="size-5 lg:size-8" />
+            <HabitTypeIcon habitType={habit.type} habitState={habitState} className="size-5 lg:size-6" />
           )}
 
           {!!habitDayStatus?.skipped_count && (

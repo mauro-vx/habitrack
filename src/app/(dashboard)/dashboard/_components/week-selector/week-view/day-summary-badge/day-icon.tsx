@@ -9,6 +9,6 @@ export function DayIcon({ result, idx }: { result: boolean; idx: number }) {
   const Comp = result ? Star : StarOff;
 
   return (
-    <Comp className={cn(`size-5 lg:size-8 ${COL_START_CLASSES[idx + 1]}, ${result ? "text-yellow-500" : "text-pink-600"}`)} />
+    <Comp className={cn(`size-5 lg:size-6 ${COL_START_CLASSES[idx + 1]}, ${result ? "text-yellow-500" : "text-pink-600"}`)} />
   );
 }

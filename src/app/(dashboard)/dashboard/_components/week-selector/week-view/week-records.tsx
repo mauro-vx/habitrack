@@ -19,7 +19,7 @@ export function WeekRecords({
       <>
         <Separator />
 
-        <div className="grid auto-rows-[minmax(50px,auto)] grid-cols-9 place-items-center gap-0 overflow-y-auto py-2 lg:auto-rows-[minmax(80px,auto)] lg:py-4">
+        <div className="grid auto-rows-[minmax(50px,auto)] grid-cols-9 place-items-center gap-0 overflow-y-auto py-2 lg:auto-rows-[minmax(56px,auto)] lg:py-4">
           {habits.map((habit) => {
             const weeklyTotalCount = calculateWeeklyTotal(habit);
 

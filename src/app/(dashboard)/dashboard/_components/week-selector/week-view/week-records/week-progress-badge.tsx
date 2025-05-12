@@ -24,7 +24,7 @@ import { HabitType } from "@/app/enums";
 export function WeekProgressBadge({
   habit,
   weeklyTotalCount,
-  className = "size-5 lg:size-8 col-start-9",
+  className = "size-5 lg:size-6 col-start-9",
 }: {
   habit: HabitEntityRpc;
   weeklyTotalCount: number;

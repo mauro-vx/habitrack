@@ -36,8 +36,8 @@ export function HabitsOverview({
   }, [selectedCategory, initialData]);
 
   return (
-    <section className={cn("flex flex-col gap-1 sm:flex-col lg:gap-2", className)}>
-      <div className="flex gap-1 lg:gap-4">
+    <section className={cn("flex flex-col gap-2 sm:flex-col flex-1 items-stretch", className)}>
+      <div className="flex gap-2 lg:gap-4">
         {categories.map((category) => (
           <Button
             variant="outline"

@@ -82,7 +82,7 @@ export function CreateHabitForm({ className }: { className?: string }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-2 lg:gap-4", className)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-2 lg:gap-4 flex-1", className)}>
         <NameField control={form.control} disabled={isPending} />
         <DescriptionField control={form.control} disabled={isPending} />
         <TypeField control={form.control} disabled={isPending} onChange={onHabitTypeChange} />

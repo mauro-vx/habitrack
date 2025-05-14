@@ -99,11 +99,11 @@ export function WeekSelector() {
 
   return (
     <>
-      <div className="flex items-center gap-x-4">
+      <div className="flex items-center">
         <Button variant="ghost" size="icon" onClick={() => scrollHandler("left")} aria-label="Previous week">
           <ChevronLeft className="size-4" />
         </Button>
-        <span>
+        <span className="text-center min-w-40">
           Week {visibleWeeks[1].week} - {visibleWeeks[1].year}
         </span>
         <Button variant="ghost" size="icon" onClick={() => scrollHandler("right")} aria-label="Next week">

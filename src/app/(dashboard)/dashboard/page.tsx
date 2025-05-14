@@ -3,7 +3,6 @@ import { HydrationBoundary } from "@tanstack/react-query";
 
 import { prefetchDataForDashboardRpc } from "../dashboard/_utils/server";
 import { Switcher } from "./_components/switcher";
-import { WeekSelector } from "./_components/week-selector";
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
@@ -11,16 +10,12 @@ export default async function DashboardPage() {
 
   const dehydratedState = await prefetchDataForDashboardRpc(new Date(), timezone);
 
-  const slots = [
-    { slotName: "Day", component: <div>Daily view</div> },
-    { slotName: "Week", component: <WeekSelector /> },
-    { slotName: "Month", component: <div>Monthly view</div> },
-    { slotName: "Year", component: <div>Yearly view</div> },
-  ];
+  const slotNames = ["Day", "Week", "Month", "Year"];
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <Switcher slots={slots} />
+      <Switcher slotNames={slotNames} />
     </HydrationBoundary>
   );
 }
+

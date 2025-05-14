@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { HabitEntitiesRpc } from "@/app/types";
+import { HabitEntitiesWeekRpc } from "@/app/types";
 import { calculateWeeklyTotal } from "./week-records/utils";
 import { HabitName } from "./week-records/habit-name";
 import { DayStatusCells } from "./week-records/day-status-cells";
@@ -11,7 +11,7 @@ export function WeekRecords({
   habits,
   weekData,
 }: {
-  habits: HabitEntitiesRpc;
+  habits: HabitEntitiesWeekRpc;
   weekData: { year: number; week: number };
 }) {
   const habitElements = React.useMemo(() => {

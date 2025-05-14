@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { getYear, getISOWeek, startOfWeek, addWeeks, subWeeks, setISOWeek } from "date-fns";
+import { getYear, getISOWeek, startOfWeek, addWeeks, subWeeks, setISOWeek, getMonth, getDate } from "date-fns";
 import { User } from "@supabase/supabase-js";
 
 export function cn(...inputs: ClassValue[]) {
@@ -74,5 +74,47 @@ export function getAdjacentWeeksNumber(
   return {
     prevWeek: { week: previousWeek, year: previousYear },
     nextWeek: { week: nextWeek, year: nextYear },
+  };
+}
+
+// Add these functions to your utils.ts file
+export function getMonthAndYear(date: Date): { month: number; year: number } {
+  const year = getYear(date);
+  const month = getMonth(date) + 1; // date-fns months are 0-indexed
+
+  return { month, year };
+}
+
+export function getDayMonthYear(date: Date): { day: number; month: number; year: number } {
+  const year = getYear(date);
+  const month = getMonth(date) + 1; // date-fns months are 0-indexed
+  const day = getDate(date);
+
+  return { day, month, year };
+}
+
+export function getAdjacentMonths(year: number, month: number): {
+  prevMonth: { year: number; month: number };
+  nextMonth: { year: number; month: number }
+} {
+  let prevMonth = month - 1;
+  let prevYear = year;
+
+  if (prevMonth < 1) {
+    prevMonth = 12;
+    prevYear = year - 1;
+  }
+
+  let nextMonth = month + 1;
+  let nextYear = year;
+
+  if (nextMonth > 12) {
+    nextMonth = 1;
+    nextYear = year + 1;
+  }
+
+  return {
+    prevMonth: { year: prevYear, month: prevMonth },
+    nextMonth: { year: nextYear, month: nextMonth }
   };
 }

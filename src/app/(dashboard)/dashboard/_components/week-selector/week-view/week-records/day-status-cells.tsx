@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { HabitEntityRpc } from "@/app/types";
+import { HabitEntityWeekRpc } from "@/app/types";
 import { HabitType } from "@/app/enums";
 import { DAYS_OF_WEEK } from "@/app/(dashboard)/dashboard/constants";
 import { isAfterToday } from "@/app/(dashboard)/dashboard/_utils/date";
@@ -13,7 +13,7 @@ export function DayStatusCells({
   weekData,
   weeklyTotalCount,
 }: {
-  habit: HabitEntityRpc;
+  habit: HabitEntityWeekRpc;
   weekData: { year: number; week: number };
   weeklyTotalCount: number;
 }) {
@@ -27,7 +27,7 @@ export function DayStatusCells({
       if ((!hasStatusForDay && !isUnderTarget) || isFutureDay) return null;
     }
 
-    if (habit.type === HabitType.CUSTOM && !habit.days_of_week?.[dayNumber as keyof HabitEntityRpc["days_of_week"]]) {
+    if (habit.type === HabitType.CUSTOM && !habit.days_of_week?.[dayNumber as keyof HabitEntityWeekRpc["days_of_week"]]) {
       return null;
     }
 

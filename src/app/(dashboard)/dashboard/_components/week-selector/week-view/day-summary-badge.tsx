@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import { HabitEntityRpc } from "@/app/types";
+import { HabitEntityWeekRpc } from "@/app/types";
 import { DayIcon } from "./day-summary-badge/day-icon";
 import { calculateDailyTarget } from "./day-summary-badge/utils";
 import { Separator } from "@/components/ui/separator";
 
-export function DaySummaryBadge({ habits }: { habits: HabitEntityRpc[] }) {
+export function DaySummaryBadge({ habits }: { habits: HabitEntityWeekRpc[] }) {
   const dailyTargets = React.useMemo(() => calculateDailyTarget(habits), [habits]);
 
   if (!habits.length) {

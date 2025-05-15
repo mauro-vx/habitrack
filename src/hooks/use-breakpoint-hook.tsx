@@ -5,6 +5,8 @@ import * as React from 'react';
 import defaultTheme from "tailwindcss/defaultTheme";
 
 const breakpoints = {
+  xs: '30rem', // custom bp 480px
+
   sm: defaultTheme.screens.sm, // '40rem'
   md: defaultTheme.screens.md, // '48rem'
   lg: defaultTheme.screens.lg, // '64rem'

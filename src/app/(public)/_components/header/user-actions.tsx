@@ -8,7 +8,7 @@ import { PathGuard } from "@/components/auth/path_guard";
 
 export function UserActions() {
   return (
-    <div className="flex w-full flex-row-reverse gap-2 lg:gap-4 items-center">
+    <div className="flex w-full flex-row-reverse items-center gap-2 lg:gap-4">
       <AuthGuard userStatus="signedIn">
         <DropdownAvatar />
         <DashboardButton />

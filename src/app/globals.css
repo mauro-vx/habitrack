@@ -127,6 +127,10 @@
   --brand: oklch(0.662 0.192 139.285);
 }
 
+@theme {
+  --breakpoint-xs: 30rem;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

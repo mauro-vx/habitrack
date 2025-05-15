@@ -2,11 +2,11 @@
 
 import * as React from "react";
 
-import { format, addMonths, subMonths, getDaysInMonth, setDate, startOfMonth, getDay } from "date-fns";
+import { format, getDaysInMonth, setDate, startOfMonth, getDay } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { useMonthDataMapped } from "../_utils/client";
-import { getMonthAndYear } from "@/lib/utils";
+import { getAdjacentMonths, getMonthAndYear } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { getDayNamesByFormat } from "@/app/(dashboard)/dashboard/_utils/date";
 import { HabitEntityWeekRpc } from "@/app/types";
@@ -18,8 +18,15 @@ export function MonthSelector() {
 
   const { data: monthData = [] } = useMonthDataMapped(year, month);
 
-  const goToPreviousMonth = () => setSelectedDate((prev) => subMonths(prev, 1));
-  const goToNextMonth = () => setSelectedDate((prev) => addMonths(prev, 1));
+  const goToPreviousMonth = () => {
+    const { prevMonth } = getAdjacentMonths(year, month);
+    setSelectedDate(new Date(prevMonth.year, prevMonth.month - 1, 1));
+  };
+
+  const goToNextMonth = () => {
+    const { nextMonth } = getAdjacentMonths(year, month);
+    setSelectedDate(new Date(nextMonth.year, nextMonth.month - 1, 1));
+  };
 
   const daysInMonth = getDaysInMonth(selectedDate);
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);

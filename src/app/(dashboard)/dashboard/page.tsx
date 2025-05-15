@@ -11,7 +11,7 @@ export default async function DashboardPage() {
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value || "Europe/Prague";
 
-  const dehydratedState = await prefetchDataForDashboardRpc(new Date(), timezone);
+  const dehydratedState = await prefetchDataForDashboardRpc(timezone);
 
   const slots = [
     { name: "Day", component: <DaySelector /> },

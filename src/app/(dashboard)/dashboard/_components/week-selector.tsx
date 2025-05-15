@@ -95,7 +95,6 @@ export function WeekSelector() {
       api.off("select", selectHandler);
     };
   }, [api, handlePreviousWeek, handleNextWeek]);
-  
 
   return (
     <>

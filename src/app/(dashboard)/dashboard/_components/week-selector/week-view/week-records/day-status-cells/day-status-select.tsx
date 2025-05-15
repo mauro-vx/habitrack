@@ -76,8 +76,6 @@ export function DayStatusSelect({
   };
 
   const handleValueChange = async (value: SelectHabitState) => {
-    console.log('🙀 value 🙀: ', value);
-    
     if (!habitDayStatus?.id) {
       React.startTransition(() =>
         createAction({

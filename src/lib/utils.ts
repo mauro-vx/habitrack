@@ -54,6 +54,35 @@ export function getAdjacentWeeksDate(date: Date): {
   };
 }
 
+export function getDateSeries(date: Date): {
+  current: { day: number; week: number; month: number; year: number };
+  previous: { day: number; week: number; month: number; year: number };
+  next: { day: number; week: number; month: number; year: number };
+} {
+  const currentYear = getYear(date);
+  const currentWeek = getISOWeek(date);
+  const currentDay = getDate(date);
+  const currentMonth = getMonth(date) + 1; // date-fns months are 0-indexed
+
+  const previousDate = subWeeks(date, 1);
+  const previousYear = getYear(previousDate);
+  const previousWeek = getISOWeek(previousDate);
+  const previousDay = getDate(previousDate);
+  const previousMonth = getMonth(previousDate) + 1;
+
+  const nextDate = addWeeks(date, 1);
+  const nextYear = getYear(nextDate);
+  const nextWeek = getISOWeek(nextDate);
+  const nextDay = getDate(nextDate);
+  const nextMonth = getMonth(nextDate) + 1;
+
+  return {
+    current: { day: currentDay, week: currentWeek, month: currentMonth, year: currentYear },
+    previous: { day: previousDay, week: previousWeek, month: previousMonth, year: previousYear },
+    next: { day: nextDay, week: nextWeek, month: nextMonth, year: nextYear },
+  };
+}
+
 export function getAdjacentWeeksNumber(
   year: number | string,
   week: number | string,
@@ -77,7 +106,6 @@ export function getAdjacentWeeksNumber(
   };
 }
 
-// Add these functions to your utils.ts file
 export function getMonthAndYear(date: Date): { month: number; year: number } {
   const year = getYear(date);
   const month = getMonth(date) + 1; // date-fns months are 0-indexed
@@ -93,9 +121,12 @@ export function getDayMonthYear(date: Date): { day: number; month: number; year:
   return { day, month, year };
 }
 
-export function getAdjacentMonths(year: number, month: number): {
+export function getAdjacentMonths(
+  year: number,
+  month: number,
+): {
   prevMonth: { year: number; month: number };
-  nextMonth: { year: number; month: number }
+  nextMonth: { year: number; month: number };
 } {
   let prevMonth = month - 1;
   let prevYear = year;
@@ -115,6 +146,6 @@ export function getAdjacentMonths(year: number, month: number): {
 
   return {
     prevMonth: { year: prevYear, month: prevMonth },
-    nextMonth: { year: nextYear, month: nextMonth }
+    nextMonth: { year: nextYear, month: nextMonth },
   };
 }

@@ -4,19 +4,17 @@ import * as React from "react";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { getAdjacentWeeksDate, getAdjacentWeeksNumber } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { WeekView } from "./week-selector/week-view";
+import { addWeeks, format, startOfWeek } from "date-fns";
 
 export function WeekSelector() {
   const [api, setApi] = React.useState<CarouselApi>();
 
-  const {
-    prevWeek: prevWeekInit,
-    currentWeek: currentWeekInit,
-    nextWeek: nextWeekInit,
-  } = getAdjacentWeeksDate(new Date());
+  const prevWeekInit = startOfWeek(addWeeks(new Date(), -1), { weekStartsOn: 1 });
+  const currentWeekInit = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const nextWeekInit = startOfWeek(addWeeks(new Date(), 1), { weekStartsOn: 1 });
 
   const [visibleWeeks, setVisibleWeeks] = React.useState([prevWeekInit, currentWeekInit, nextWeekInit]);
 
@@ -39,19 +37,15 @@ export function WeekSelector() {
 
   const handlePreviousWeek = React.useCallback(() => {
     setVisibleWeeks((prevState) => {
-      const firstWeek = prevState[0];
-      const { prevWeek } = getAdjacentWeeksNumber(firstWeek.year, firstWeek.week);
-
-      return [prevWeek, ...prevState.slice(0, -1)];
+      const prevWeekDate = startOfWeek(addWeeks(prevState[0], -1), { weekStartsOn: 1 });
+      return [prevWeekDate, ...prevState.slice(0, -1)];
     });
   }, []);
 
   const handleNextWeek = React.useCallback(() => {
     setVisibleWeeks((prevState) => {
-      const lastWeek = prevState[prevState.length - 1];
-      const { nextWeek } = getAdjacentWeeksNumber(lastWeek.year, lastWeek.week);
-
-      return [...prevState.slice(1), nextWeek];
+      const nextWeekDate = startOfWeek(addWeeks(prevState[2], 1), { weekStartsOn: 1 });
+      return [...prevState.slice(1), nextWeekDate];
     });
   }, []);
 
@@ -102,8 +96,8 @@ export function WeekSelector() {
         <Button variant="ghost" size="icon" onClick={() => scrollHandler("left")} aria-label="Previous week">
           <ChevronLeft className="size-4" />
         </Button>
-        <span className="text-center min-w-40">
-          Week {visibleWeeks[1].week} - {visibleWeeks[1].year}
+        <span className="min-w-40 text-center">
+          Week {format(visibleWeeks[1], "wo")} - {format(visibleWeeks[1], "yyyy")}
         </span>
         <Button variant="ghost" size="icon" onClick={() => scrollHandler("right")} aria-label="Next week">
           <ChevronRight className="size-4" />
@@ -119,10 +113,8 @@ export function WeekSelector() {
           <CarouselContent className="h-full" parentClassName="h-full">
             {[carouselItem0, carouselItem1, carouselItem2].map((carouselItem, idx) => (
               <CarouselItem key={`carousel-item-${idx}`} className="flex h-full flex-col">
-                <React.Suspense
-                  fallback={<div>Loading data for week {visibleWeeks[carouselItem.current].week}...</div>}
-                >
-                  <WeekView weekData={visibleWeeks[!api ? 1 : carouselItem.current]} />
+                <React.Suspense fallback={<div>Loading data for week {format(visibleWeeks[1], "wo")}...</div>}>
+                  <WeekView weekStartDate={visibleWeeks[!api ? 1 : carouselItem.current]} />
                 </React.Suspense>
               </CarouselItem>
             ))}

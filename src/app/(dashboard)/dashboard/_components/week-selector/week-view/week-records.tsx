@@ -7,13 +7,7 @@ import { DayStatusCells } from "./week-records/day-status-cells";
 import { WeekProgressBadge } from "./week-records/week-progress-badge";
 import { Separator } from "@/components/ui/separator";
 
-export function WeekRecords({
-  habits,
-  weekData,
-}: {
-  habits: HabitEntitiesWeekRpc;
-  weekData: { year: number; week: number };
-}) {
+export function WeekRecords({ habits, weekStartDate }: { habits: HabitEntitiesWeekRpc; weekStartDate: Date }) {
   const habitElements = React.useMemo(() => {
     return (
       <>
@@ -26,7 +20,7 @@ export function WeekRecords({
             return (
               <React.Fragment key={habit.id}>
                 <HabitName name={habit.name} />
-                <DayStatusCells habit={habit} weeklyTotalCount={weeklyTotalCount} weekData={weekData} />
+                <DayStatusCells habit={habit} weeklyTotalCount={weeklyTotalCount} weekStartDate={weekStartDate} />
                 <WeekProgressBadge habit={habit} weeklyTotalCount={weeklyTotalCount} />
               </React.Fragment>
             );
@@ -34,7 +28,7 @@ export function WeekRecords({
         </div>
       </>
     );
-  }, [habits, weekData]);
+  }, [habits, weekStartDate]);
 
   return <>{habitElements}</>;
 }

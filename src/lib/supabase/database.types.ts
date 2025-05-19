@@ -13,41 +13,32 @@ export type Database = {
         Row: {
           completion_count: number | null
           created_at: string | null
-          day: number
           day_number: number
           habit_id: string
           id: string
-          month: number
           skipped_count: number | null
+          status_date: string
           updated_at: string | null
-          week: number
-          year: number
         }
         Insert: {
           completion_count?: number | null
           created_at?: string | null
-          day: number
           day_number: number
           habit_id: string
           id?: string
-          month: number
           skipped_count?: number | null
+          status_date: string
           updated_at?: string | null
-          week: number
-          year: number
         }
         Update: {
           completion_count?: number | null
           created_at?: string | null
-          day?: number
           day_number?: number
           habit_id?: string
           id?: string
-          month?: number
           skipped_count?: number | null
+          status_date?: string
           updated_at?: string | null
-          week?: number
-          year?: number
         }
         Relationships: [
           {
@@ -65,17 +56,9 @@ export type Database = {
           days_of_week: Json
           description: string | null
           end_date: string | null
-          end_day: number | null
-          end_month: number | null
-          end_week: number | null
-          end_year: number | null
           id: string
           name: string
           start_date: string
-          start_day: number | null
-          start_month: number | null
-          start_week: number | null
-          start_year: number | null
           target_count: number
           timezone: string
           type: Database["public"]["Enums"]["habit_type"]
@@ -87,17 +70,9 @@ export type Database = {
           days_of_week?: Json
           description?: string | null
           end_date?: string | null
-          end_day?: number | null
-          end_month?: number | null
-          end_week?: number | null
-          end_year?: number | null
           id?: string
           name: string
           start_date: string
-          start_day?: number | null
-          start_month?: number | null
-          start_week?: number | null
-          start_year?: number | null
           target_count: number
           timezone?: string
           type: Database["public"]["Enums"]["habit_type"]
@@ -109,17 +84,9 @@ export type Database = {
           days_of_week?: Json
           description?: string | null
           end_date?: string | null
-          end_day?: number | null
-          end_month?: number | null
-          end_week?: number | null
-          end_year?: number | null
           id?: string
           name?: string
           start_date?: string
-          start_day?: number | null
-          start_month?: number | null
-          start_week?: number | null
-          start_year?: number | null
           target_count?: number
           timezone?: string
           type?: Database["public"]["Enums"]["habit_type"]
@@ -161,7 +128,7 @@ export type Database = {
     }
     Functions: {
       fetch_day_data: {
-        Args: { _year: number; _month: number; _day: number }
+        Args: { _date: string }
         Returns: {
           id: string
           user_id: string
@@ -170,14 +137,6 @@ export type Database = {
           type: Database["public"]["Enums"]["habit_type"]
           start_date: string
           end_date: string
-          start_week: number
-          start_month: number
-          start_day: number
-          start_year: number
-          end_week: number
-          end_month: number
-          end_day: number
-          end_year: number
           days_of_week: Json
           target_count: number
           created_at: string
@@ -186,7 +145,7 @@ export type Database = {
         }[]
       }
       fetch_month_data: {
-        Args: { _year: number; _month: number }
+        Args: { _month_start: string }
         Returns: {
           id: string
           user_id: string
@@ -195,23 +154,13 @@ export type Database = {
           type: Database["public"]["Enums"]["habit_type"]
           start_date: string
           end_date: string
-          start_week: number
-          start_month: number
-          start_day: number
-          start_year: number
-          end_week: number
-          end_month: number
-          end_day: number
-          end_year: number
-          days_of_week: Json
-          target_count: number
           created_at: string
           updated_at: string
           habit_statuses: Json
         }[]
       }
       fetch_week_data: {
-        Args: { _year: number; _week: number }
+        Args: { _startweek: string; _endweek: string } | { _week_start: string }
         Returns: {
           id: string
           user_id: string
@@ -220,18 +169,16 @@ export type Database = {
           type: Database["public"]["Enums"]["habit_type"]
           start_date: string
           end_date: string
-          start_week: number
-          start_month: number
-          start_day: number
-          start_year: number
-          end_week: number
-          end_month: number
-          end_day: number
-          end_year: number
-          days_of_week: Json
-          target_count: number
           created_at: string
           updated_at: string
+          habit_statuses: Json
+        }[]
+      }
+      get_habits_with_statuses: {
+        Args: { start_week: string; end_week: string }
+        Returns: {
+          habit_id: number
+          habit_name: string
           habit_statuses: Json
         }[]
       }

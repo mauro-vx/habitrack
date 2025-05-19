@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isMonday } from "date-fns";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { DAILY_DAYS_OF_WEEK, DEFAULT_DAYS_OF_WEEK } from "../constants";
 import { Status, HabitType } from "@/app/enums";
@@ -37,8 +38,9 @@ const initState: CreateHabitState = {
   days_of_week: DAILY_DAYS_OF_WEEK,
 };
 
-export function CreateHabitForm({ className }: { className?: string }) {
+export function CreateHabitForm({ timezone, className }: { timezone: string; className?: string }) {
   const [state, formAction, isPending] = React.useActionState(createHabit, initState);
+  const queryClient = useQueryClient();
 
   const form = useForm({
     resolver: zodResolver(createHabitSchema),
@@ -76,13 +78,15 @@ export function CreateHabitForm({ className }: { className?: string }) {
       toast.success("Habit has been created", {
         description: form.getValues("name"),
       });
+
+      queryClient.invalidateQueries({ queryKey: ["habits", timezone] });
       form.reset(initState);
     }
-  }, [state?.status, isPending, form]);
+  }, [state?.status, isPending, form, queryClient, timezone]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-2 lg:gap-4 flex-1", className)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-1 flex-col gap-2 lg:gap-4", className)}>
         <NameField control={form.control} disabled={isPending} />
         <DescriptionField control={form.control} disabled={isPending} />
         <TypeField control={form.control} disabled={isPending} onChange={onHabitTypeChange} />

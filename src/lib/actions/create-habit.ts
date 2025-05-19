@@ -10,6 +10,7 @@ import { CreateHabitState } from "@/app/(dashboard)/dashboard/create/types";
 import { CreateHabitSchema, createHabitSchema } from "@/app/(dashboard)/dashboard/create/schema";
 import { createClient } from "@/lib/supabase/server";
 import { TablesInsert } from "@/lib/supabase/database.types";
+import { startOfDay, endOfDay } from "date-fns";
 
 export async function createHabit(prevState: CreateHabitState, formData: CreateHabitSchema): Promise<CreateHabitState> {
   const validation = createHabitSchema.safeParse(formData);
@@ -47,8 +48,8 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
     type: validationData.type,
     target_count: validationData.target_count,
     days_of_week: validationData.days_of_week,
-    start_date: start_date.toISOString(),
-    end_date: end_date && end_date.toISOString(),
+    start_date: startOfDay(start_date).toISOString(),
+    end_date: end_date ? endOfDay(end_date).toISOString() : null,
     timezone: timezone,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),

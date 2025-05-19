@@ -1,50 +1,53 @@
 import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { addDays, addMonths, getDate, getISOWeek, getMonth, getYear, startOfDay, subDays } from "date-fns";
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  subDays,
+  subMonths,
+  subWeeks,
+} from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
 
 import { HabitEntitiesWeekRpc, HabitEntitiesMonthRpc, HabitEntitiesDayRpc } from "@/app/types";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 
-export async function fetchDayDataServerRpc(year: number, month: number, day: number): Promise<HabitEntitiesDayRpc> {
-  const { authSupabase } = await authenticateUser();
+const { authSupabase } = await authenticateUser();
 
-  if (!year || !month || !day) {
-    throw new Error("`year`, `month`, and `day` parameters are all required.");
-  }
+export async function fetchDayDataServer(dayDate: Date): Promise<HabitEntitiesDayRpc> {
+  const isoDateFormatted = dayDate.toISOString().split("T")[0];
 
-  const { data, error } = await authSupabase.rpc("fetch_day_data", { _year: year, _month: month, _day: day });
+  const { data, error } = await authSupabase.rpc("fetch_day_data", { _date: isoDateFormatted });
 
   if (error) {
+    console.error("Error fetching day data:", error);
     throw new Error(error.message || "Failed to fetch day data");
   }
 
   return data as HabitEntitiesDayRpc;
 }
 
-export async function fetchWeekDataServerRpc(year: number, week: number): Promise<HabitEntitiesWeekRpc> {
-  const { authSupabase } = await authenticateUser();
+export async function fetchWeekDataServer(weekDate: Date): Promise<HabitEntitiesWeekRpc> {
+  const isoDateFormatted = weekDate.toISOString().split("T")[0];
 
-  if (!year || !week) {
-    throw new Error("Both `week` and `year` parameters are required.");
-  }
-
-  const { data, error } = await authSupabase.rpc("fetch_week_data", { _year: year, _week: week });
+  const { data, error } = await authSupabase.rpc("fetch_week_data", { _week_start: isoDateFormatted });
 
   if (error) {
+    console.error("Error fetching week data:", error);
     throw new Error(error.message || "Failed to fetch week data");
   }
 
   return data as HabitEntitiesWeekRpc;
 }
 
-export async function fetchMonthDataServerRpc(year: number, month: number): Promise<HabitEntitiesMonthRpc> {
-  const { authSupabase } = await authenticateUser();
+export async function fetchMonthDataServer(monthDate: Date): Promise<HabitEntitiesMonthRpc> {
+  const isoMonthFormatted = monthDate.toISOString().split("T")[0];
 
-  if (!year || !month) {
-    throw new Error("Both `month` and `year` parameters are required.");
-  }
-
-  const { data, error } = await authSupabase.rpc("fetch_month_data", { _year: year, _month: month });
+  const { data, error } = await authSupabase.rpc("fetch_month_data", { _month_start: isoMonthFormatted });
 
   if (error) {
     throw new Error(error.message || "Failed to fetch month data");
@@ -59,90 +62,81 @@ export async function prefetchDataForDashboardRpc(timezone: string) {
   const now = new Date();
   const localTime = fromZonedTime(now, timezone);
 
-  const year = getYear(localTime);
-  const week = getISOWeek(localTime);
-  const month = getMonth(localTime) + 1;
-  const day = getDate(localTime);
+  const yesterday = subDays(localTime, 1);
+  const today = startOfDay(localTime);
+  const tomorrow = addDays(localTime, 1);
 
-  const prevWeekDate = subDays(localTime, 7);
-  const prevWeek = { year: getYear(prevWeekDate), week: getISOWeek(prevWeekDate) };
+  const startOfWeekCurrent = startOfWeek(localTime, { weekStartsOn: 1 });
+  const startOfWeekPast = subWeeks(startOfWeekCurrent, 1);
+  const startOfWeekNext = addWeeks(startOfWeekCurrent, 1);
 
-  const nextWeekDate = addDays(localTime, 7);
-  const nextWeek = { year: getYear(nextWeekDate), week: getISOWeek(nextWeekDate) };
-
-  const prevMonth = addMonths(localTime, -1);
-  const prevMonthData = { year: getYear(prevMonth), month: getMonth(prevMonth) + 1 };
-
-  const nextMonth = addMonths(localTime, 1);
-  const nextMonthData = { year: getYear(nextMonth), month: getMonth(nextMonth) + 1 };
-
-  const prevDayDate = subDays(localTime, 1);
-  const prevDay = { year: getYear(prevDayDate), month: getMonth(prevDayDate) + 1, day: getDate(prevDayDate) };
-
-  const nextDayDate = addDays(localTime, 1);
-  const nextDay = { year: getYear(nextDayDate), month: getMonth(nextDayDate) + 1, day: getDate(nextDayDate) };
+  const startOfMonthCurrent = startOfMonth(localTime);
+  const startOfMonthPast = subMonths(startOfMonthCurrent, 1);
+  const startOfMonthNext = addMonths(startOfMonthCurrent, 1);
 
   await Promise.all([
     queryClient.prefetchQuery({
-      queryKey: ["dayData", prevDay.year, prevDay.month, prevDay.day],
-      queryFn: () => fetchDayDataServerRpc(prevDay.year, prevDay.month, prevDay.day),
+      queryKey: ["dayData", yesterday.toISOString()],
+      queryFn: () => fetchDayDataServer(yesterday),
     }),
     queryClient.prefetchQuery({
-      queryKey: ["dayData", year, month, day],
-      queryFn: () => fetchDayDataServerRpc(year, month, day),
+      queryKey: ["dayData", today.toISOString()],
+      queryFn: () => fetchDayDataServer(today),
     }),
     queryClient.prefetchQuery({
-      queryKey: ["dayData", nextDay.year, nextDay.month, nextDay.day],
-      queryFn: () => fetchDayDataServerRpc(nextDay.year, nextDay.month, nextDay.day),
-    }),
-
-    queryClient.prefetchQuery({
-      queryKey: ["weekData", prevWeek.year, prevWeek.week],
-      queryFn: () => fetchWeekDataServerRpc(prevWeek.year, prevWeek.week),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: ["weekData", year, week],
-      queryFn: () => fetchWeekDataServerRpc(year, week),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: ["weekData", nextWeek.year, nextWeek.week],
-      queryFn: () => fetchWeekDataServerRpc(nextWeek.year, nextWeek.week),
+      queryKey: ["dayData", tomorrow.toISOString()],
+      queryFn: () => fetchDayDataServer(tomorrow),
     }),
 
     queryClient.prefetchQuery({
-      queryKey: ["monthData", prevMonthData.year, prevMonthData.month],
-      queryFn: () => fetchMonthDataServerRpc(prevMonthData.year, prevMonthData.month),
+      queryKey: ["weekData", startOfWeekPast.toISOString()],
+      queryFn: () => fetchWeekDataServer(startOfWeekPast),
     }),
     queryClient.prefetchQuery({
-      queryKey: ["monthData", year, month],
-      queryFn: () => fetchMonthDataServerRpc(year, month),
+      queryKey: ["weekData", startOfWeekCurrent.toISOString()],
+      queryFn: () => fetchWeekDataServer(startOfWeekCurrent),
     }),
     queryClient.prefetchQuery({
-      queryKey: ["monthData", nextMonthData.year, nextMonthData.month],
-      queryFn: () => fetchMonthDataServerRpc(nextMonthData.year, nextMonthData.month),
+      queryKey: ["weekData", startOfWeekNext.toISOString()],
+      queryFn: () => fetchWeekDataServer(startOfWeekNext),
+    }),
+
+    queryClient.prefetchQuery({
+      queryKey: ["monthData", startOfMonthPast.toISOString()],
+      queryFn: () => fetchMonthDataServer(startOfMonthPast),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["monthData", startOfMonthCurrent.toISOString()],
+      queryFn: () => fetchMonthDataServer(startOfMonthCurrent),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["monthData", startOfMonthNext.toISOString()],
+      queryFn: () => fetchMonthDataServer(startOfMonthNext),
     }),
   ]);
 
   return dehydrate(queryClient);
 }
 
-export async function fetchHabitsByTimezone(timezone: string) {
+export async function getLocalizedHabits(timezone: string) {
   const { authSupabase } = await authenticateUser();
 
   const now = new Date();
   const localTime = fromZonedTime(now, timezone);
-  const todayStart = startOfDay(localTime);
-  const isoDate = todayStart.toISOString();
+
+  const currentWeekStart = startOfWeek(localTime, { weekStartsOn: 1 });
+  const currentWeekEnd = endOfWeek(localTime, { weekStartsOn: 1 });
+  const nextWeekStart = startOfWeek(addWeeks(localTime, 1), { weekStartsOn: 1 });
 
   const [activeHabits, futureHabits, pastHabits] = await Promise.all([
     authSupabase
       .from("habits")
-      .select("*, habit_statuses(*)")
-      .or(`start_date.is.null,start_date.lte.${isoDate},end_date.is.null,end_date.gte.${isoDate}`),
-
-    authSupabase.from("habits").select("*, habit_statuses(*)").gt("start_date", isoDate),
-
-    authSupabase.from("habits").select("*, habit_statuses(*)").lt("end_date", isoDate),
+      .select("*")
+      .or(
+        `and(start_date.lte.${currentWeekStart.toISOString()},end_date.is.null),and(start_date.lte.${currentWeekStart.toISOString()},end_date.gte.${currentWeekEnd.toISOString()})`,
+      ),
+    authSupabase.from("habits").select("*").gte("start_date", nextWeekStart.toISOString()),
+    authSupabase.from("habits").select("*").lt("end_date", currentWeekStart.toISOString()),
   ]);
 
   if (activeHabits.error || futureHabits.error || pastHabits.error) {
@@ -154,9 +148,12 @@ export async function fetchHabitsByTimezone(timezone: string) {
     );
   }
 
+  const all = [...(activeHabits.data || []), ...(futureHabits.data || []), ...(pastHabits.data || [])];
+
   return {
     active: activeHabits.data || [],
     future: futureHabits.data || [],
     past: pastHabits.data || [],
+    all: all,
   };
 }

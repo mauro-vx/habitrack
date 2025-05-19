@@ -2,36 +2,33 @@
 
 import * as React from "react";
 
-import { format, getDaysInMonth, setDate, startOfMonth, getDay } from "date-fns";
+import { format, getDaysInMonth, setDate, startOfMonth, getDay, subMonths, addMonths } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { useMonthDataMapped } from "../_utils/client";
-import { getAdjacentMonths, getMonthAndYear } from "@/lib/utils";
+import { useMonthData } from "../_utils/client";
 import { Button } from "@/components/ui/button";
 import { getDayNamesByFormat } from "@/app/(dashboard)/dashboard/_utils/date";
-import { HabitEntityWeekRpc } from "@/app/types";
 import { Tables } from "@/lib/supabase/database.types";
 
 export function MonthSelector() {
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const { month, year } = getMonthAndYear(selectedDate);
+  const [selectedMonth, setSelectedMonth] = React.useState(startOfMonth(new Date()));
 
-  const { data: monthData = [] } = useMonthDataMapped(year, month);
+  const { data: monthData = [] } = useMonthData(selectedMonth);
+
+  console.log("🙀 monthData 🙀: ", monthData);
 
   const goToPreviousMonth = () => {
-    const { prevMonth } = getAdjacentMonths(year, month);
-    setSelectedDate(new Date(prevMonth.year, prevMonth.month - 1, 1));
+    setSelectedMonth(startOfMonth(subMonths(selectedMonth, 1)));
   };
 
   const goToNextMonth = () => {
-    const { nextMonth } = getAdjacentMonths(year, month);
-    setSelectedDate(new Date(nextMonth.year, nextMonth.month - 1, 1));
+    setSelectedMonth(startOfMonth(addMonths(selectedMonth, 1)));
   };
 
-  const daysInMonth = getDaysInMonth(selectedDate);
+  const daysInMonth = getDaysInMonth(selectedMonth);
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-  const firstDayOfMonth = getDay(startOfMonth(selectedDate));
+  const firstDayOfMonth = getDay(startOfMonth(selectedMonth));
   const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
   const emptyCells = Array.from({ length: adjustedFirstDay }, (_, i) => (
@@ -46,45 +43,48 @@ export function MonthSelector() {
         <Button variant="ghost" size="icon" onClick={goToPreviousMonth} aria-label="Previous month">
           <ChevronLeft className="size-4" />
         </Button>
-        <span className="min-w-32 text-center">{format(selectedDate, "MMMM yyyy")}</span>
+        <span className="min-w-32 text-center">{format(selectedMonth, "MMMM yyyy")}</span>
         <Button variant="ghost" size="icon" onClick={goToNextMonth} aria-label="Next month">
           <ChevronRight className="size-4" />
         </Button>
       </div>
 
       <div className="mb-4 grid grid-cols-7 gap-1">
-        {dayNamesArray.map((day) => (
-          <div key={day} className="p-2 text-center font-bold">
-            {day}
+        {dayNamesArray.map((dayName) => (
+          <div key={dayName} className="p-2 text-center font-bold">
+            {dayName}
           </div>
         ))}
 
         {emptyCells}
 
-        {days.map((day) => {
-          const habitsForDay = monthData.filter((habit) => isHabitScheduledForDay(habit, day, month, year));
+        {days.map((dayNumber) => {
+          const habitsForDay = monthData.filter((habit) => isHabitScheduledForDay(habit, selectedMonth, dayNumber));
 
           return (
             <div
-              key={day}
-              className="h-24 cursor-pointer overflow-y-auto rounded border p-2 hover:bg-gray-50"
-              onClick={() => setSelectedDate(setDate(selectedDate, day))}
+              key={dayNumber}
+              className="h-24 cursor-pointer overflow-y-auto rounded border p-2 hover:bg-gray-50 flex flex-col justify-between"
+              onClick={() => setSelectedMonth(setDate(selectedMonth, dayNumber))}
             >
-              <div className="font-bold">{day}</div>
-              {habitsForDay.length > 0 ? (
-                habitsForDay.map((habit) => {
-                  const status = habit.habit_statuses && habit.habit_statuses[day.toString()];
-                  const hasStatus = !!status;
+              <span className="font-bold">{dayNumber}</span>
+              {!!habitsForDay.length ? (
+                <div className="flex flex-col gap-y-1">
+                  {habitsForDay.map((habit) => {
+                    const status = habit.habit_statuses && habit.habit_statuses[dayNumber.toString()];
+                    const hasStatus = !!status;
 
-                  return (
-                    <div
-                      key={habit.id}
-                      className={`mb-1 truncate rounded p-1 text-xs ${hasStatus ? "bg-blue-500" : "bg-gray-500"}`}
-                    >
-                      {habit.name} {hasStatus ? `(${status.completion_count || 0}/${habit.target_count})` : "(pending)"}
-                    </div>
-                  );
-                })
+                    return (
+                      <div
+                        key={habit.id}
+                        className={`truncate rounded p-1 text-xs ${hasStatus ? "bg-blue-500" : "bg-gray-500"}`}
+                      >
+                        {habit.name} {hasStatus && `(${status.completion_count || 0}/${habit.target_count})`}
+                      </div>
+                    );
+                  })}
+                </div>
+
               ) : (
                 <div className="text-xs text-gray-400">No habits</div>
               )}
@@ -96,24 +96,19 @@ export function MonthSelector() {
   );
 }
 
-const isHabitScheduledForDay = (habit: Tables<"habits">, dayOfMonth: number, month: number, year: number) => {
-  const date = new Date(year, month - 1, dayOfMonth);
+const isHabitScheduledForDay = (habit: Tables<"habits">, selectedMonth: Date, day: number) => {
+  const targetDate = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), day).toISOString();
 
-  const habitStartDate = new Date(habit.start_year!, habit.start_month! - 1, habit.start_day!);
-
-  if (date < habitStartDate) {
+  if (habit.start_date && targetDate < habit.start_date) {
     return false;
   }
 
-  if (habit.end_year) {
-    const habitEndDate = new Date(habit.end_year, habit.end_month! - 1, habit.end_day!);
-
-    if (date > habitEndDate) {
-      return false;
-    }
+  if (habit.end_date && targetDate > habit.end_date) {
+    return false;
   }
 
-  const dayNumber = date.getDay() === 0 ? 7 : date.getDay();
+  const dayOfWeekISO = getDay(targetDate);
+  const adjustedDayOfWeek = dayOfWeekISO === 0 ? 7 : dayOfWeekISO;
 
-  return habit.days_of_week && habit.days_of_week[dayNumber as keyof HabitEntityWeekRpc["days_of_week"]];
+  return habit.days_of_week?.[adjustedDayOfWeek as keyof typeof habit.days_of_week] || false;
 };

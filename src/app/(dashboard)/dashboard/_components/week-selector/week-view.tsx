@@ -1,18 +1,18 @@
 import * as React from "react";
 
 import { HabitEntitiesWeekRpc } from "@/app/types";
-import { useWeekDataMapped } from "@/app/(dashboard)/dashboard/_utils/client";
+import { useWeekData } from "@/app/(dashboard)/dashboard/_utils/client";
 import { DaySummaryBadge } from "./week-view/day-summary-badge";
 import { WeekTimeline } from "@/app/(dashboard)/dashboard/_components/week-selector/week-view/week-timeline";
 import { WeekRecords } from "@/app/(dashboard)/dashboard/_components/week-selector/week-view/week-records";
 
-export function WeekView({ weekData }: { weekData: { year: number; week: number } }) {
-  const { data: habits = [] }: { data: HabitEntitiesWeekRpc } = useWeekDataMapped(weekData.year, weekData.week);
+export function WeekView({ weekStartDate }: { weekStartDate: Date }) {
+  const { data: habits }: { data: HabitEntitiesWeekRpc } = useWeekData(weekStartDate);
 
   return (
     <>
-      <WeekTimeline weekData={weekData} />
-      <WeekRecords habits={habits} weekData={weekData} />
+      <WeekTimeline weekStartDate={weekStartDate} />
+      <WeekRecords habits={habits} weekStartDate={weekStartDate} />
       <DaySummaryBadge habits={habits} />
     </>
   );

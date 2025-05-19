@@ -1,14 +1,18 @@
 import * as React from "react";
 
-import { Star, StarOff } from "lucide-react";
+import { Star, MoonStar } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { COL_START_CLASSES } from "../_utils/grid-column-utils";
 
 export function DayIcon({ result, idx }: { result: boolean; idx: number }) {
-  const Comp = result ? Star : StarOff;
+  const Comp = result ? Star : MoonStar;
 
   return (
-    <Comp className={cn(`size-5 lg:size-6 ${COL_START_CLASSES[idx + 1]}, ${result ? "text-yellow-500" : "text-pink-600"}`)} />
+    <Comp
+      className={cn(
+        `size-5 lg:size-6 ${COL_START_CLASSES[idx + 1]}, ${result ? "fill-yellow-500 stroke-yellow-200" : "stroke-gray-500"}`,
+      )}
+    />
   );
 }

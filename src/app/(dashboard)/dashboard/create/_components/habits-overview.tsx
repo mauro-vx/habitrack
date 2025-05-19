@@ -2,41 +2,58 @@
 
 import * as React from "react";
 
-import { HabitEntities } from "@/app/types";
+import { HabitInfo } from "@/app/types";
 import { cn } from "@/lib/utils";
 import { HabitCard } from "@/app/(dashboard)/dashboard/create/_components/habits-overview/habit-card";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { getLocalizedHabitsClient } from "@/app/(dashboard)/dashboard/_utils/client";
 
 enum CategoryKey {
-  All = "all",
   Active = "active",
   Future = "future",
   Past = "past",
+  All = "all",
 }
 
 const categories: CategoryKey[] = [CategoryKey.All, CategoryKey.Active, CategoryKey.Future, CategoryKey.Past];
 
 export function HabitsOverview({
-  initialData,
+  habits,
+  timezone,
   className,
 }: {
-  initialData: {
-    active: HabitEntities;
-    future: HabitEntities;
-    past: HabitEntities;
-    all: HabitEntities;
+  habits: {
+    active: HabitInfo[];
+    future: HabitInfo[];
+    past: HabitInfo[];
+    all: HabitInfo[];
   };
+  timezone: string;
   className?: string;
 }) {
   const [selectedCategory, setSelectedCategory] = React.useState<CategoryKey>(CategoryKey.Active);
-  const [displayedHabits, setDisplayedHabits] = React.useState<HabitEntities>(initialData.all);
 
-  React.useEffect(() => {
-    setDisplayedHabits(initialData[selectedCategory]);
-  }, [selectedCategory, initialData]);
+  const { data, error, isError, isFetching, isRefetching } = useQuery({
+    queryKey: ["habits", timezone],
+    queryFn: () => getLocalizedHabitsClient(timezone),
+    initialData: habits,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+
+  const displayedHabits = React.useMemo(() => {
+    return data[selectedCategory] || [];
+  }, [data, selectedCategory]);
+
+  if (isError) {
+    console.error("Error fetching habits:", error);
+
+    return <div>Error loading habits: {error.message}</div>;
+  }
 
   return (
-    <section className={cn("flex flex-col gap-2 sm:flex-col flex-1 items-stretch", className)}>
+    <section className={cn("flex flex-1 flex-col items-stretch gap-2", className)}>
       <div className="flex gap-2 lg:gap-4">
         {categories.map((category) => (
           <Button
@@ -45,7 +62,7 @@ export function HabitsOverview({
             disabled={selectedCategory === category}
             key={category}
             onClick={() => setSelectedCategory(category)}
-            className={cn("text-xs lg:text-base", selectedCategory === category && "text-brand")}
+            className={cn("hover:text-brand-light text-xs lg:text-base", selectedCategory === category && "text-brand")}
             style={{ opacity: "100" }}
           >
             {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -53,8 +70,10 @@ export function HabitsOverview({
         ))}
       </div>
 
-      <div className="overflow-auto space-y-1 lg:space-y-2">
-        {displayedHabits.length === 0 ? (
+      <div className="space-y-1 overflow-auto lg:space-y-2">
+        {isRefetching || isFetching ? (
+          <p className="text-muted-foreground text-center">Refreshing habits...</p>
+        ) : displayedHabits.length === 0 ? (
           <p className="text-muted-foreground text-center">No habits in this category</p>
         ) : (
           displayedHabits.map((habit) => <HabitCard key={habit.id} title={habit.name} />)

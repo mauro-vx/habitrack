@@ -3,22 +3,24 @@ import * as React from "react";
 import { HabitEntityWeekRpc } from "@/app/types";
 import { HabitType } from "@/app/enums";
 import { DAYS_OF_WEEK } from "@/app/(dashboard)/dashboard/constants";
-import { isAfterToday } from "@/app/(dashboard)/dashboard/_utils/date";
 import { COL_START_CLASSES } from "../_utils/grid-column-utils";
 import { calculateCountUntilDay, getDayStatusCount } from "./day-status-cells/utils";
 import { DayStatusSelect } from "./day-status-cells/day-status-select";
+import { addDays, isAfter, startOfToday } from "date-fns";
 
 export function DayStatusCells({
   habit,
-  weekData,
+  weekStartDate,
   weeklyTotalCount,
 }: {
   habit: HabitEntityWeekRpc;
-  weekData: { year: number; week: number };
+  weekStartDate: Date;
   weeklyTotalCount: number;
 }) {
   return DAYS_OF_WEEK.map((dayNumber) => {
-    const isFutureDay = isAfterToday(weekData.year, weekData.week, dayNumber);
+    const statusDate = addDays(new Date(weekStartDate), dayNumber - 1);
+    const isFutureDay = isAfter(statusDate, startOfToday())
+
 
     if (habit.type === HabitType.WEEKLY) {
       const hasStatusForDay = !!habit.habit_statuses?.[dayNumber];
@@ -27,7 +29,10 @@ export function DayStatusCells({
       if ((!hasStatusForDay && !isUnderTarget) || isFutureDay) return null;
     }
 
-    if (habit.type === HabitType.CUSTOM && !habit.days_of_week?.[dayNumber as keyof HabitEntityWeekRpc["days_of_week"]]) {
+    if (
+      habit.type === HabitType.CUSTOM &&
+      !habit.days_of_week?.[dayNumber as keyof HabitEntityWeekRpc["days_of_week"]]
+    ) {
       return null;
     }
 
@@ -42,8 +47,8 @@ export function DayStatusCells({
         cumulativeCountWeekly={weeklyTotalCount}
         cumulativeCountUntilToday={countUntilToday}
         cumulativeCountDay={countForDay}
-        year={weekData.year}
-        week={weekData.week}
+        weekStartDate={weekStartDate}
+        statusDate={statusDate}
         dayNumber={dayNumber}
         className={COL_START_CLASSES[dayNumber]}
       />

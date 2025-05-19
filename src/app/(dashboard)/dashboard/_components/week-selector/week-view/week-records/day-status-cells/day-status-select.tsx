@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { RefreshCcw, TriangleAlert } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { isBefore, startOfToday, isToday, isAfter } from "date-fns";
 
 import { HabitEntityWeekRpc, SelectHabitState } from "@/app/types";
 import { Tables } from "@/lib/supabase/database.types";
@@ -15,7 +16,6 @@ import { deleteHabitStatus } from "@/lib/actions/delete-habit-status";
 import { updateHabitStatus } from "@/lib/actions/update-habit-status";
 import { createHabitStatus } from "@/lib/actions/create-habit-status";
 import { Select } from "@radix-ui/react-select";
-import { isAfterToday, isBeforeToday, isToday } from "@/app/(dashboard)/dashboard/_utils/date";
 import { HabitTypeIcon } from "./day-status-select/habit-type-icon";
 
 export function DayStatusSelect({
@@ -24,8 +24,8 @@ export function DayStatusSelect({
   cumulativeCountWeekly,
   cumulativeCountUntilToday,
   cumulativeCountDay,
-  year,
-  week,
+  weekStartDate,
+  statusDate,
   dayNumber,
   open: controlledOpen,
   onOpenChange = () => {},
@@ -37,8 +37,8 @@ export function DayStatusSelect({
   cumulativeCountWeekly: number;
   cumulativeCountUntilToday: number;
   cumulativeCountDay: number;
-  year: number;
-  week: number;
+  weekStartDate: Date;
+  statusDate: Date;
   dayNumber: number;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -54,9 +54,9 @@ export function DayStatusSelect({
   const [updateState, updateAction, isPendingUpdate] = React.useActionState(updateHabitStatus, null);
   const [deleteState, deleteAction, isPendingDelete] = React.useActionState(deleteHabitStatus, null);
 
-  const isPastDay = isBeforeToday(year, week, dayNumber);
-  const isCurrentDay = isToday(year, week, dayNumber);
-  const isFutureDay = isAfterToday(year, week, dayNumber);
+  const isPastDay = isBefore(statusDate, startOfToday());
+  const isCurrentDay = isToday(statusDate);
+  const isFutureDay = isAfter(statusDate, startOfToday());
 
   const habitState = getHabitState(
     habit,
@@ -80,8 +80,8 @@ export function DayStatusSelect({
       React.startTransition(() =>
         createAction({
           habitId: habit.id,
-          week,
-          year,
+          weekStartDate,
+          statusDate,
           dayNumber,
           initialState: value,
         }),
@@ -131,9 +131,10 @@ export function DayStatusSelect({
 
   React.useEffect(() => {
     if (successfulState && !isPending) {
-      queryClient.invalidateQueries({ queryKey: ["weekData", year, week] });
+      const isoWeek = weekStartDate.toISOString();
+      queryClient.invalidateQueries({ queryKey: ["weekData", isoWeek] });
     }
-  }, [successfulState, isPending, queryClient, year, week]);
+  }, [weekStartDate, isPending, queryClient, successfulState]);
 
   return (
     <>

@@ -16,9 +16,9 @@ import { fromZonedTime } from "date-fns-tz";
 import { HabitEntitiesWeekRpc, HabitEntitiesMonthRpc, HabitEntitiesDayRpc } from "@/app/types";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 
-const { authSupabase } = await authenticateUser();
-
 export async function fetchDayDataServer(dayDate: Date): Promise<HabitEntitiesDayRpc> {
+  const { authSupabase } = await authenticateUser();
+
   const isoDateFormatted = dayDate.toISOString().split("T")[0];
 
   const { data, error } = await authSupabase.rpc("fetch_day_data", { _date: isoDateFormatted });
@@ -32,6 +32,8 @@ export async function fetchDayDataServer(dayDate: Date): Promise<HabitEntitiesDa
 }
 
 export async function fetchWeekDataServer(weekDate: Date): Promise<HabitEntitiesWeekRpc> {
+  const { authSupabase } = await authenticateUser();
+
   const isoDateFormatted = weekDate.toISOString().split("T")[0];
 
   const { data, error } = await authSupabase.rpc("fetch_week_data", { _week_start: isoDateFormatted });
@@ -45,6 +47,8 @@ export async function fetchWeekDataServer(weekDate: Date): Promise<HabitEntities
 }
 
 export async function fetchMonthDataServer(monthDate: Date): Promise<HabitEntitiesMonthRpc> {
+  const { authSupabase } = await authenticateUser();
+
   const isoMonthFormatted = monthDate.toISOString().split("T")[0];
 
   const { data, error } = await authSupabase.rpc("fetch_month_data", { _month_start: isoMonthFormatted });

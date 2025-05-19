@@ -15,8 +15,6 @@ export function MonthSelector() {
 
   const { data: monthData = [] } = useMonthData(selectedMonth);
 
-  console.log("🙀 monthData 🙀: ", monthData);
-
   const goToPreviousMonth = () => {
     setSelectedMonth(startOfMonth(subMonths(selectedMonth, 1)));
   };

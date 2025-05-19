@@ -5,9 +5,9 @@ import { fromZonedTime } from "date-fns-tz";
 import { HabitEntitiesWeekRpc, HabitEntitiesDayRpc, HabitEntitiesMonthRpc } from "@/app/types";
 import { createClient } from "@/lib/supabase/client";
 
-const supabase = createClient();
-
 export async function fetchDayDataClient(dayDate: Date): Promise<HabitEntitiesDayRpc> {
+  const supabase = createClient();
+
   const isoDateFormatted = dayDate.toISOString().split("T")[0];
 
   const { data, error } = await supabase.rpc("fetch_day_data", { _date: isoDateFormatted });
@@ -37,6 +37,8 @@ export function useDayData(dayStartDate: Date): DefinedUseQueryResult<HabitEntit
 }
 
 export async function fetchWeekDataClient(weekDate: Date): Promise<HabitEntitiesWeekRpc> {
+  const supabase = createClient();
+
   const isoDateFormatted = weekDate.toISOString().split("T")[0];
 
   const { data, error } = await supabase.rpc("fetch_week_data", { _week_start: isoDateFormatted });
@@ -66,6 +68,8 @@ export function useWeekData(weekStartDate: Date): DefinedUseQueryResult<HabitEnt
 }
 
 export async function fetchMonthDataClient(monthDate: Date): Promise<HabitEntitiesMonthRpc> {
+  const supabase = createClient();
+
   const isoMonthFormatted = monthDate.toISOString().split("T")[0];
 
   const { data, error } = await supabase.rpc("fetch_month_data", { _month_start: isoMonthFormatted });
@@ -94,6 +98,8 @@ export function useMonthData(monthStartDate: Date): DefinedUseQueryResult<HabitE
 }
 
 export async function getLocalizedHabitsClient(timezone: string) {
+  const supabase = createClient();
+
   const now = new Date();
   const localTime = fromZonedTime(now, timezone);
 

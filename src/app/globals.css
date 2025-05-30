@@ -181,3 +181,7 @@
     padding-inline: 140px;
   }
 }
+
+@utility no-scrollbar {
+  @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}

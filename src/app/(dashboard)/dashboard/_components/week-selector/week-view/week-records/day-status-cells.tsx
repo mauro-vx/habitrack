@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { HabitEntityWeekRpc } from "@/app/types";
 import { HabitType } from "@/app/enums";
 import { DAYS_OF_WEEK } from "@/app/(dashboard)/dashboard/constants";

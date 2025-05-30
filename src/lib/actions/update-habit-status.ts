@@ -8,7 +8,7 @@ import { HabitState, Status } from "@/app/enums";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 
 export async function updateHabitStatus(
-  prevstate: { status: Status; message: string } | null,
+  prevState: { status: Status; message: string } | null,
   payload: { habitStatusId: string; action: SelectHabitState }
 ): Promise<{
   status: Status;

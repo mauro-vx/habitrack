@@ -1,9 +1,7 @@
-import * as React from "react";
-
 import { Control } from "react-hook-form";
 
 import { HabitType } from "@/app/enums";
-import { CreateHabitSchema } from "../../schema";
+import { CreateSchemaClient } from "@/app/(dashboard)/dashboard/_utils/schema-client";
 import { useCapitalizeFirst } from "@/hooks/use-capitalize-first";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";
@@ -13,7 +11,7 @@ export function TypeField({
   disabled,
   onChange,
 }: {
-  control: Control<CreateHabitSchema>;
+  control: Control<CreateSchemaClient>;
   disabled?: boolean;
   onChange: (value: HabitType) => void;
 }) {

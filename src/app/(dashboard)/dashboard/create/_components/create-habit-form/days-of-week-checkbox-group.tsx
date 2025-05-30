@@ -1,9 +1,7 @@
-import * as React from "react";
-
 import { Control } from "react-hook-form";
 
 import { DAILY_DAYS_OF_WEEK, dayNamesMap } from "../../constants";
-import { CreateHabitSchema } from "../../schema";
+import { CreateSchemaClient } from "../../../_utils/schema-client";
 import { cn } from "@/lib/utils";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -46,7 +44,7 @@ export function DaysOfWeekField({
   disabled,
   isCustom,
 }: {
-  control: Control<CreateHabitSchema>;
+  control: Control<CreateSchemaClient>;
   disabled?: boolean;
   isCustom: boolean;
 }) {

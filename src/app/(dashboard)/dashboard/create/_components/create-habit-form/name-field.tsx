@@ -1,12 +1,10 @@
-import * as React from "react";
-
 import { Control } from "react-hook-form";
 
-import { CreateHabitSchema } from "../../schema";
+import { CreateSchemaClient } from "@/app/(dashboard)/dashboard/_utils/schema-client";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-export function NameField({ control, disabled }: { control: Control<CreateHabitSchema>; disabled?: boolean }) {
+export function NameField({ control, disabled }: { control: Control<CreateSchemaClient>; disabled?: boolean }) {
   return (
     <FormField
       control={control}

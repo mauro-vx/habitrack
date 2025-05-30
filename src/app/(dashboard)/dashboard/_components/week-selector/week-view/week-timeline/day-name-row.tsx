@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { cn } from "@/lib/utils";
 import { getDayNamesByFormat } from "@/app/(dashboard)/dashboard/_utils/date";
 

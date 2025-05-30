@@ -23,6 +23,7 @@ export interface CreateHabitState {
     start_date: Date;
     end_date: Date | null;
   };
+  timezone: string;
   status?: Status;
   validationErrors?: CreateValidationErrors;
   dbError?: PostgrestError | null;

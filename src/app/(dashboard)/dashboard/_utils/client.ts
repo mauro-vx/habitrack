@@ -1,16 +1,13 @@
-import { DefinedUseQueryResult, useQuery } from "@tanstack/react-query";
-import { startOfWeek, addWeeks, endOfWeek } from "date-fns";
-import { fromZonedTime } from "date-fns-tz";
+import { DefinedUseQueryResult, useQuery, QueryClient } from "@tanstack/react-query";
 
 import { HabitEntitiesWeekRpc, HabitEntitiesDayRpc, HabitEntitiesMonthRpc } from "@/app/types";
 import { createClient } from "@/lib/supabase/client";
+import { getWeekDateSeries } from "@/lib/utils";
 
-export async function fetchDayDataClient(dayDate: Date): Promise<HabitEntitiesDayRpc> {
+export async function fetchDayDataClient(year: number, week: number, day: number): Promise<HabitEntitiesDayRpc> {
   const supabase = createClient();
 
-  const isoDateFormatted = dayDate.toISOString().split("T")[0];
-
-  const { data, error } = await supabase.rpc("fetch_day_data", { _date: isoDateFormatted });
+  const { data, error } = await supabase.rpc("fetch_day_data", { _year: year, _week: week, _day: day });
 
   if (error) {
     console.error("Error fetching day data:", error);
@@ -25,23 +22,38 @@ export function useDayData(dayStartDate: Date): DefinedUseQueryResult<HabitEntit
     throw new Error("Date parameter is required");
   }
 
-  const isoDay = dayStartDate.toISOString();
-  const queryKey = ["dayData", isoDay];
+  const  { year, week, day } = getWeekDateSeries(dayStartDate).current;
+  
 
   return useQuery({
-    queryKey,
-    queryFn: () => fetchDayDataClient(dayStartDate),
+    queryKey: ["dayData", year, week, day],
+    queryFn: () => fetchDayDataClient(year, week, day),
     // @ts-expect-error: TypeScript doesn't recognize 'suspense' as a valid property
     suspense: true,
   });
 }
 
-export async function fetchWeekDataClient(weekDate: Date): Promise<HabitEntitiesWeekRpc> {
+export async function prefetchDay(queryClient: QueryClient, date: Date) {
+  if (!queryClient) {
+    throw new Error("QueryClient instance is required");
+  }
+
+  if (!date) {
+    throw new Error("Date parameter is required for prefetchDay");
+  }
+
+  const { year, week, day } = getWeekDateSeries(date).current;
+
+  return queryClient.prefetchQuery({
+    queryKey: ["dayData", year, week, day],
+    queryFn: () => fetchDayDataClient(year, week, day),
+  });
+}
+
+export async function fetchWeekDataClient(year: number, week: number): Promise<HabitEntitiesWeekRpc> {
   const supabase = createClient();
 
-  const isoDateFormatted = weekDate.toISOString().split("T")[0];
-
-  const { data, error } = await supabase.rpc("fetch_week_data", { _week_start: isoDateFormatted });
+  const { data, error } = await supabase.rpc("fetch_week_data", { _year: year, _week: week });
 
   if (error) {
     console.error("Error fetching week data:", error);
@@ -56,23 +68,37 @@ export function useWeekData(weekStartDate: Date): DefinedUseQueryResult<HabitEnt
     throw new Error("Date parameter is required");
   }
 
-  const isoWeek = weekStartDate.toISOString();
-  const queryKey = ["weekData", isoWeek];
+  const  { year, week } = getWeekDateSeries(weekStartDate).current;
 
   return useQuery({
-    queryKey,
-    queryFn: () => fetchWeekDataClient(weekStartDate),
+    queryKey: ["weekData", year, week],
+    queryFn: () => fetchWeekDataClient(year, week),
     // @ts-expect-error: TypeScript doesn't recognize 'suspense' as a valid property
     suspense: true,
   });
 }
 
-export async function fetchMonthDataClient(monthDate: Date): Promise<HabitEntitiesMonthRpc> {
+export async function prefetchMonth(queryClient: QueryClient, date: Date) {
+  if (!queryClient) {
+    throw new Error("QueryClient instance is required");
+  }
+
+  if (!date) {
+    throw new Error("Date parameter is required for prefetchDay");
+  }
+
+  const  { year, month } = getWeekDateSeries(date).current;
+
+  return queryClient.prefetchQuery({
+    queryKey: ["monthData", year, month],
+    queryFn: () => fetchMonthDataClient(year, month),
+  });
+}
+
+export async function fetchMonthDataClient(year: number, month: number): Promise<HabitEntitiesMonthRpc> {
   const supabase = createClient();
 
-  const isoMonthFormatted = monthDate.toISOString().split("T")[0];
-
-  const { data, error } = await supabase.rpc("fetch_month_data", { _month_start: isoMonthFormatted });
+  const { data, error } = await supabase.rpc("fetch_month_data", { _year: year, _month: month });
 
   if (error) {
     throw new Error(error.message || "Failed to fetch month data");
@@ -86,36 +112,84 @@ export function useMonthData(monthStartDate: Date): DefinedUseQueryResult<HabitE
     throw new Error("Date parameter is required");
   }
 
-  const isoMonth = monthStartDate.toISOString();
-  const queryKey = ["monthData", isoMonth];
+  const { year, month } = getWeekDateSeries(monthStartDate).current;
+  
 
   return useQuery({
-    queryKey,
-    queryFn: () => fetchMonthDataClient(monthStartDate),
+    queryKey: ["monthData", year, month],
+    queryFn: () => fetchMonthDataClient(year, month),
     // @ts-expect-error: TypeScript doesn't recognize 'suspense' as a valid property
     suspense: true,
   });
 }
 
-export async function getLocalizedHabitsClient(timezone: string) {
+// export async function getLocalizedHabitsClient() {
+//   const supabase = createClient();
+//
+//   const today = startOfToday();
+//
+//   const { year: currentYear, week: currentWeek } = getWeekDateSeries(today).current;
+//
+//   const [activeHabits, futureHabits, pastHabits] = await Promise.all([
+//     supabase
+//       .from("habits")
+//       .select("*")
+//       .or(
+//         `start_year.lt.${currentYear},and(start_year.eq.${currentYear},start_week.lte.${currentWeek}),and(end_year.is.null,end_year.gt.${currentYear}),and(end_year.eq.${currentYear},end_week.gte.${currentWeek})`
+//       ),
+//
+//     supabase
+//       .from("habits")
+//       .select("*")
+//       .or(
+//         `start_year.gt.${currentYear},and(start_year.eq.${currentYear},start_week.gt.${currentWeek})`
+//       ),
+//
+//     supabase
+//       .from("habits")
+//       .select("*")
+//       .or(
+//         `end_year.lt.${currentYear},and(end_year.eq.${currentYear},end_week.lt.${currentWeek})`
+//       ),
+//   ]);
+//
+//   if (activeHabits.error || futureHabits.error || pastHabits.error) {
+//     throw new Error(
+//       activeHabits.error?.message ||
+//       futureHabits.error?.message ||
+//       pastHabits.error?.message ||
+//       "Failed to fetch habits"
+//     );
+//   }
+//
+//   return {
+//     activeHabits: activeHabits.data,
+//     futureHabits: futureHabits.data,
+//     pastHabits: pastHabits.data,
+//   };
+// }
+
+export async function getLocalizedHabitsClient() {
   const supabase = createClient();
 
   const now = new Date();
-  const localTime = fromZonedTime(now, timezone);
 
-  const currentWeekStart = startOfWeek(localTime, { weekStartsOn: 1 });
-  const currentWeekEnd = endOfWeek(localTime, { weekStartsOn: 1 });
-  const nextWeekStart = startOfWeek(addWeeks(localTime, 1), { weekStartsOn: 1 });
+  const {
+    current: { year: currentYear, week: currentWeek },
+    next: { year: nextWeekYear, week: nextWeekISOWeek },
+  } = getWeekDateSeries(now);
 
   const [activeHabits, futureHabits, pastHabits] = await Promise.all([
     supabase
       .from("habits")
       .select("*")
       .or(
-        `and(start_date.lte.${currentWeekStart.toISOString()},end_date.is.null),and(start_date.lte.${currentWeekStart.toISOString()},end_date.gte.${currentWeekEnd.toISOString()})`,
+        `and(start_year.lte.${currentYear},start_week.lte.${currentWeek},end_year.is.null,end_week.is.null),and(start_year.lte.${currentYear},start_week.lte.${currentWeek},end_year.gte.${currentYear},end_week.gte.${currentWeek})`,
       ),
-    supabase.from("habits").select("*").gte("start_date", nextWeekStart.toISOString()),
-    supabase.from("habits").select("*").lt("end_date", currentWeekStart.toISOString()),
+
+    supabase.from("habits").select("*").or(`and(start_year.gte.${nextWeekYear},start_week.gte.${nextWeekISOWeek})`),
+
+    supabase.from("habits").select("*").or(`and(end_year.lte.${currentYear},end_week.lt.${currentWeek})`),
   ]);
 
   if (activeHabits.error || futureHabits.error || pastHabits.error) {
@@ -127,12 +201,10 @@ export async function getLocalizedHabitsClient(timezone: string) {
     );
   }
 
-  const all = [...(activeHabits.data || []), ...(futureHabits.data || []), ...(pastHabits.data || [])];
-
   return {
     active: activeHabits.data || [],
     future: futureHabits.data || [],
     past: pastHabits.data || [],
-    all: all,
+    all: [...(activeHabits.data || []), ...(futureHabits.data || []), ...(pastHabits.data || [])],
   };
 }

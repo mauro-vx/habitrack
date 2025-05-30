@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { Star, MoonStar } from "lucide-react";
 
 import { cn } from "@/lib/utils";

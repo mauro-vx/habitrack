@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import Link from "next/link";
 
 import { SignInForm } from "../_components/sign-in-form";

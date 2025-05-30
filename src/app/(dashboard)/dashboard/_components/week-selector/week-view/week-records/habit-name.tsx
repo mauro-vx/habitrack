@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
 export function HabitName({ name, className = "col-start-1" }: { name: string; className?: string }) {

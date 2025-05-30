@@ -1,6 +1,7 @@
+import * as React from 'react';
+
 import { Profile } from "./profile";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Suspense } from "react";
 
 function ProfileSkeleton() {
   return (
@@ -17,9 +18,9 @@ function ProfileSkeleton() {
 export default function ProfilePage() {
   return (
     <main className="container flex h-screen items-center justify-center">
-      <Suspense fallback={<ProfileSkeleton />}>
+      <React.Suspense fallback={<ProfileSkeleton />}>
         <Profile />
-      </Suspense>
+      </React.Suspense>
     </main>
   );
 }

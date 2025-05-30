@@ -9,9 +9,9 @@ import { Tables } from "@/lib/supabase/database.types";
 import { HabitState, HabitType, Status } from "@/app/enums";
 import { STATUS_OPTIONS } from "./day-status-select/constants";
 import { getHabitState } from "./day-status-select/utils";
-import { cn } from "@/lib/utils";
+import { cn, getWeekDateSeries } from "@/lib/utils";
 import { SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { FractionDisplay } from "@/app/(dashboard)/dashboard/_components/fraction-display";
+import { FractionDisplay } from "./day-status-select/fraction-display";
 import { deleteHabitStatus } from "@/lib/actions/delete-habit-status";
 import { updateHabitStatus } from "@/lib/actions/update-habit-status";
 import { createHabitStatus } from "@/lib/actions/create-habit-status";
@@ -131,10 +131,13 @@ export function DayStatusSelect({
 
   React.useEffect(() => {
     if (successfulState && !isPending) {
-      const isoWeek = weekStartDate.toISOString();
-      queryClient.invalidateQueries({ queryKey: ["weekData", isoWeek] });
+      const { year, month, week } = getWeekDateSeries(weekStartDate).current;
+
+      queryClient.invalidateQueries({ queryKey: ["dayData", year, week, dayNumber] });
+      queryClient.invalidateQueries({ queryKey: ["weekData", year, week] });
+      queryClient.invalidateQueries({ queryKey: ["monthData", year, month] });
     }
-  }, [weekStartDate, isPending, queryClient, successfulState]);
+  }, [weekStartDate, isPending, queryClient, successfulState, dayNumber]);
 
   return (
     <>

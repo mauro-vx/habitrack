@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { HabitEntitiesWeekRpc } from "@/app/types";
 import { useWeekData } from "@/app/(dashboard)/dashboard/_utils/client";
 import { DaySummaryBadge } from "./week-view/day-summary-badge";
@@ -8,6 +6,9 @@ import { WeekRecords } from "@/app/(dashboard)/dashboard/_components/week-select
 
 export function WeekView({ weekStartDate }: { weekStartDate: Date }) {
   const { data: habits }: { data: HabitEntitiesWeekRpc } = useWeekData(weekStartDate);
+  
+  console.log('habits: ', habits);
+  
 
   return (
     <>

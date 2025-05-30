@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { Circle, Triangle, Square, PlusCircle } from "lucide-react";
 
 import { Enums } from "@/lib/supabase/database.types";

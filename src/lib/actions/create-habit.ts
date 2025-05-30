@@ -1,22 +1,21 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
 import { Status } from "@/app/enums";
 import { CreateHabitState } from "@/app/(dashboard)/dashboard/create/types";
-import { CreateHabitSchema, createHabitSchema } from "@/app/(dashboard)/dashboard/create/schema";
 import { createClient } from "@/lib/supabase/server";
 import { TablesInsert } from "@/lib/supabase/database.types";
-import { startOfDay, endOfDay } from "date-fns";
+import { CreateSchemaServer, createSchemaServer } from "@/app/(dashboard)/dashboard/_utils/schema-server";
 
-export async function createHabit(prevState: CreateHabitState, formData: CreateHabitSchema): Promise<CreateHabitState> {
-  const validation = createHabitSchema.safeParse(formData);
-
+export async function createHabit(prevState: CreateHabitState, formData: CreateSchemaServer): Promise<CreateHabitState> {
   const cookieStore = await cookies();
   const timezone = cookieStore.get("timezone")?.value || "Europe/Prague";
+
+  const validation = createSchemaServer.safeParse({ ...formData, timezone });
 
   if (!validation.success) {
     return {
@@ -25,6 +24,9 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
       validationErrors: validation.error.flatten().fieldErrors,
     };
   }
+  
+  console.log('🙀 timezone 🙀: ', timezone);
+  
 
   const supabase = await createClient();
   const {
@@ -48,8 +50,9 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
     type: validationData.type,
     target_count: validationData.target_count,
     days_of_week: validationData.days_of_week,
-    start_date: startOfDay(start_date).toISOString(),
-    end_date: end_date ? endOfDay(end_date).toISOString() : null,
+    // Dates are serialized as strings from the server, hence typecasting them to string
+    start_date: start_date as unknown as string,
+    end_date: end_date ? (end_date as unknown as string) : null,
     timezone: timezone,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -66,8 +69,6 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateH
   }
 
   revalidatePath("/dashboard", "layout");
-
-  // TODO: Revalidate specific cache tag (cache key) in the future
 
   return {
     ...prevState,

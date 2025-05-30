@@ -1,9 +1,7 @@
-import * as React from "react";
-
 import { Control } from "react-hook-form";
 import { Plus, Minus } from "lucide-react";
 
-import { CreateHabitSchema } from "../../schema";
+import { CreateSchemaClient } from "@/app/(dashboard)/dashboard/_utils/schema-client";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
@@ -11,7 +9,7 @@ export function TargetCount({
   control,
   disabled,
 }: {
-  control: Control<CreateHabitSchema>;
+  control: Control<CreateSchemaClient>;
   disabled?: boolean;
 }) {
   return (

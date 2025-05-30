@@ -1,15 +1,18 @@
 import { addDays, getDay, isSameDay, startOfMonth } from "date-fns";
+
+import { HabitEntitiesWeekRpc, HabitEntityWeekRpc } from "@/app/types";
 import { cn, getWeekDateSeries } from "@/lib/utils";
-import { Tables } from "@/lib/supabase/database.types";
 import { ListDisplay } from "./list-display";
 
-type DayCellProps = {
+export function DayCell({
+  dayNumber,
+  selectedMonth,
+  monthData,
+}: {
   dayNumber: number;
   selectedMonth: Date;
-  monthData: Tables<"habits">[];
-};
-
-export function DayCell({ dayNumber, selectedMonth, monthData }: DayCellProps) {
+  monthData: HabitEntitiesWeekRpc;
+}) {
   const dayDate = addDays(startOfMonth(selectedMonth), dayNumber - 1);
 
   const habitsForDay = monthData.filter((habit) => isHabitScheduledForDay(habit, dayDate));
@@ -32,37 +35,7 @@ export function DayCell({ dayNumber, selectedMonth, monthData }: DayCellProps) {
   );
 }
 
-// const isHabitScheduledForDay = (habit: Tables<"habits">, dayDate: Date): boolean => {
-//   // Get the week number for the target day
-//   const {
-//     current: { year, week },
-//   } = getWeekDateSeries(dayDate);
-//
-//   if (!habit.start_year || !habit.start_week) {
-//     return false;
-//   }
-//
-//   // Check start year and week: must be the same year (and <= week) or a previous year
-//   const isBeforeStart = habit.start_year > year || (habit.start_year === year && habit.start_week > week);
-//
-//   if (isBeforeStart) return false;
-//
-//   // Check end year and week: must be >= target week, or a later year, or null (ongoing)
-//   const isAfterEnd =
-//     habit.end_year !== null &&
-//     habit.end_week !== null &&
-//     (habit.end_year < year || (habit.end_year === year && habit.end_week < week));
-//
-//   if (isAfterEnd) return false;
-//
-//   // Determine the target day of the week (ISO standard: Monday = 1, Sunday = 7)
-//   const dayOfWeek = getDay(dayDate) === 0 ? 7 : getDay(dayDate);
-//
-//   // Verify if the habit is scheduled for this day of the week
-//   return habit.days_of_week?.[dayOfWeek as keyof typeof habit.days_of_week] || false;
-// };
-
-const isHabitScheduledForDay = (habit: Tables<"habits">, dayDate: Date): boolean => {
+const isHabitScheduledForDay = (habit: HabitEntityWeekRpc, dayDate: Date): boolean => {
   const { year, week } = getWeekDateSeries(dayDate).current;
 
   if (!habit.start_year || !habit.start_week) return false;

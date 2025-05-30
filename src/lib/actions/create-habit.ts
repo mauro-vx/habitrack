@@ -24,9 +24,6 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateS
       validationErrors: validation.error.flatten().fieldErrors,
     };
   }
-  
-  console.log('🙀 timezone 🙀: ', timezone);
-  
 
   const supabase = await createClient();
   const {

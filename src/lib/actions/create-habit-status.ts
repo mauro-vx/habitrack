@@ -51,8 +51,6 @@ export async function createHabitStatus(
   //   created_at: new Date().toISOString(),
   //   updated_at: new Date().toISOString(),
   // };
-  
-  console.log('🙀 payload.weekStartDate 🙀: ', payload.weekStartDate);
 
   const {
     current: { year, month, week },

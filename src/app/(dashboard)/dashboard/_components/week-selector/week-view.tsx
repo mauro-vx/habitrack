@@ -6,9 +6,6 @@ import { WeekRecords } from "@/app/(dashboard)/dashboard/_components/week-select
 
 export function WeekView({ weekStartDate }: { weekStartDate: Date }) {
   const { data: habits }: { data: HabitEntitiesWeekRpc } = useWeekData(weekStartDate);
-  
-  console.log('habits: ', habits);
-  
 
   return (
     <>

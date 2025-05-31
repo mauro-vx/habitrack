@@ -2,16 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
+import { toZonedTime } from "date-fns-tz";
 
 import { HabitEntity } from "@/app/types";
 import { HabitState, Status } from "@/app/enums";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 import { getWeekDateSeries } from "@/lib/utils";
+import { cookies } from "next/headers";
 
 export async function createHabitStatus(
   prevState: { status: Status; message: string } | null,
-  payload:
-  {
+  payload: {
     habitId: HabitEntity["id"];
     weekStartDate: Date;
     statusDate: Date;
@@ -23,6 +24,9 @@ export async function createHabitStatus(
   message: string;
 }> {
   const { authSupabase } = await authenticateUser();
+
+  const cookieStore = await cookies();
+  const timezone = cookieStore.get("timezone")?.value || "Europe/Prague";
 
   // const { data: existingStatus, error: dbError } = await authSupabase
   //   .from("habit_statuses")
@@ -52,10 +56,11 @@ export async function createHabitStatus(
   //   updated_at: new Date().toISOString(),
   // };
 
+  const zonedDate = toZonedTime(payload.weekStartDate, timezone);
+
   const {
     current: { year, month, week },
-  } = getWeekDateSeries(payload.weekStartDate);
-  
+  } = getWeekDateSeries(zonedDate);
 
   const newHabitStatus = {
     id: uuidv4(),

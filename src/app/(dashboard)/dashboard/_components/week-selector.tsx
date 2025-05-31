@@ -7,14 +7,14 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { WeekView } from "./week-selector/week-view";
-import { addWeeks, format, startOfWeek } from "date-fns";
+import { addWeeks, format, startOfWeek, subWeeks } from "date-fns";
 
 export function WeekSelector() {
   const [api, setApi] = React.useState<CarouselApi>();
 
-  const prevWeekInit = startOfWeek(addWeeks(new Date(), -1), { weekStartsOn: 1 });
   const currentWeekInit = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const nextWeekInit = startOfWeek(addWeeks(new Date(), 1), { weekStartsOn: 1 });
+  const prevWeekInit = subWeeks(currentWeekInit, 1);
+  const nextWeekInit = addWeeks(currentWeekInit, 1);
 
   const [visibleWeeks, setVisibleWeeks] = React.useState([prevWeekInit, currentWeekInit, nextWeekInit]);
 

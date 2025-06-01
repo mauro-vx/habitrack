@@ -4,7 +4,7 @@ import { HydrationBoundary } from "@tanstack/react-query";
 import { prefetchDataForDashboardRpc } from "../dashboard/_utils/server";
 import { ClientSwitcher } from "./_components/client-switcher";
 import { DayPanel } from "./_components/day-panel";
-import { WeekSelector } from "./_components/week-selector";
+import { WeekPanel } from "./_components/week-panel";
 import { MonthPanel } from "./_components/month-panel";
 
 export default async function DashboardPage() {
@@ -15,7 +15,7 @@ export default async function DashboardPage() {
 
   const slots = [
     { name: "Day", component: <DayPanel /> },
-    { name: "Week", component: <WeekSelector /> },
+    { name: "Week", component: <WeekPanel /> },
     { name: "Month", component: <MonthPanel /> },
     { name: "Year", component: <div>Yearly view</div> },
   ];

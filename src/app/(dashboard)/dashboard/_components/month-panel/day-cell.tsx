@@ -26,8 +26,8 @@ export function DayCell({
     >
       <span className="text-xs font-bold lg:text-sm">{dayNumber}</span>
 
-      {habitsForDay.length > 0 ? (
-        <ListDisplay habits={habitsForDay} dayNumber={dayNumber} />
+      {!!habitsForDay.length ? (
+        <ListDisplay habits={habitsForDay} dayDate={dayDate} />
       ) : (
         <div className="text-xs text-gray-400">No habits</div>
       )}

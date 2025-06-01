@@ -23,7 +23,7 @@ export const WeekSelector: React.FC<WeekSelectorProps> = ({ visibleWeeks, onWeek
       </Button>
 
       <span className="min-w-40 text-center font-medium">
-        Week {format(visibleWeeks[1], "wo")} - {format(visibleWeeks[1], "yyyy")}
+        Week {format(visibleWeeks[1], "wo")} - {format(visibleWeeks[1], "MMMM yyyy")}
       </span>
 
       <Button

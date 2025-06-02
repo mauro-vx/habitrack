@@ -7,7 +7,7 @@ import { addMonths, format, startOfMonth, subMonths } from "date-fns";
 import { MonthSelector } from "./month-panel/month-selector";
 import { MonthView } from "@/app/(dashboard)/dashboard/_components/month-panel/month-view";
 import { useQueryClient } from "@tanstack/react-query";
-import { prefetchMonth } from "@/app/(dashboard)/dashboard/_utils/client";
+import { prefetchMonth } from "@/app/(dashboard)/dashboard/_services/client";
 
 export function MonthPanel() {
   const [selectedMonth, setSelectedMonth] = React.useState(startOfMonth(new Date()));

@@ -31,7 +31,7 @@ const initState: CreateHabitState = {
   description: "",
   type: DAILY,
   date_range: {
-  start_date: startOfWeek(addWeeks(new Date(), 1), { weekStartsOn: 1 }),
+  start_date: startOfWeek(new Date(), { weekStartsOn: 1 }),
     end_date: null,
   },
   target_count: 1,

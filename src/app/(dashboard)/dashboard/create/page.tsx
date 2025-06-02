@@ -3,7 +3,7 @@ import { ChevronLeft } from "lucide-react";
 import { cookies } from "next/headers";
 
 import { Separator } from "@/components/ui/separator";
-import { getLocalizedHabits } from "@/app/(dashboard)/dashboard/_utils/server";
+import { getLocalizedHabits } from "@/app/(dashboard)/dashboard/_services/server";
 import { CreateHabitForm } from "./_components/create-habit-form";
 import { HabitsOverview } from "./_components/habits-overview";
 

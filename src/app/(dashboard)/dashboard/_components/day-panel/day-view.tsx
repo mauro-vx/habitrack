@@ -1,7 +1,7 @@
 import { getDay } from "date-fns";
 
 import { cn } from "@/lib/utils";
-import { useDayData } from "@/app/(dashboard)/dashboard/_utils/client";
+import { useDayData } from "@/app/(dashboard)/dashboard/_services/client";
 import { HabitType } from "@/app/enums";
 
 export function DayView({ selectedDate }: { selectedDate: Date }) {

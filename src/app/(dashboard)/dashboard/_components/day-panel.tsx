@@ -6,7 +6,7 @@ import { DaySelector } from "./day-panel/day-selector";
 import { DayView } from "./day-panel/day-view";
 import { addDays, format, startOfDay, subDays } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
-import { prefetchDay } from "@/app/(dashboard)/dashboard/_utils/client";
+import { prefetchDay } from "@/app/(dashboard)/dashboard/_services/client";
 
 export function DayPanel() {
   const [selectedDate, setSelectedDate] = React.useState(startOfDay(new Date()));

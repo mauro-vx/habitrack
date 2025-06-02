@@ -1,6 +1,6 @@
 import { Control } from "react-hook-form";
 import { CalendarIcon, X } from "lucide-react";
-import { format, isBefore, isMonday, isSunday, startOfDay, isAfter, isSameDay } from "date-fns";
+import { format, isBefore, isMonday, isSunday, startOfDay, isAfter, isSameDay, startOfWeek } from "date-fns";
 
 import { CreateSchemaClient } from "@/app/(dashboard)/dashboard/_utils/schema-client";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -33,7 +33,9 @@ export function DateRangeField({ control, disabled }: { control: Control<CreateS
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => field.onChange({ start_date: null, end_date: null })}
+                        onClick={() =>
+                          field.onChange({ start_date: startOfWeek(new Date(), { weekStartsOn: 1 }), end_date: null })
+                        }
                       >
                         <X className="h-4 w-4" />
                         <span className="sr-only">Clear</span>
@@ -115,7 +117,9 @@ export function DateRangeField({ control, disabled }: { control: Control<CreateS
                     variant="ghost"
                     size="sm"
                     className="absolute top-0 right-0 h-full px-3"
-                    onClick={() => field.onChange({ start_date: null, end_date: null })}
+                    onClick={() =>
+                      field.onChange({ start_date: startOfWeek(new Date(), { weekStartsOn: 1 }), end_date: null })
+                    }
                   >
                     <X className="h-4 w-4" />
                     <span className="sr-only">Clear</span>

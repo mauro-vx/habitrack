@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { HydrationBoundary } from "@tanstack/react-query";
 
-import { prefetchDataForDashboardRpc } from "../dashboard/_utils/server";
+import { prefetchDataForDashboardRpc } from "@/app/(dashboard)/dashboard/_services/server";
 import { ClientSwitcher } from "./_components/client-switcher";
 import { DayPanel } from "./_components/day-panel";
 import { WeekPanel } from "./_components/week-panel";

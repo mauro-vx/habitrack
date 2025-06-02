@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { HabitInfo } from "@/app/types";
 import { CategoryKey } from "../habits-overview";
-import { getLocalizedHabitsClient } from "@/app/(dashboard)/dashboard/_utils/client";
+import { getLocalizedHabitsClient } from "@/app/(dashboard)/dashboard/_services/client";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function HabitsView({

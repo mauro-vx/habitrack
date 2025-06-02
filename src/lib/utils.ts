@@ -29,19 +29,19 @@ export function getWeekDateSeries(date: Date): {
   const currentYear = getYear(date);
   const currentMonth = getMonth(date) + 1;
   const currentWeek = getWeek(date, { weekStartsOn: 1 });
-  const currentDay = getDay(date) === 0 ? 7 : getDay(date);
+  const currentDay = getDay(date) || 7;
 
   const previousDate = subWeeks(date, 1);
   const previousYear = getYear(previousDate);
   const previousMonth = getMonth(previousDate) + 1;
   const previousWeek = getWeek(previousDate, { weekStartsOn: 1 });
-  const previousDay = getDay(date) === 0 ? 7 : getDay(date);
+  const previousDay = getDay(date) || 7;
 
   const nextDate = addWeeks(date, 1);
   const nextYear = getYear(nextDate);
   const nextMonth = getMonth(nextDate) + 1;
   const nextWeek = getWeek(nextDate, { weekStartsOn: 1 });
-  const nextDay = getDay(date) === 0 ? 7 : getDay(date);
+  const nextDay = getDay(date) || 7;
 
   return {
     current: { day: currentDay, week: currentWeek, month: currentMonth, year: currentYear },
@@ -64,19 +64,19 @@ export function getDateSeries(
   const currentYear = getYear(date);
   const currentMonth = getMonth(date) + 1;
   const currentWeek = getWeek(date, { weekStartsOn: 1 });
-  const currentDay = getDay(date) === 0 ? 7 : getDay(date);
+  const currentDay = getDay(date) || 7;
 
   const previousDate = subDate(date, 1);
   const previousYear = getYear(previousDate);
   const previousMonth = getMonth(previousDate) + 1;
   const previousWeek = getWeek(previousDate, { weekStartsOn: 1 });
-  const previousDay = getDay(previousDate) === 0 ? 7 : getDay(previousDate);
+  const previousDay = getDay(date) || 7;
 
   const nextDate = addDate(date, 1);
   const nextYear = getYear(nextDate);
   const nextMonth = getMonth(nextDate) + 1;
   const nextWeek = getWeek(nextDate, { weekStartsOn: 1 });
-  const nextDay = getDay(nextDate) === 0 ? 7 : getDay(nextDate);
+  const nextDay = getDay(date) || 7;
 
   return {
     current: { day: currentDay, week: currentWeek, month: currentMonth, year: currentYear },

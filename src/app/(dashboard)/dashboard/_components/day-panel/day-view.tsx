@@ -15,10 +15,14 @@ export function DayView({ selectedDate }: { selectedDate: Date }) {
         </div>
       ) : (
         dayData.map(({ id, name, description, target_count, habit_statuses, days_of_week, type }) => {
-          const sum = (habit_statuses?.skipped_count || 0) + (habit_statuses?.completion_count || 0);
+          const totalProgress = (habit_statuses?.skipped_count || 0) + (habit_statuses?.completion_count || 0);
+
+          const isCompleted = totalProgress !== null && totalProgress === target_count;
+          const isInProgress = totalProgress !== null && totalProgress < target_count && totalProgress > 0;
+          const isNotStarted = totalProgress !== null && totalProgress === 0;
 
           const isHabitScheduledForDay =
-            days_of_week && days_of_week[getDay(selectedDate) as keyof typeof days_of_week];
+            days_of_week && days_of_week[(getDay(selectedDate) || 7) as keyof typeof days_of_week];
 
           if (!isHabitScheduledForDay) {
             return null;
@@ -29,9 +33,9 @@ export function DayView({ selectedDate }: { selectedDate: Date }) {
               key={id}
               className={cn(
                 "flex flex-col gap-0.5 rounded border p-4 lg:gap-1",
-                sum === target_count && "border-brand bg-brand/5",
-                sum < target_count && "border-violet-800 bg-violet-600/5",
-                !sum && "border-gray-800 bg-gray-600/5",
+                isCompleted && "border-brand bg-brand/5",
+                isInProgress && "border-violet-800 bg-violet-600/5",
+                isNotStarted && "border-gray-800 bg-gray-600/5",
               )}
             >
               <h2

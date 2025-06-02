@@ -1,15 +1,15 @@
-import { HabitEntityWeekRpc } from "@/app/types";
+import { HabitEntityRpc } from "@/app/types";
 import { DAYS_OF_WEEK } from "@/app/(dashboard)/dashboard/constants";
 import { HabitType } from "@/app/enums";
 
-export function calculateDailyTarget(habits: HabitEntityWeekRpc[]): Record<number, boolean> {
+export function calculateDailyTarget(habits: HabitEntityRpc[]): Record<number, boolean> {
   return DAYS_OF_WEEK.reduce((acc: Record<number, boolean>, day: number) => {
     acc[day] = habits.every((habit) => isHabitCompletedForDay(habit, day));
     return acc;
   }, {});
 }
 
-function isHabitCompletedForDay(habit: HabitEntityWeekRpc, day: number): boolean {
+function isHabitCompletedForDay(habit: HabitEntityRpc, day: number): boolean {
   const statusForDay = habit.habit_statuses[day];
 
   if (habit.type === HabitType.WEEKLY) {

@@ -1,7 +1,7 @@
 import { cn, getWeekDateSeries } from "@/lib/utils";
-import { HabitEntitiesWeekRpc } from "@/app/types";
+import { HabitEntitiesRpc } from "@/app/types";
 
-export function ListDisplay({ habits, dayDate }: { habits: HabitEntitiesWeekRpc; dayDate: Date }) {
+export function ListDisplay({ habits, dayDate }: { habits: HabitEntitiesRpc; dayDate: Date }) {
   const { year, week, day } = getWeekDateSeries(dayDate).current;
 
   return (

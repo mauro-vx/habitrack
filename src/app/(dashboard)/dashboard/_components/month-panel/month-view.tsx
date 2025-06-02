@@ -5,11 +5,7 @@ import { getDayNamesByFormat } from "@/app/(dashboard)/dashboard/_utils/date";
 import { useMonthData } from "@/app/(dashboard)/dashboard/_utils/client";
 import { DayCell } from "./day-cell";
 
-type MonthViewProps = {
-  selectedMonth: Date;
-};
-
-export function MonthView({ selectedMonth }: MonthViewProps) {
+export function MonthView({ selectedMonth }: { selectedMonth: Date }) {
   const { data: monthData = [] } = useMonthData(selectedMonth);
 
   const daysInMonth = getDaysInMonth(selectedMonth);

@@ -1,6 +1,6 @@
 import { addDays, getDay, isSameDay, startOfMonth } from "date-fns";
 
-import { HabitEntitiesWeekRpc, HabitEntityWeekRpc } from "@/app/types";
+import { HabitEntitiesRpc, HabitEntityRpc } from "@/app/types";
 import { cn, getWeekDateSeries } from "@/lib/utils";
 import { ListDisplay } from "./list-display";
 
@@ -11,7 +11,7 @@ export function DayCell({
 }: {
   dayNumber: number;
   selectedMonth: Date;
-  monthData: HabitEntitiesWeekRpc;
+  monthData: HabitEntitiesRpc;
 }) {
   const dayDate = addDays(startOfMonth(selectedMonth), dayNumber - 1);
 
@@ -35,7 +35,7 @@ export function DayCell({
   );
 }
 
-const isHabitScheduledForDay = (habit: HabitEntityWeekRpc, dayDate: Date): boolean => {
+const isHabitScheduledForDay = (habit: HabitEntityRpc, dayDate: Date): boolean => {
   const { year, week } = getWeekDateSeries(dayDate).current;
 
   if (!habit.start_year || !habit.start_week) return false;

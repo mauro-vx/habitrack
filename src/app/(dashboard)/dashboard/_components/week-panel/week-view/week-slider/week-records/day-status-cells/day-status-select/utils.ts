@@ -1,9 +1,9 @@
-import { HabitEntityWeekRpc, ShowHabitState } from "@/app/types";
+import { HabitEntityRpc, ShowHabitState } from "@/app/types";
 import { Tables } from "@/lib/supabase/database.types";
 import { HabitState, HabitType } from "@/app/enums";
 
 export function getHabitState(
-  habit: HabitEntityWeekRpc,
+  habit: HabitEntityRpc,
   habitDayStatus: Tables<"habit_statuses">,
   cumulativeCountWeekly: number,
   cumulativeCountDay: number,

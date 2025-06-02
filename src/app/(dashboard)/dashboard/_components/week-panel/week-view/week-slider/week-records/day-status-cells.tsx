@@ -1,4 +1,4 @@
-import { HabitEntityWeekRpc } from "@/app/types";
+import { HabitEntityRpc } from "@/app/types";
 import { HabitType } from "@/app/enums";
 import { DAYS_OF_WEEK } from "@/app/(dashboard)/dashboard/constants";
 import { COL_START_CLASSES } from "../_utils/grid-column-utils";
@@ -11,7 +11,7 @@ export function DayStatusCells({
   weekStartDate,
   weeklyTotalCount,
 }: {
-  habit: HabitEntityWeekRpc;
+  habit: HabitEntityRpc;
   weekStartDate: Date;
   weeklyTotalCount: number;
 }) {
@@ -29,7 +29,7 @@ export function DayStatusCells({
 
     if (
       habit.type === HabitType.CUSTOM &&
-      !habit.days_of_week?.[dayNumber as keyof HabitEntityWeekRpc["days_of_week"]]
+      !habit.days_of_week?.[dayNumber as keyof HabitEntityRpc["days_of_week"]]
     ) {
       return null;
     }

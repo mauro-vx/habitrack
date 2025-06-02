@@ -4,7 +4,7 @@ import { RefreshCcw, TriangleAlert } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { isBefore, startOfToday, isToday, isAfter } from "date-fns";
 
-import { HabitEntityWeekRpc, SelectHabitState } from "@/app/types";
+import { HabitEntityRpc, SelectHabitState } from "@/app/types";
 import { Tables } from "@/lib/supabase/database.types";
 import { HabitState, HabitType, Status } from "@/app/enums";
 import { STATUS_OPTIONS } from "./day-status-select/constants";
@@ -31,7 +31,7 @@ export function DayStatusSelect({
   onOpenChange = () => {},
   className,
 }: {
-  habit: HabitEntityWeekRpc;
+  habit: HabitEntityRpc;
   habitDayStatus: Tables<"habit_statuses">;
   habitStatusId?: Tables<"habit_statuses">["id"];
   cumulativeCountWeekly: number;

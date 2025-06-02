@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 
 import { addWeeks, format, startOfWeek } from "date-fns";
@@ -7,14 +5,17 @@ import { addWeeks, format, startOfWeek } from "date-fns";
 import { WeekSlider } from "./week-view/WeekSlider";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 
-interface WeekCarouselProps {
+export const WeekView = ({
+  visibleWeeks,
+  api,
+  setApi,
+  setVisibleWeeks,
+}: {
   visibleWeeks: Date[];
   setVisibleWeeks: React.Dispatch<React.SetStateAction<Date[]>>;
   api: CarouselApi | undefined;
   setApi: React.Dispatch<React.SetStateAction<CarouselApi | undefined>>;
-}
-
-export const WeekView: React.FC<WeekCarouselProps> = ({ visibleWeeks, api, setApi, setVisibleWeeks }) => {
+}) => {
   const handlePreviousWeek = React.useCallback(() => {
     setVisibleWeeks((prevState) => {
       const prevWeekDate = startOfWeek(addWeeks(prevState[0], -1), { weekStartsOn: 1 });

@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import { HabitEntitiesWeekRpc } from "@/app/types";
+import { HabitEntitiesRpc } from "@/app/types";
 import { calculateWeeklyTotal } from "./week-records/utils";
 import { HabitName } from "./week-records/habit-name";
 import { DayStatusCells } from "./week-records/day-status-cells";
 import { WeekProgressBadge } from "./week-records/week-progress-badge";
 import { Separator } from "@/components/ui/separator";
 
-export function WeekRecords({ habits, weekStartDate }: { habits: HabitEntitiesWeekRpc; weekStartDate: Date }) {
+export function WeekRecords({ habits, weekStartDate }: { habits: HabitEntitiesRpc; weekStartDate: Date }) {
   const habitElements = React.useMemo(() => {
     return (
       <>

@@ -4,12 +4,13 @@ import { format } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface WeekSelectorProps {
+export const WeekSelector = ({
+  visibleWeeks,
+  onWeekChange,
+}: {
   visibleWeeks: Date[];
   onWeekChange: (direction: "left" | "right") => void;
-}
-
-export const WeekSelector: React.FC<WeekSelectorProps> = ({ visibleWeeks, onWeekChange }) => {
+}) => {
   return (
     <div className="flex items-center justify-center space-x-4">
       <Button
@@ -19,7 +20,7 @@ export const WeekSelector: React.FC<WeekSelectorProps> = ({ visibleWeeks, onWeek
         aria-label="Previous week"
         className="btn btn-ghost btn-icon"
       >
-        <ChevronLeft className="w-4 h-4" />
+        <ChevronLeft className="h-4 w-4" />
       </Button>
 
       <span className="min-w-40 text-center font-medium">
@@ -33,7 +34,7 @@ export const WeekSelector: React.FC<WeekSelectorProps> = ({ visibleWeeks, onWeek
         aria-label="Next week"
         className="btn btn-ghost btn-icon"
       >
-        <ChevronRight className="w-4 h-4" />
+        <ChevronRight className="h-4 w-4" />
       </Button>
     </div>
   );

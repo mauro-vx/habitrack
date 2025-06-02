@@ -18,7 +18,7 @@ import {
   IceCreamCone,
   TrendingUp,
 } from "lucide-react";
-import { HabitEntityWeekRpc } from "@/app/types";
+import { HabitEntityRpc } from "@/app/types";
 import { HabitType } from "@/app/enums";
 
 export function WeekProgressBadge({
@@ -26,7 +26,7 @@ export function WeekProgressBadge({
   weeklyTotalCount,
   className = "size-5 lg:size-6 col-start-9",
 }: {
-  habit: HabitEntityWeekRpc;
+  habit: HabitEntityRpc;
   weeklyTotalCount: number;
   className?: string;
 }) {
@@ -74,7 +74,7 @@ export function WeekProgressBadge({
   return <IconComponent className={`${className} ${iconClassName}`} />;
 }
 
-function calculateWeeklyTarget(habit: HabitEntityWeekRpc): number {
+function calculateWeeklyTarget(habit: HabitEntityRpc): number {
   if (!habit) return 0;
 
   if (habit.type === HabitType.WEEKLY) {

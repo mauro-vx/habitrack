@@ -2,20 +2,15 @@ import { Tables } from "@/lib/supabase/database.types";
 import { HabitState } from "@/app/enums";
 
 export type HabitInfo = Tables<"habits">;
-
 export type HabitStatus = Tables<"habit_statuses">;
-export type HabitStatuses = HabitStatus[];
 
-export type HabitEntity = HabitInfo & { habit_statuses: HabitStatuses };
+export type HabitEntity = HabitInfo & { habit_statuses: HabitStatus | null } ;
 export type HabitEntities = HabitEntity[];
 
-export type HabitEntitiesDayRpc = (HabitEntity & { habit_status: HabitStatus | null })[];
-
 export type HabitStatusesMapped = Record<number, HabitStatus> | Record<number, never>;
-export type HabitEntityWeekRpc = HabitInfo & { habit_statuses: HabitStatusesMapped };
-export type HabitEntitiesWeekRpc = HabitEntityWeekRpc[];
 
-export type HabitEntitiesMonthRpc = (HabitEntity & { habit_statuses: Record<string, HabitStatus> | null })[];
+export type HabitEntityRpc = HabitInfo & { habit_statuses: HabitStatusesMapped };
+export type HabitEntitiesRpc = HabitEntityRpc[];
 
 export type ShowHabitState = Extract<
   HabitState,

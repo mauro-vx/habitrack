@@ -1,10 +1,10 @@
 import { DefinedUseQueryResult, useQuery, QueryClient } from "@tanstack/react-query";
 
-import { HabitEntitiesWeekRpc, HabitEntitiesDayRpc, HabitEntitiesMonthRpc } from "@/app/types";
+import { HabitEntities, HabitEntitiesRpc } from "@/app/types";
 import { createClient } from "@/lib/supabase/client";
 import { getWeekDateSeries } from "@/lib/utils";
 
-export async function fetchDayDataClient(year: number, week: number, day: number): Promise<HabitEntitiesDayRpc> {
+export async function fetchDayDataClient(year: number, week: number, day: number): Promise<HabitEntities> {
   const supabase = createClient();
 
   const { data, error } = await supabase.rpc("fetch_day_data", { _year: year, _week: week, _day: day });
@@ -14,10 +14,10 @@ export async function fetchDayDataClient(year: number, week: number, day: number
     throw new Error(error.message || "Failed to fetch day data");
   }
 
-  return data as HabitEntitiesDayRpc;
+  return data as HabitEntities;
 }
 
-export function useDayData(dayStartDate: Date): DefinedUseQueryResult<HabitEntitiesDayRpc> {
+export function useDayData(dayStartDate: Date): DefinedUseQueryResult<HabitEntities> {
   if (!dayStartDate) {
     throw new Error("Date parameter is required");
   }
@@ -50,7 +50,7 @@ export async function prefetchDay(queryClient: QueryClient, date: Date) {
   });
 }
 
-export async function fetchWeekDataClient(year: number, week: number): Promise<HabitEntitiesWeekRpc> {
+export async function fetchWeekDataClient(year: number, week: number): Promise<HabitEntitiesRpc> {
   const supabase = createClient();
 
   const { data, error } = await supabase.rpc("fetch_week_data", { _year: year, _week: week });
@@ -60,10 +60,10 @@ export async function fetchWeekDataClient(year: number, week: number): Promise<H
     throw new Error(error.message || "Failed to fetch week data");
   }
 
-  return data as HabitEntitiesWeekRpc;
+  return data as HabitEntitiesRpc;
 }
 
-export function useWeekData(weekStartDate: Date): DefinedUseQueryResult<HabitEntitiesWeekRpc> {
+export function useWeekData(weekStartDate: Date): DefinedUseQueryResult<HabitEntitiesRpc> {
   if (!weekStartDate) {
     throw new Error("Date parameter is required");
   }
@@ -95,7 +95,7 @@ export async function prefetchMonth(queryClient: QueryClient, date: Date) {
   });
 }
 
-export async function fetchMonthDataClient(year: number, month: number): Promise<HabitEntitiesMonthRpc> {
+export async function fetchMonthDataClient(year: number, month: number): Promise<HabitEntitiesRpc> {
   const supabase = createClient();
 
   const { data, error } = await supabase.rpc("fetch_month_data", { _year: year, _month: month });
@@ -104,10 +104,10 @@ export async function fetchMonthDataClient(year: number, month: number): Promise
     throw new Error(error.message || "Failed to fetch month data");
   }
 
-  return data as HabitEntitiesMonthRpc;
+  return data as HabitEntitiesRpc;
 }
 
-export function useMonthData(monthStartDate: Date): DefinedUseQueryResult<HabitEntitiesMonthRpc> {
+export function useMonthData(monthStartDate: Date): DefinedUseQueryResult<HabitEntitiesRpc> {
   if (!monthStartDate) {
     throw new Error("Date parameter is required");
   }

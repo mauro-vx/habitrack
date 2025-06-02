@@ -46,7 +46,15 @@ export type Database = {
           week_number?: number
           year_number?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "habit_statuses_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       habits: {
         Row: {
@@ -173,7 +181,7 @@ export type Database = {
           target_count: number
           created_at: string
           updated_at: string
-          habit_status: Json
+          habit_statuses: Json
         }[]
       }
       fetch_month_data: {

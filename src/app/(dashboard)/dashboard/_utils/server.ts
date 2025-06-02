@@ -1,11 +1,11 @@
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 
-import { HabitEntitiesWeekRpc, HabitEntitiesMonthRpc, HabitEntitiesDayRpc } from "@/app/types";
+import { HabitEntities, HabitEntitiesRpc } from "@/app/types";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
 import { getDateSeries, getWeekDateSeries } from "@/lib/utils";
 
-export async function fetchDayDataServer(year: number, week: number, day: number): Promise<HabitEntitiesDayRpc> {
+export async function fetchDayDataServer(year: number, week: number, day: number): Promise<HabitEntities> {
   const { authSupabase } = await authenticateUser();
 
   const { data, error } = await authSupabase.rpc("fetch_day_data", { _year: year, _week: week, _day: day });
@@ -15,10 +15,10 @@ export async function fetchDayDataServer(year: number, week: number, day: number
     throw new Error(error.message || "Failed to fetch day data");
   }
 
-  return data as HabitEntitiesDayRpc;
+  return data as HabitEntities;
 }
 
-export async function fetchWeekDataServer(year: number, week: number): Promise<HabitEntitiesWeekRpc> {
+export async function fetchWeekDataServer(year: number, week: number): Promise<HabitEntitiesRpc> {
   const { authSupabase } = await authenticateUser();
 
   const { data, error } = await authSupabase.rpc("fetch_week_data", { _year: year, _week: week });
@@ -28,10 +28,10 @@ export async function fetchWeekDataServer(year: number, week: number): Promise<H
     throw new Error(error.message || "Failed to fetch week data");
   }
 
-  return data as HabitEntitiesWeekRpc;
+  return data as HabitEntitiesRpc;
 }
 
-export async function fetchMonthDataServer(year: number, month: number): Promise<HabitEntitiesMonthRpc> {
+export async function fetchMonthDataServer(year: number, month: number): Promise<HabitEntitiesRpc> {
   const { authSupabase } = await authenticateUser();
 
   const { data, error } = await authSupabase.rpc("fetch_month_data", { _year: year, _month: month });
@@ -40,7 +40,7 @@ export async function fetchMonthDataServer(year: number, month: number): Promise
     throw new Error(error.message || "Failed to fetch month data");
   }
 
-  return data as HabitEntitiesMonthRpc;
+  return data as HabitEntitiesRpc;
 }
 
 export async function prefetchDataForDashboardRpc(timezone: string) {

@@ -20,7 +20,7 @@ export function DayCell({
   return (
     <div
       className={cn(
-        "flex h-24 flex-col justify-between gap-1 rounded border p-2 hover:bg-gray-600 lg:gap-2",
+        "flex h-24 flex-col justify-between gap-1 rounded border p-2 hover:border-secondary-accent-foreground lg:gap-2",
         isSameDay(new Date(), dayDate) && "border-brand",
       )}
     >

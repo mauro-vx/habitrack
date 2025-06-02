@@ -37,7 +37,7 @@ function HabitNameStatus({ habit, totalProgress }: { habit: HabitEntityRpc; tota
     >
       <span
         className={cn(
-          "overflow-x-auto text-xs whitespace-nowrap",
+          "overflow-x-auto text-xs whitespace-nowrap no-scrollbar",
           habit.type === HabitType.DAILY && "text-blue-600",
           habit.type === HabitType.WEEKLY && "text-orange-600",
           habit.type === HabitType.CUSTOM && "text-yellow-600",

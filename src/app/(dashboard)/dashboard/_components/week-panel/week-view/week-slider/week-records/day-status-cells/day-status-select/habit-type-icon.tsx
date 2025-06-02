@@ -7,24 +7,24 @@ import { cn } from "@/lib/utils";
 
 const STATUS_OPTIONS_MAP = {
   [HabitState.PENDING]: {
-    startIcon: <Circle className="fill-gray-500" />,
-    fill: "fill-gray-500",
+    startIcon: <Circle className="stroke-inactive-stroke" />,
+    fill: "fill-inactive-fill",
   },
   [HabitState.PROGRESS]: {
-    startIcon: <Circle className="fill-violet-500" />,
-    fill: "fill-violet-500",
+    startIcon: <Circle className="stroke-active-fill" />,
+    fill: "fill-active-fill",
   },
   [HabitState.DONE]: {
-    startIcon: <PlusCircle className="stroke-green-500" />,
-    fill: "fill-green-500",
+    startIcon: <PlusCircle className="stroke-positive" />,
+    fill: "fill-brand",
   },
   [HabitState.SKIP]: {
-    startIcon: <PlusCircle className="stroke-blue-500" />,
-    fill: "fill-blue-500",
+    startIcon: <PlusCircle className="stroke-informative" />,
+    fill: "stroke-informative",
   },
   [HabitState.INCOMPLETE]: {
-    startIcon: <Circle className="fill-red-500" />,
-    fill: "fill-red-500",
+    startIcon: <Circle className="stroke-negative-stroke" />,
+    fill: "fill-negative-fill",
   },
 };
 

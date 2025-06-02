@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { RefreshCcw, TriangleAlert } from "lucide-react";
+import { RotateCw, TriangleAlert } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { isBefore, startOfToday, isToday, isAfter } from "date-fns";
 
@@ -149,20 +149,20 @@ export function DayStatusSelect({
             habit.type === HabitType.WEEKLY &&
               habitState === HabitState.PENDING &&
               isPastDay &&
-              "border-2 border-dashed border-gray-500",
+              "border-2 border-dashed border-ring",
             className,
           )}
         >
           {isPending ? (
-            <RefreshCcw className="size-5 animate-spin stroke-yellow-500 lg:size-6" />
+            <RotateCw className="size-5 animate-spin stroke-positive-stroke lg:size-6" />
           ) : isError ? (
-            <TriangleAlert className="size-5 stroke-red-500 lg:size-6" />
+            <TriangleAlert className="size-5 stroke-destructive-foreground lg:size-6" />
           ) : (
             <HabitTypeIcon habitType={habit.type} habitState={habitState} className="size-5 lg:size-6" />
           )}
 
           {!!habitDayStatus?.skipped_count && (
-            <span className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 transform text-blue-500 lg:-translate-x-1/2 lg:-translate-y-1/2">
+            <span className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 transform text-informative lg:-translate-x-1/2 lg:-translate-y-1/2">
               {habitDayStatus?.skipped_count}
             </span>
           )}
@@ -172,7 +172,7 @@ export function DayStatusSelect({
             className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 transform lg:translate-x-1/2 lg:-translate-y-1/2"
           />
           {!!habitDayStatus?.completion_count && (
-            <span className="absolute right-0 bottom-0 translate-x-1/3 translate-y-1/3 transform text-green-500 lg:translate-x-1/2 lg:translate-y-1/2">
+            <span className="absolute right-0 bottom-0 translate-x-1/3 translate-y-1/3 transform text-positive lg:translate-x-1/2 lg:translate-y-1/2">
               {habitDayStatus?.completion_count}
             </span>
           )}

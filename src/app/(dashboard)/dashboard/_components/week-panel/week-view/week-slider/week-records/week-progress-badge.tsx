@@ -43,31 +43,31 @@ export function WeekProgressBadge({
   };
 
   let IconComponent: React.ElementType = Circle;
-  let iconClassName = "stroke-gray-300";
+  let iconClassName = "stroke-inactive-stroke";
 
   if (weeklyTotalCount === 0) {
     const zeroIcons = [Banana, Bean, CloudHail];
     IconComponent = getIconByHabitProperty(zeroIcons);
-    iconClassName = "stroke-fuchsia-300";
+    iconClassName = "stroke-zero";
   } else {
     const completionRatio = weeklyTotalCount / weeklyTarget;
 
     if (completionRatio >= 1) {
       const fullIcons = [Trophy, Medal, Award];
       IconComponent = getIconByHabitProperty(fullIcons);
-      iconClassName = "stroke-yellow-500";
+      iconClassName = "stroke-full";
     } else if (completionRatio >= 0.75) {
       const mostlyIcons = [Milestone, Sun, Sparkle];
       IconComponent = getIconByHabitProperty(mostlyIcons);
-      iconClassName = "stroke-gray-500";
+      iconClassName = "stroke-mostly";
     } else if (completionRatio >= 0.5) {
       const halfIcons = [ThumbsUp, Smile, SmilePlus];
       IconComponent = getIconByHabitProperty(halfIcons);
-      iconClassName = "stroke-brown-500";
+      iconClassName = "stroke-half";
     } else if (completionRatio > 0) {
       const startedIcons = [BicepsFlexed, IceCreamCone, TrendingUp];
       IconComponent = getIconByHabitProperty(startedIcons);
-      iconClassName = "stroke-orange-500";
+      iconClassName = "stroke-started";
     }
   }
 

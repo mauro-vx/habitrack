@@ -9,7 +9,7 @@ export function DayIcon({ result, idx }: { result: boolean; idx: number }) {
   return (
     <Comp
       className={cn(
-        `size-5 lg:size-6 ${COL_START_CLASSES[idx + 1]}, ${result ? "fill-yellow-500 stroke-yellow-200" : "stroke-gray-500"}`,
+        `size-5 lg:size-6 ${COL_START_CLASSES[idx + 1]}, ${result ? "fill-completed-fill stroke-completed-stroke" : "stroke-inactive-stroke"}`,
       )}
     />
   );

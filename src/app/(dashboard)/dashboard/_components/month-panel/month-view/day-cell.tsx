@@ -29,7 +29,7 @@ export function DayCell({
       {!!habitsForDay.length ? (
         <ListDisplay habits={habitsForDay} dayDate={dayDate} />
       ) : (
-        <div className="text-xs text-gray-400">No habits</div>
+        <div className="text-xs text-muted-foreground">No habits</div>
       )}
     </div>
   );

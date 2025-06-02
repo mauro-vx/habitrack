@@ -29,18 +29,18 @@ function HabitNameStatus({ habit, totalProgress }: { habit: HabitEntityRpc; tota
   return (
     <div
       className={cn(
-        "flex lg:rounded border-b-3 lg:border lg:p-1",
+        "flex lg:rounded border-b-2 lg:border lg:p-1",
         isCompleted && "border-brand",
-        isInProgress && "border-violet-500",
-        isNotStarted && "border-gray-500",
+        isInProgress && "border-active-stroke",
+        isNotStarted && "border-inactive-stroke",
       )}
     >
       <span
         className={cn(
           "overflow-x-auto text-xs whitespace-nowrap no-scrollbar",
-          habit.type === HabitType.DAILY && "text-blue-600",
-          habit.type === HabitType.WEEKLY && "text-orange-600",
-          habit.type === HabitType.CUSTOM && "text-yellow-600",
+          habit.type === HabitType.DAILY && "text-accent-2-foreground",
+          habit.type === HabitType.WEEKLY && "text-accent-3-foreground",
+          habit.type === HabitType.CUSTOM && "text-accent-4-foreground",
         )}
       >
         {habit.name}

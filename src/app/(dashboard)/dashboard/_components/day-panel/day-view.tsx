@@ -34,16 +34,16 @@ export function DayView({ selectedDate }: { selectedDate: Date }) {
               className={cn(
                 "flex flex-col gap-0.5 rounded border p-4 lg:gap-1",
                 isCompleted && "border-brand bg-brand/5",
-                isInProgress && "border-violet-800 bg-violet-600/5",
-                isNotStarted && "border-gray-800 bg-gray-600/5",
+                isInProgress && "border-active-fill bg-active-fill/5",
+                isNotStarted && "border-inactive-fill bg-inactive-fill/5",
               )}
             >
               <h2
                 className={cn(
                   "text-md w-fit underline underline-offset-6 lg:text-xl",
-                  type === HabitType.DAILY && "bg-blue-600/5 text-blue-600",
-                  type === HabitType.WEEKLY && "bg-orange-600/5 text-orange-600",
-                  type === HabitType.CUSTOM && "bg-yellow-600/5 text-yellow-600",
+                  type === HabitType.DAILY && "bg-accent-2/5 text-accent-2-foreground",
+                  type === HabitType.WEEKLY && "bg-accent-2/5 text-accent-3-foreground",
+                  type === HabitType.CUSTOM && "bg-accent-2/5 text-accent-4-foreground",
                 )}
               >
                 {name}

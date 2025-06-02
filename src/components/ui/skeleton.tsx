@@ -15,7 +15,7 @@ export function Skeleton({
 }) {
   return (
     <div
-      className={cn("animate-pulse rounded-full bg-gray-300 dark:bg-gray-700", className)}
+      className={cn("animate-pulse rounded-full bg-skeleton", className)}
       style={{
         width: width || size,
         height: height || size,

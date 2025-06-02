@@ -26,7 +26,7 @@ export function MonthView({ selectedMonth }: { selectedMonth: Date }) {
       ))}
 
       {emptyCells.map((_, idx) => (
-        <div key={`empty-${idx}`} className="h-24 rounded border bg-gray-800 p-2" />
+        <div key={`empty-${idx}`} className="h-24 rounded border bg-dark p-2" />
       ))}
 
       {days.map((dayNumber) => (

@@ -77,7 +77,7 @@ export function ProfileEditForm({ userProfile }: { userProfile: UserProfile }) {
           </Label>
 
           <Input id="avatarUpload" type="file" className="hidden" onChange={handleAvatarChange} disabled={isPending} />
-          <p className={cn("text-sm text-gray-500", form.getValues("avatar")?.name && "text-accent-foreground")}>
+          <p className={cn("text-sm text-muted-foreground", form.getValues("avatar")?.name && "text-accent-foreground")}>
             {form.getValues("avatar")?.name || "Click the avatar to change."}
           </p>
         </div>

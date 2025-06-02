@@ -28,15 +28,14 @@ export async function DropdownAvatar() {
     console.error("Failed to fetch profile data:", error.message);
   }
 
-  const avatarUrl = authSupabase.storage.from("avatars").getPublicUrl(profileData?.avatar_url || '').data.publicUrl
+  const avatarUrl = authSupabase.storage.from("avatars").getPublicUrl(profileData?.avatar_url || "").data.publicUrl;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="outline-primary outline-2 size-6 lg:size-8">
+        <Avatar className="outline-primary size-6 outline-2 lg:size-8">
           <AvatarImage src={avatarUrl} alt={`${profileData?.full_name || "User"} profile picture`} />
-          {/* Todo: username initials */}
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback className="animate-pulse from-muted/50 to-muted bg-gradient-to-b" />
         </Avatar>
       </DropdownMenuTrigger>
 

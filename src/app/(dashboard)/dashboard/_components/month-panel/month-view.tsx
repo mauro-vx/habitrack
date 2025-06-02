@@ -3,7 +3,7 @@ import { getDay, getDaysInMonth } from "date-fns";
 
 import { getDayNamesByFormat } from "@/app/(dashboard)/dashboard/_utils/date";
 import { useMonthData } from "@/app/(dashboard)/dashboard/_utils/client";
-import { DayCell } from "./day-cell";
+import { DayCell } from "./month-view/day-cell";
 
 export function MonthView({ selectedMonth }: { selectedMonth: Date }) {
   const { data: monthData = [] } = useMonthData(selectedMonth);

@@ -2,7 +2,7 @@ import { addDays, getDay, isSameDay, startOfMonth } from "date-fns";
 
 import { HabitEntitiesRpc, HabitEntityRpc } from "@/app/types";
 import { cn, getWeekDateSeries } from "@/lib/utils";
-import { ListDisplay } from "./list-display";
+import { ListDisplay } from "./day-cell/list-display";
 
 export function DayCell({
   dayNumber,

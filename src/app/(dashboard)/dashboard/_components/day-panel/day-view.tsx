@@ -2,6 +2,7 @@ import { getDay } from "date-fns";
 
 import { cn } from "@/lib/utils";
 import { useDayData } from "@/app/(dashboard)/dashboard/_utils/client";
+import { HabitType } from "@/app/enums";
 
 export function DayView({ selectedDate }: { selectedDate: Date }) {
   const { data: dayData } = useDayData(selectedDate);
@@ -13,7 +14,7 @@ export function DayView({ selectedDate }: { selectedDate: Date }) {
           <p>No data for this day</p>
         </div>
       ) : (
-        dayData.map(({ id, name, description, target_count, habit_statuses, days_of_week }) => {
+        dayData.map(({ id, name, description, target_count, habit_statuses, days_of_week, type }) => {
           const sum = (habit_statuses?.skipped_count || 0) + (habit_statuses?.completion_count || 0);
 
           const isHabitScheduledForDay =
@@ -33,7 +34,16 @@ export function DayView({ selectedDate }: { selectedDate: Date }) {
                 !sum && "border-gray-800 bg-gray-600/5",
               )}
             >
-              <h2 className="text-md underline underline-offset-6 lg:text-xl">{name}</h2>
+              <h2
+                className={cn(
+                  "text-md w-fit underline underline-offset-6 lg:text-xl",
+                  type === HabitType.DAILY && "bg-blue-600/5 text-blue-600",
+                  type === HabitType.WEEKLY && "bg-orange-600/5 text-orange-600",
+                  type === HabitType.CUSTOM && "bg-yellow-600/5 text-yellow-600",
+                )}
+              >
+                {name}
+              </h2>
               <p>{description}</p>
 
               {habit_statuses && (

@@ -1,6 +1,6 @@
 import { Control } from "react-hook-form";
 import { CalendarIcon, X } from "lucide-react";
-import { format, isBefore, isMonday, isSunday, startOfDay, isAfter, isSameDay, startOfWeek } from "date-fns";
+import { format, isBefore, isMonday, isSunday, startOfDay, isAfter, isSameDay, startOfWeek, addWeeks } from "date-fns";
 
 import { CreateSchemaClient } from "@/app/(dashboard)/dashboard/_utils/schema-client";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -31,10 +31,14 @@ export function DateRangeField({ control, disabled }: { control: Control<CreateS
                     <div className="flex items-center justify-between border-b p-3">
                       <div className="text-sm font-medium">Habit Duration</div>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() =>
-                          field.onChange({ start_date: startOfWeek(new Date(), { weekStartsOn: 1 }), end_date: null })
+                          field.onChange({
+                            start_date: startOfWeek(addWeeks(new Date(), 1), { weekStartsOn: 1 }),
+                            end_date: null,
+                          })
                         }
                       >
                         <X className="h-4 w-4" />
@@ -114,11 +118,15 @@ export function DateRangeField({ control, disabled }: { control: Control<CreateS
 
                 {field.value?.start_date && (
                   <Button
+                    type="button"
                     variant="ghost"
                     size="sm"
                     className="absolute top-0 right-0 h-full px-3"
                     onClick={() =>
-                      field.onChange({ start_date: startOfWeek(new Date(), { weekStartsOn: 1 }), end_date: null })
+                      field.onChange({
+                        start_date: startOfWeek(addWeeks(new Date(), 1), { weekStartsOn: 1 }),
+                        end_date: null,
+                      })
                     }
                   >
                     <X className="h-4 w-4" />

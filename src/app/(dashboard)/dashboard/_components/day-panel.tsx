@@ -27,14 +27,14 @@ export function DayPanel() {
     const newDate = subDays(selectedDate, 1);
 
     prefetchAdjacentDay(subDays(newDate, 1));
-    setSelectedDate(newDate);
+    setSelectedDate(() => newDate);
   }, [selectedDate, prefetchAdjacentDay]);
 
   const goToNextDay = React.useCallback(() => {
     const newDate = addDays(selectedDate, 1);
 
     prefetchAdjacentDay(addDays(newDate, 1));
-    setSelectedDate(newDate);
+    setSelectedDate(() => newDate);
   }, [selectedDate, prefetchAdjacentDay]);
 
   return (

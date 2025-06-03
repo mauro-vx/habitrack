@@ -111,46 +111,6 @@ export async function prefetchDataForDashboardRpc(timezone: string) {
   return dehydrate(queryClient);
 }
 
-// export async function getLocalizedHabits(timezone: string) {
-//   const { authSupabase } = await authenticateUser();
-//
-//   const now = new Date();
-//   const localTime = toZonedTime(now, timezone);
-//
-//   const currentWeekStart = startOfWeek(localTime, { weekStartsOn: 1 }).toISOString();
-//   const currentWeekEnd = endOfWeek(localTime, { weekStartsOn: 1 }).toISOString();
-//   const nextWeekStart = startOfWeek(addWeeks(localTime, 1), { weekStartsOn: 1 }).toISOString();
-//
-//   const [activeHabits, futureHabits, pastHabits] = await Promise.all([
-//     authSupabase
-//       .from("habits")
-//       .select("*")
-//       .or(
-//         `and(start_date.lte.${currentWeekStart},end_date.is.null),and(start_date.lte.${currentWeekStart},end_date.gte.${currentWeekEnd})`,
-//       ),
-//     authSupabase.from("habits").select("*").gte("start_date", nextWeekStart),
-//     authSupabase.from("habits").select("*").lt("end_date", currentWeekStart),
-//   ]);
-//
-//   if (activeHabits.error || futureHabits.error || pastHabits.error) {
-//     throw new Error(
-//       activeHabits.error?.message ||
-//         futureHabits.error?.message ||
-//         pastHabits.error?.message ||
-//         "Failed to fetch habits",
-//     );
-//   }
-//
-//   const all = [...(activeHabits.data || []), ...(futureHabits.data || []), ...(pastHabits.data || [])];
-//
-//   return {
-//     active: activeHabits.data || [],
-//     future: futureHabits.data || [],
-//     past: pastHabits.data || [],
-//     all: all,
-//   };
-// }
-
 export async function getLocalizedHabits(timezone: string) {
   const { authSupabase } = await authenticateUser();
 
@@ -191,59 +151,3 @@ export async function getLocalizedHabits(timezone: string) {
     all: [...(activeHabits.data || []), ...(futureHabits.data || []), ...(pastHabits.data || [])],
   };
 }
-
-// export async function getLocalizedHabits(timezone: string) {
-//   const { authSupabase } = await authenticateUser();
-//
-//   const now = new Date();
-//   const localTime = toZonedTime(now, timezone);
-//
-//   // Break down the current date into its components (year, month, week, and day)
-//   const currentYear = getYear(localTime);
-//   const currentMonth = getMonth(localTime) + 1; // getMonth is zero-based
-//   const currentWeek = getISOWeek(localTime); // Get ISO week number
-//   const currentDay = getDate(localTime); // Day of the month
-//
-//   // Calculate start and end of the current week
-//   const currentWeekStart = startOfWeek(localTime, { weekStartsOn: 1 });
-//   const currentWeekEnd = endOfWeek(localTime, { weekStartsOn: 1 });
-//
-//   // Determine next week's start and its components
-//   const nextWeekStart = addWeeks(currentWeekStart, 1);
-//   const nextWeekYear = getYear(nextWeekStart);
-//   const nextWeekISOWeek = getISOWeek(nextWeekStart);
-//
-//   // Query the habits based on the new structure
-//   const [activeHabits, futureHabits, pastHabits] = await Promise.all([
-//     // Active habits: ongoing from current week
-//     authSupabase
-//       .from("habits")
-//       .select("*")
-//       .or(
-//         `and(start_year.lte.${currentYear},start_week.lte.${currentWeek},end_year.is.null,end_week.is.null),and(start_year.lte.${currentYear},start_week.lte.${currentWeek},end_year.gte.${currentYear},end_week.gte.${currentWeek})`,
-//       ),
-//
-//     // Future habits: starting after the current week
-//     authSupabase.from("habits").select("*").or(`and(start_year.gte.${nextWeekYear},start_week.gte.${nextWeekISOWeek})`),
-//
-//     // Past habits: ended before the current week
-//     authSupabase.from("habits").select("*").or(`and(end_year.lte.${currentYear},end_week.lt.${currentWeek})`),
-//   ]);
-//
-//   // Handle errors in any of the queries
-//   if (activeHabits.error || futureHabits.error || pastHabits.error) {
-//     throw new Error(
-//       activeHabits.error?.message ||
-//         futureHabits.error?.message ||
-//         pastHabits.error?.message ||
-//         "Failed to fetch habits",
-//     );
-//   }
-//
-//   return {
-//     active: activeHabits.data || [],
-//     future: futureHabits.data || [],
-//     past: pastHabits.data || [],
-//     all: [...(activeHabits.data || []), ...(futureHabits.data || []), ...(pastHabits.data || [])],
-//   };
-// }

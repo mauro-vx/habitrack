@@ -123,52 +123,6 @@ export function useMonthData(monthStartDate: Date): DefinedUseQueryResult<HabitE
   });
 }
 
-// export async function getLocalizedHabitsClient() {
-//   const supabase = createClient();
-//
-//   const today = startOfToday();
-//
-//   const { year: currentYear, week: currentWeek } = getWeekDateSeries(today).current;
-//
-//   const [activeHabits, futureHabits, pastHabits] = await Promise.all([
-//     supabase
-//       .from("habits")
-//       .select("*")
-//       .or(
-//         `start_year.lt.${currentYear},and(start_year.eq.${currentYear},start_week.lte.${currentWeek}),and(end_year.is.null,end_year.gt.${currentYear}),and(end_year.eq.${currentYear},end_week.gte.${currentWeek})`
-//       ),
-//
-//     supabase
-//       .from("habits")
-//       .select("*")
-//       .or(
-//         `start_year.gt.${currentYear},and(start_year.eq.${currentYear},start_week.gt.${currentWeek})`
-//       ),
-//
-//     supabase
-//       .from("habits")
-//       .select("*")
-//       .or(
-//         `end_year.lt.${currentYear},and(end_year.eq.${currentYear},end_week.lt.${currentWeek})`
-//       ),
-//   ]);
-//
-//   if (activeHabits.error || futureHabits.error || pastHabits.error) {
-//     throw new Error(
-//       activeHabits.error?.message ||
-//       futureHabits.error?.message ||
-//       pastHabits.error?.message ||
-//       "Failed to fetch habits"
-//     );
-//   }
-//
-//   return {
-//     activeHabits: activeHabits.data,
-//     futureHabits: futureHabits.data,
-//     pastHabits: pastHabits.data,
-//   };
-// }
-
 export async function getLocalizedHabitsClient() {
   const supabase = createClient();
 

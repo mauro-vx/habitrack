@@ -70,13 +70,13 @@ export function getDateSeries(
   const previousYear = getYear(previousDate);
   const previousMonth = getMonth(previousDate) + 1;
   const previousWeek = getWeek(previousDate, { weekStartsOn: 1 });
-  const previousDay = getDay(date) || 7;
+  const previousDay = getDay(previousDate) || 7;
 
   const nextDate = addDate(date, 1);
   const nextYear = getYear(nextDate);
   const nextMonth = getMonth(nextDate) + 1;
   const nextWeek = getWeek(nextDate, { weekStartsOn: 1 });
-  const nextDay = getDay(date) || 7;
+  const nextDay = getDay(nextDate) || 7;
 
   return {
     current: { day: currentDay, week: currentWeek, month: currentMonth, year: currentYear },

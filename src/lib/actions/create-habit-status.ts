@@ -7,7 +7,7 @@ import { toZonedTime } from "date-fns-tz";
 import { HabitEntity } from "@/app/types";
 import { HabitState, Status } from "@/app/enums";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
-import { getWeekDateSeries } from "@/lib/utils";
+import { getDateSeries } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { TablesInsert } from "@/lib/supabase/database.types";
 
@@ -30,7 +30,7 @@ export async function createHabitStatus(
   const timezone = cookieStore.get("timezone")?.value || "Europe/Prague";
 
   const zonedDate = toZonedTime(payload.weekStartDate, timezone);
-  const { year, month, week } = getWeekDateSeries(zonedDate).current;
+  const { year, month, week } = getDateSeries(zonedDate, "week").current;
 
   const { data: existingStatus, error: dbError } = await authSupabase
     .from("habit_statuses")

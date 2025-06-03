@@ -3,7 +3,7 @@ import { fromZonedTime, toZonedTime } from "date-fns-tz";
 
 import { HabitEntities, HabitEntitiesRpc } from "@/app/types";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
-import { getDateSeries, getWeekDateSeries } from "@/lib/utils";
+import { getDateSeries } from "@/lib/utils";
 
 export async function fetchDayDataServer(year: number, week: number, day: number): Promise<HabitEntities> {
   const { authSupabase } = await authenticateUser();
@@ -120,7 +120,7 @@ export async function getLocalizedHabits(timezone: string) {
   const {
     current: { year: currentYear, week: currentWeek },
     next: { year: nextWeekYear, week: nextWeekISOWeek },
-  } = getWeekDateSeries(localTime);
+  } = getDateSeries(localTime, "week");
 
   const [activeHabits, futureHabits, pastHabits] = await Promise.all([
     authSupabase

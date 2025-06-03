@@ -21,35 +21,6 @@ export function capitalizeFirstLetter(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-export function getWeekDateSeries(date: Date): {
-  current: { day: number; week: number; month: number; year: number };
-  previous: { day: number; week: number; month: number; year: number };
-  next: { day: number; week: number; month: number; year: number };
-} {
-  const currentYear = getYear(date);
-  const currentMonth = getMonth(date) + 1;
-  const currentWeek = getWeek(date, { weekStartsOn: 1 });
-  const currentDay = getDay(date) || 7;
-
-  const previousDate = subWeeks(date, 1);
-  const previousYear = getYear(previousDate);
-  const previousMonth = getMonth(previousDate) + 1;
-  const previousWeek = getWeek(previousDate, { weekStartsOn: 1 });
-  const previousDay = getDay(date) || 7;
-
-  const nextDate = addWeeks(date, 1);
-  const nextYear = getYear(nextDate);
-  const nextMonth = getMonth(nextDate) + 1;
-  const nextWeek = getWeek(nextDate, { weekStartsOn: 1 });
-  const nextDay = getDay(date) || 7;
-
-  return {
-    current: { day: currentDay, week: currentWeek, month: currentMonth, year: currentYear },
-    previous: { day: previousDay, week: previousWeek, month: previousMonth, year: previousYear },
-    next: { day: nextDay, week: nextWeek, month: nextMonth, year: nextYear },
-  };
-}
-
 export function getDateSeries(
   date: Date,
   unit: "day" | "week" | "month",

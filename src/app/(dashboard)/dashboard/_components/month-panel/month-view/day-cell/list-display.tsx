@@ -1,9 +1,9 @@
 import { HabitEntitiesRpc, HabitEntityRpc } from "@/app/types";
 import { HabitType } from "@/app/enums";
-import { cn, getWeekDateSeries } from "@/lib/utils";
+import { cn, getDateSeries } from "@/lib/utils";
 
 export function ListDisplay({ habits, dayDate }: { habits: HabitEntitiesRpc; dayDate: Date }) {
-  const { year, week, day } = getWeekDateSeries(dayDate).current;
+  const { year, week, day } = getDateSeries(dayDate, "week").current;
 
   return (
     <div className="no-scrollbar flex flex-col gap-y-1 overflow-y-auto">

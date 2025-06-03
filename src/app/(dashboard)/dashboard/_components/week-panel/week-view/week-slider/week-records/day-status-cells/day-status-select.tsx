@@ -9,7 +9,7 @@ import { Tables } from "@/lib/supabase/database.types";
 import { HabitState, HabitType, Status } from "@/app/enums";
 import { STATUS_OPTIONS } from "./day-status-select/constants";
 import { getHabitState } from "./day-status-select/utils";
-import { cn, getWeekDateSeries } from "@/lib/utils";
+import { cn, getDateSeries } from "@/lib/utils";
 import { SelectContent, SelectGroup, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { FractionDisplay } from "./day-status-select/fraction-display";
 import { deleteHabitStatus } from "@/lib/actions/delete-habit-status";
@@ -131,7 +131,7 @@ export function DayStatusSelect({
 
   React.useEffect(() => {
     if (successfulState && !isPending) {
-      const { year, month, week } = getWeekDateSeries(weekStartDate).current;
+      const { year, month, week } = getDateSeries(weekStartDate, "week").current;
 
       queryClient.invalidateQueries({ queryKey: ["dayData", year, week, dayNumber] });
       queryClient.invalidateQueries({ queryKey: ["weekData", year, week] });

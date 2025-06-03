@@ -2,7 +2,7 @@ import { DefinedUseQueryResult, useQuery, QueryClient } from "@tanstack/react-qu
 
 import { HabitEntities, HabitEntitiesRpc } from "@/app/types";
 import { createClient } from "@/lib/supabase/client";
-import { getWeekDateSeries } from "@/lib/utils";
+import { getDateSeries } from "@/lib/utils";
 
 export async function fetchDayDataClient(year: number, week: number, day: number): Promise<HabitEntities> {
   const supabase = createClient();
@@ -22,7 +22,7 @@ export function useDayData(dayStartDate: Date): DefinedUseQueryResult<HabitEntit
     throw new Error("Date parameter is required");
   }
 
-  const  { year, week, day } = getWeekDateSeries(dayStartDate).current;
+  const  { year, week, day } = getDateSeries(dayStartDate, "week").current;
   
 
   return useQuery({
@@ -42,7 +42,7 @@ export async function prefetchDay(queryClient: QueryClient, date: Date) {
     throw new Error("Date parameter is required for prefetchDay");
   }
 
-  const { year, week, day } = getWeekDateSeries(date).current;
+  const { year, week, day } = getDateSeries(date, "week").current;
 
   return queryClient.prefetchQuery({
     queryKey: ["dayData", year, week, day],
@@ -68,7 +68,7 @@ export function useWeekData(weekStartDate: Date): DefinedUseQueryResult<HabitEnt
     throw new Error("Date parameter is required");
   }
 
-  const  { year, week } = getWeekDateSeries(weekStartDate).current;
+  const  { year, week } = getDateSeries(weekStartDate, "week").current;
 
   return useQuery({
     queryKey: ["weekData", year, week],
@@ -87,7 +87,7 @@ export async function prefetchMonth(queryClient: QueryClient, date: Date) {
     throw new Error("Date parameter is required for prefetchDay");
   }
 
-  const  { year, month } = getWeekDateSeries(date).current;
+  const  { year, month } = getDateSeries(date, "week").current;
 
   return queryClient.prefetchQuery({
     queryKey: ["monthData", year, month],
@@ -112,7 +112,7 @@ export function useMonthData(monthStartDate: Date): DefinedUseQueryResult<HabitE
     throw new Error("Date parameter is required");
   }
 
-  const { year, month } = getWeekDateSeries(monthStartDate).current;
+  const { year, month } = getDateSeries(monthStartDate, "week").current;
   
 
   return useQuery({
@@ -131,7 +131,7 @@ export async function getLocalizedHabitsClient() {
   const {
     current: { year: currentYear, week: currentWeek },
     next: { year: nextWeekYear, week: nextWeekISOWeek },
-  } = getWeekDateSeries(now);
+  } = getDateSeries(now, "week");
 
   const [activeHabits, futureHabits, pastHabits] = await Promise.all([
     supabase

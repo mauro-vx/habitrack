@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import WelcomeBanner from "@/app/(public)/_components/welcome-banner";
+import { WelcomeBanner } from "@/app/(public)/_components/welcome-banner";
 
 export default function Page() {
   return (

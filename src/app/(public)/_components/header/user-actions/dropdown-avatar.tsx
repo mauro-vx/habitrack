@@ -14,6 +14,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuButtonAuth } from "./dropdown-avatar/dropdown-menu-button-auth";
 import { authenticateUser } from "@/lib/supabase/authenticate-user";
+import CatSilhouette from "~/public/icons/cat-silhouette.svg";
+
 
 export async function DropdownAvatar() {
   const { authSupabase, user } = await authenticateUser();
@@ -35,7 +37,9 @@ export async function DropdownAvatar() {
       <DropdownMenuTrigger asChild>
         <Avatar className="outline-primary size-6 outline-2 lg:size-8">
           <AvatarImage src={avatarUrl} alt={`${profileData?.full_name || "User"} profile picture`} />
-          <AvatarFallback className="animate-pulse from-muted/50 to-muted bg-gradient-to-b" />
+          <AvatarFallback className="bg-background">
+            <CatSilhouette className="fill-foreground size-6" alt="Cat avatar" />
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 

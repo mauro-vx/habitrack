@@ -26,5 +26,3 @@ export function WelcomeBanner({
     </AnimatedSection>
   );
 }
-
-export default WelcomeBanner;

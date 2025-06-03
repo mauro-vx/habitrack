@@ -2,17 +2,11 @@
 
 import * as React from "react";
 
-import {  useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import { AuthMode } from "@/app/(public)/(auth)/enums";
 import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SignInForm } from "@/app/(public)/(auth)/_components/sign-in-form";
 import { SignUpForm } from "@/app/(public)/(auth)/_components/sign-up-form";
@@ -25,6 +19,7 @@ const authModeLabels = {
 export default function DialogDemo() {
   const [authMode, setAuthMode] = React.useState<AuthMode>(AuthMode.SignIn);
   const router = useRouter();
+  const pathname = usePathname();
 
   const isSignIn = authMode === AuthMode.SignIn;
   const otherAuthMode = isSignIn ? AuthMode.SignUp : AuthMode.SignIn;
@@ -33,8 +28,11 @@ export default function DialogDemo() {
     router.back();
   };
 
+  const isOpen =
+    !pathname.includes("verification-sent") && (pathname.includes("sign-in") || pathname.includes("sign-up"));
+
   return (
-    <Dialog open={true}>
+    <Dialog open={isOpen}>
       <DialogContent
         className="sm:max-w-[425px] [&>button:last-child]:hidden"
         onEscapeKeyDown={handleClose}
@@ -55,7 +53,8 @@ export default function DialogDemo() {
             </Button>
           </div>
         </DialogHeader>
-        <SignInForm className={cn(!isSignIn && "hidden")} /> <SignUpForm className={cn(isSignIn && "hidden")} />
+        <SignInForm className={cn(!isSignIn && "hidden")} />
+        <SignUpForm className={cn(isSignIn && "hidden")} />
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
             Cancel

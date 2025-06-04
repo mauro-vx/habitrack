@@ -58,12 +58,15 @@ export async function createHabit(prevState: CreateHabitState, formData: CreateS
   const { error: dbError } = await supabase.from("habits").insert([habitInsertPayload]);
 
   if (dbError) {
+    console.error("Database error occurred while creating a habit:", dbError);
+
     return {
       ...prevState,
       status: Status.DATABASE_ERROR,
-      dbError: dbError,
+      dbError: "An error occurred while creating the habit. Please try again.",
     };
   }
+
 
   revalidatePath("/dashboard", "layout");
 

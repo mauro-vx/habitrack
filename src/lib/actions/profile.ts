@@ -45,6 +45,25 @@ export async function updateUserProfile(
   } = { id: user.id };
 
   if (avatar) {
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedFileTypes.includes(avatar.type)) {
+      return {
+        ...prevState,
+        status: Status.VALIDATION_ERROR,
+        validationErrors: { avatar: ["Invalid file type. Only JPEG, PNG, and WEBP are allowed."] },
+      };
+    }
+
+    if (avatar.size > MAX_FILE_SIZE) {
+      return {
+        ...prevState,
+        status: Status.VALIDATION_ERROR,
+        validationErrors: { avatar: ["File size exceeds the 5MB limit."] },
+      };
+    }
+
     const fileExtension = avatar.name.split(".").pop();
     const fileName = `${uuidv4()}.${fileExtension}`;
 
@@ -57,6 +76,7 @@ export async function updateUserProfile(
         storageError: storageError,
       };
     }
+
     changes.avatar_url = fileName;
   }
 
@@ -71,7 +91,7 @@ export async function updateUserProfile(
   if (Object.keys(changes).length === 1) {
     return {
       status: Status.VALIDATION_ERROR,
-      noEdits: "No changes were made.",
+      noEdits: "No changes detected in your profile.",
       fullName: prevState.fullName,
       username: prevState.username,
       avatarPublicUrl: prevState.avatarPublicUrl,
@@ -85,13 +105,18 @@ export async function updateUserProfile(
   if (dbError) {
     return {
       status: Status.DATABASE_ERROR,
-      dbError: dbError,
+      dbError: "An error occurred while updating your profile. Please try again later.",
       fullName: prevState.fullName,
       username: prevState.username,
       avatarPublicUrl: prevState.avatarPublicUrl,
     };
   }
 
-  revalidatePath("/profile", "page");
+  try {
+    revalidatePath("/profile", "page");
+  } catch (error) {
+    console.error("Failed to revalidate profile path for user:", user.id, error);
+  }
+
   redirect("/profile");
 }

@@ -1,18 +1,17 @@
 import React from "react";
 
 import { AlertCircle } from "lucide-react";
-import { PostgrestError } from "@supabase/supabase-js";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-export function ErrorAlert({ error }: { error?: PostgrestError | null }) {
+export function ErrorAlert({ error }: { error?: string }) {
   if (!error) return null;
 
   return (
     <Alert variant="destructive">
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>Error</AlertTitle>
-      <AlertDescription>{error.message || "An error occurred."}</AlertDescription>
+      <AlertDescription>{error || "An error occurred."}</AlertDescription>
     </Alert>
   );
 }

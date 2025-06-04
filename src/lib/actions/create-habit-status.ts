@@ -43,11 +43,15 @@ export async function createHabitStatus(
     .maybeSingle();
 
   if (dbError) {
-    return { status: Status.DATABASE_ERROR, message: `Error fetching habit status: ${dbError.message}` };
+    console.error("Error fetching habit status:", dbError);
+    return {
+      status: Status.DATABASE_ERROR,
+      message: "An error occurred while fetching the habit status. Please try again.",
+    };
   }
 
   if (existingStatus) {
-    return { status: Status.DATABASE_ERROR, message: "Habit status already exists." };
+    return { status: Status.DATABASE_ERROR, message: "Habit status for this day already exists." };
   }
 
   const newHabitStatus: TablesInsert<"habit_statuses"> = {
@@ -66,10 +70,18 @@ export async function createHabitStatus(
   const { error: insertError } = await authSupabase.from("habit_statuses").insert([newHabitStatus]).select();
 
   if (insertError) {
-    return { status: Status.DATABASE_ERROR, message: insertError.message };
+    console.error("Error inserting habit status:", insertError);
+    return {
+      status: Status.DATABASE_ERROR,
+      message: "An error occurred while creating the habit status. Please try again.",
+    };
   }
 
-  revalidatePath("/dashboard", "page");
+  try {
+    revalidatePath("/dashboard", "page");
+  } catch (error) {
+    console.error("Failed to revalidate path:", error);
+  }
 
   return { status: Status.SUCCESS, message: "Habit status created successfully." };
 }

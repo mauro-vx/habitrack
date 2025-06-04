@@ -1,4 +1,3 @@
-import type { PostgrestError } from "@supabase/supabase-js";
 import { Status, HabitType } from "@/app/enums";
 
 export type DayNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -26,5 +25,5 @@ export interface CreateHabitState {
   timezone: string;
   status?: Status;
   validationErrors?: CreateValidationErrors;
-  dbError?: PostgrestError | null;
+  dbError?: string;
 }

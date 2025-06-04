@@ -18,13 +18,18 @@ export async function deleteHabitStatus(
   const { error: deleteError } = await authSupabase.from("habit_statuses").delete().eq("id", habitStatusId);
 
   if (deleteError) {
+    console.error("Error deleting habit status:", deleteError);
     return {
       status: Status.DATABASE_ERROR,
-      message: `Error deleting habit status: ${deleteError.message}`,
+      message: "An error occurred while removing the habit status. Please try again later.",
     };
   }
 
-  revalidatePath("/dashboard", "page");
+  try {
+    revalidatePath("/dashboard", "page");
+  } catch (error) {
+    console.error("Failed to revalidate path after deleting habit status:", error);
+  }
 
   return {
     status: Status.SUCCESS,

@@ -1,4 +1,4 @@
-import type { User, PostgrestError } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { StorageError } from "@supabase/storage-js";
 import { Status } from "@/app/enums";
 
@@ -25,5 +25,5 @@ export interface EditProfileState {
   status?: Status;
   validationErrors?: EditFormErrors;
   storageError?: StorageError | null;
-  dbError?: PostgrestError | null;
+  dbError?: string;
 }

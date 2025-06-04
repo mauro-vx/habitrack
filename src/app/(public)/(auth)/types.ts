@@ -1,4 +1,3 @@
-import { AuthError } from "@supabase/auth-js";
 import { Status } from "@/app/enums";
 
 interface SignInFormErrors {
@@ -17,7 +16,7 @@ export interface SignInState {
   password: string;
   status?: Status;
   validationErrors?: SignInFormErrors;
-  dbError?: AuthError;
+  dbError?: string;
 }
 
 export interface SignUpState {
@@ -26,5 +25,5 @@ export interface SignUpState {
   verifyPassword: string;
   status?: Status;
   validationErrors?: SignUpFormErrors;
-  dbError?: AuthError;
+  dbError?: string;
 }

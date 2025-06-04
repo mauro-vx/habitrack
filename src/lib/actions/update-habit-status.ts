@@ -9,7 +9,7 @@ import { authenticateUser } from "@/lib/supabase/authenticate-user";
 
 export async function updateHabitStatus(
   prevState: { status: Status; message: string } | null,
-  payload: { habitStatusId: string; action: SelectHabitState }
+  payload: { habitStatusId: string; action: SelectHabitState },
 ): Promise<{
   status: Status;
   message: string;
@@ -23,7 +23,11 @@ export async function updateHabitStatus(
     .single();
 
   if (fetchError || !habitStatus) {
-    return { status: Status.DATABASE_ERROR, message: `Habit status not found: ${fetchError.message}` };
+    console.error("Error fetching habit status:", { id: payload.habitStatusId, error: fetchError });
+    return {
+      status: Status.DATABASE_ERROR,
+      message: "Unable to find the habit status. Please try again later.",
+    };
   }
 
   const updatePayload: TablesUpdate<"habit_statuses"> = {
@@ -46,10 +50,18 @@ export async function updateHabitStatus(
     .eq("id", payload.habitStatusId);
 
   if (updateError) {
-    return { status: Status.DATABASE_ERROR, message: updateError.message };
+    console.error("Error updating habit status:", { id: payload.habitStatusId, error: updateError });
+    return {
+      status: Status.DATABASE_ERROR,
+      message: "An error occurred while updating the habit status. Please try again later.",
+    };
   }
 
-  revalidatePath("/dashboard", "page");
+  try {
+    revalidatePath("/dashboard", "page");
+  } catch (revalidateError) {
+    console.error("Error revalidating dashboard path:", revalidateError);
+  }
 
   return { status: Status.SUCCESS, message: "Habit status successfully updated." };
 }

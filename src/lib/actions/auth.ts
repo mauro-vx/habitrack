@@ -23,12 +23,13 @@ export async function signIn(prevState: SignInState, formData: SignInSchema): Pr
   const { error: dbError } = await supabase.auth.signInWithPassword(validation.data);
 
   if (dbError) {
+    console.error("Sign-in error:", dbError);
+
     return {
       ...prevState,
       status: Status.DATABASE_ERROR,
-      dbError: dbError,
+      dbError: "An error occurred. Please try again.",
     };
-  } else {
   }
 
   redirect("/dashboard");
@@ -56,10 +57,20 @@ export async function signUp(
   const { error: dbError } = await supabase.auth.signUp({ email, password });
 
   if (dbError) {
+    console.error("Sign-up error:", dbError);
+
+    if (dbError.message.includes("already registered")) {
+      return {
+        ...prevState,
+        status: Status.DATABASE_ERROR,
+        dbError: "This email is already registered.",
+      };
+    }
+
     return {
       ...prevState,
       status: Status.DATABASE_ERROR,
-      dbError: dbError,
+      dbError: "An error occurred. Please try again.",
     };
   }
 
@@ -80,9 +91,14 @@ export async function signOut() {
   const { error: dbError } = await supabase.auth.signOut();
 
   if (dbError) {
-    return { status: Status.DATABASE_ERROR, serverError: dbError };
+    return { status: Status.DATABASE_ERROR, serverError: "An error occurred. Please try again." };
   }
 
-  revalidatePath("/", "layout");
+  try {
+    revalidatePath("/", "layout");
+  } catch (revalidateError) {
+    console.error("Error revalidating dashboard path:", revalidateError);
+  }
+
   redirect("/");
 }

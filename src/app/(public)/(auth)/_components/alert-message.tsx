@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { AlertCircle } from "lucide-react";
-import { AuthError } from "@supabase/auth-js";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -12,7 +11,7 @@ export function AlertMessage({
 }: {
   title?: string;
   icon?: React.ElementType;
-  error?: AuthError;
+  error?: string;
 }) {
   if (!error) return null;
 
@@ -20,7 +19,7 @@ export function AlertMessage({
     <Alert variant="destructive">
       <Icon className="h-4 w-4" />
       <AlertTitle>{title}</AlertTitle>
-      <AlertDescription>{error.message}</AlertDescription>
+      <AlertDescription>{error}</AlertDescription>
     </Alert>
   );
 }

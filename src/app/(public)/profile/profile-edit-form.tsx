@@ -124,7 +124,7 @@ export function ProfileEditForm({ userProfile }: { userProfile: UserProfile }) {
           {[
             { condition: state?.noEdits, message: state.noEdits },
             { condition: form.formState.errors.noEdits, message: form.formState.errors.noEdits?.message },
-            { condition: state.dbError, message: state.dbError?.message || "Invalid full name or username." },
+            { condition: state.dbError, message: state.dbError || "Invalid full name or username." },
             { condition: state.storageError, message: state.storageError?.message },
           ].map(
             (error) =>
